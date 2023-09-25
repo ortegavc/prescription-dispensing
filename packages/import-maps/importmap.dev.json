@@ -1,0 +1,7 @@
+{
+  "imports": {
+      "@msp/root-config": "http://pruebas-inventarios.msp.gob.ec/msp-root-config.js",
+      "@msp/shared": "http://pruebas-inventarios.msp.gob.ec/@msp/shared/1.0.0/main.js",
+      "@msp/terminal": "http://pruebas-inventarios.msp.gob.ec/@msp/administracion/1.0.0/main.js"
+    }
+}

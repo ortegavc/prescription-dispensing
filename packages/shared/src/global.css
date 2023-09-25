@@ -1,0 +1,248 @@
+:root {
+  --color-primary: #011627;
+  --color-secondary: #8b8c8a;
+  --color-danger: #e71d36;
+  --color-warning: #ff9f1c;
+  --color-info: #2ec4b6;
+  --color-background: #f1f5fa;
+  --color-white: #fdfffc;
+  --color-black: #171817;
+  --color-overlay: rgba(253, 255, 252, 0.8);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  
+}
+
+@layer components {
+  .card {
+    background-color: var(--color-overlay);
+    border-radius: 7;
+    padding: theme(spacing.6);
+    box-shadow: theme(boxShadow.xl);
+  }
+}
+
+body {
+  color: var(--color-primary);
+  margin: 0;
+  padding: 0;
+  background-color: rgb(226 232 240);
+}
+
+
+.text-blue-gray-50{
+  color: #eceff1;
+}
+
+.text-blue-gray-100{
+  color: #cfd8dc;
+}
+
+.text-blue-gray-200{
+  color: #b0bec5;
+}
+
+.text-blue-gray-300{
+  color: #78909c;
+}
+
+.text-blue-gray-400{
+  color: #90a4ae;
+}
+
+.text-blue-gray-500{
+  color: #607d8b;
+}
+
+.text-blue-gray-600{
+  color: #546e7a;
+}
+
+.text-blue-gray-700{
+  color: #455a64;
+}
+
+.text-blue-gray-800{
+  color: #37474f;
+}
+
+.text-blue-gray-900{
+  color: #263238;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #d6deeb;
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+  text-shadow: none;
+  background: rgba(29, 59, 83, 0.99); 
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+  text-shadow: none;
+  background: rgba(29, 59, 83, 0.99);
+}
+
+@media print {
+  code[class*="language-"],
+  pre[class*="language-"] {
+    text-shadow: none;
+  }
+}
+
+/* Code blocks */
+.preview-panel-editor pre,
+.preview-panel-editor textarea {
+  padding-left: 54px !important;
+}
+
+pre[class*="language-"] {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  color: white;
+  background: #011627;
+}
+
+:not(pre) > code[class*="language-"] {
+  padding: 0.1em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.cdata {
+  color: rgb(99, 119, 119);
+}
+
+.token.punctuation {
+  color: #c9d1d9;
+}
+
+.namespace {
+  color: rgb(178, 204, 214);
+}
+
+.token.deleted {
+  color: rgba(239, 83, 80, 0.56);
+}
+
+.token.symbol,
+.token.property {
+  color: rgb(128, 203, 196);
+}
+
+.token.operator,
+.token.keyword {
+  color: #ff7b72;
+}
+
+.token.boolean {
+  color: #c8d1d9;
+}
+
+.token.number {
+  color: #c8d1d9;
+}
+
+.token.constant,
+.token.function,
+.token.builtin,
+.token.char {
+  color: #d2a8ff;
+}
+
+.token.selector,
+.token.doctype {
+  color: rgb(199, 146, 234);
+}
+
+.token.attr-name,
+.token.inserted {
+  color: #79c0ff;
+}
+
+.token.string,
+.token.url,
+.token.entity,
+.language-css .token.string,
+.style .token.string {
+  color: #a5d6ff;
+}
+
+.token.class-name,
+.token.tag {
+  color: #7ee787;
+}
+
+.token.atrule,
+.token.attr-value {
+  color: #a5d6ff;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: rgb(214, 222, 235);
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.editorLineNumber {
+  position: absolute;
+  left: 0px;
+  color: #565f6c;
+  text-align: right;
+  width: 40px;
+}
+
+@media screen and (max-width: 600px) {
+  .ocultar-div{
+      display:none;
+
+  }
+}

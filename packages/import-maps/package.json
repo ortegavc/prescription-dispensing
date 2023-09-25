@@ -1,0 +1,12 @@
+{
+  "name": "@msp/import-maps",
+  "license": "MIT",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "deploy": "./scripts/deploy.sh"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.0.0"
+  }
+}

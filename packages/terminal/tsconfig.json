@@ -1,0 +1,20 @@
+{
+  "extends": "ts-config-single-spa",
+  "compilerOptions": {
+    "declaration": true,
+    "jsx": "react-jsx",
+    "declarationDir": "dist",
+    "baseUrl": "./src",
+    "strict": true,
+    "paths": {
+      "@presentation/*": ["./presentation/*"],
+      "@domain/*": ["./domain/*"],
+      "@application/*": ["./application/*"],
+      "@infrastructure/*": ["./infrastructure/*"],
+      "@msp/shared/*": ["../shared/src/*","../../node_modules/@msp/shared"]
+    }
+  },
+  "files": ["src/msp-terminal.tsx"],
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test*"]
+}

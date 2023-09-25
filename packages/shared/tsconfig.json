@@ -1,0 +1,24 @@
+{
+  "extends": "ts-config-single-spa",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "declaration": true,
+    "declarationDir": "dist",
+    "baseUrl": "./src",
+    "strict": true,
+    "paths": {
+      "@config/*": ["config/*"],
+      "@assets/*": ["assets/*"],
+      "@layout/*": ["layout/*"],
+      "@widgets/*": ["widgets/*"],
+      "@codegen/*": ["codegen/*"] ,
+      "@store/*": ["store/*"],
+      "@helper/*": ["helper/*"],
+      "@interfaces/*": ["interfaces/*"]
+  }
+},
+  "files": ["src/msp-shared.tsx"],
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test*"]  
+}

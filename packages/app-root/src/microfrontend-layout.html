@@ -1,0 +1,16 @@
+<single-spa-router>
+  <redirect from="/" to="/terminal"></redirect>
+ 
+  <route path="/terminal">
+    <application name="@msp/terminal"></application>
+  </route>
+  
+  <route path="silent">
+    <script>
+      parent.postMessage(location.href, location.origin);
+    </script>
+  </route>
+
+
+ 
+</single-spa-router>
