@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start:dev": "lerna run start --stream --parallel",
-    "start": "lerna run build-dev --scope=@msp/shared && node ./scripts/start.js",
+    "start": "lerna run codegen --scope=@msp/shared && lerna run build-dev --scope=@msp/shared && node ./scripts/start.js",
     "clean": "lerna clean && lerna run clean --parallel && rm -rf node_modules && lerna bootstrap",
     "bootstrap": "lerna bootstrap",
     "build:shared": "lerna run build-dev --scope=@msp/shared",
