@@ -16,7 +16,7 @@ export class Constantes {
 
   static CLIENTCLOACK: string = "local-inventario-terminal";
 
-  static URLHOME: string = "http://localhost:9000/dashboard";
+  static URLHOME: string = "http://localhost:9000/terminal/usuario";
 
   static CLIENTINVENTARIO: string = "api-inventarios";
 }
