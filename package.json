@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
+    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "start:dev": "lerna run start --stream --parallel",
     "start": "lerna run codegen --scope=@msp/shared && lerna run build-dev --scope=@msp/shared && node ./scripts/start.js",
     "clean": "lerna clean && lerna run clean --parallel && rm -rf node_modules && lerna bootstrap",
