@@ -110,8 +110,8 @@ export default function Terminal() {
         method="POST"
         className="mx-auto mt-8 max-w-full sm:mt-12"
       >
-        <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-3">
-          <Switch.Group as="div" className="flex gap-x-4 sm:col-span-3">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
+          <Switch.Group as="div" className="flex gap-x-4 col-span-full">
             <div className="flex h-6 items-center">
               <Switch
                 checked={agreed}
@@ -136,16 +136,14 @@ export default function Terminal() {
             </Switch.Label>
           </Switch.Group>
 
-          <div className="sm:col-span-2">
+          <div className="lg:col-span-2">
             <RadioGroup
               value={selected}
               onChange={setSelected}
               className="mt-4"
             >
-              <RadioGroup.Label className="sr-only">
-                Seleccione un producto
-              </RadioGroup.Label>
-              <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
+              <RadioGroup.Label>Seleccione un producto</RadioGroup.Label>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {products.map((item) => (
                   <RadioGroup.Option
                     key={item.id}
@@ -214,7 +212,8 @@ export default function Terminal() {
             </RadioGroup>
           </div>
 
-          <div>
+          <div className="lg:col-span-1">
+          <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
             <div>
               <label
                 htmlFor="no-receta"
@@ -249,7 +248,23 @@ export default function Terminal() {
                 />
               </div>
             </div>
-            <div className="sm:col-span-2">
+            <div className="col-span-full border-b border-gray-900/10 pb-12">
+              <div className="grid grid-cols-2">
+                <label
+                  htmlFor="product"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Producto
+                </label>
+                <label
+                  htmlFor="cantidad"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Cantidad
+                </label>
+              </div>
+            </div>
+            <div className="col-span-full">
               <label
                 htmlFor="message"
                 className="block text-sm font-semibold leading-6 text-gray-900"
@@ -266,7 +281,7 @@ export default function Terminal() {
                 />
               </div>
             </div>
-            <div className="mt-6 flex items-center justify-end gap-x-6">
+            <div className="mt-6 flex items-center justify-end gap-x-6 col-span-full">
               <button
                 type="button"
                 className="text-sm font-semibold leading-6 text-gray-900"
@@ -280,6 +295,7 @@ export default function Terminal() {
                 Aceptar
               </button>
             </div>
+          </div>
           </div>
         </div>
       </form>
