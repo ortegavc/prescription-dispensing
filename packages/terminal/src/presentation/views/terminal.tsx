@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+// import { graphql } from "@msp/shared";
 
 interface ProductInterface {
     id: number;
@@ -91,19 +92,17 @@ function classNames(...classes: string[]) {
 }
 
 export default function Terminal() {
+    // const { useProductoBodegaCollectionLazyQuery } = graphql;
+    // const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [agreed, setAgreed] = useState(false);
     const [selected, setSelected] = useState<ProductInterface | null>(null);
-    const [recetaProductos, setRecetaProductos] = useState<ProductInterface[]>(
-        []
-    );
+    const [recetaProductos, setRecetaProductos] = useState<ProductInterface[]>([]);
 
     useEffect(() => {
         if (selected !== null) {
             console.log("Un producto ha sido seleccionado", selected);
             // Check if an object with the same id does not already exist in the array
-            const isNotInArray = !recetaProductos.some(
-                (item) => item.id === selected.id
-            );
+            const isNotInArray = !recetaProductos.some((item) => item.id === selected.id);
 
             if (isNotInArray) {
                 // If it's not in the array, push it
@@ -111,6 +110,16 @@ export default function Terminal() {
             }
             console.log(recetaProductos);
         }
+        // getProductoBodegaCollectionLazyQuery({
+        //     variables: {
+        //         inputWhere: { bodega_id: { is: 2 }, producto: { nombre: { contains: "ina" } } },                
+        //         inputOrder: { asc: "producto.nombre" },
+        //     },
+        //     onCompleted: (c: any) => {
+        //         console.log("getProductoBodegaCollectionLazyQuery completed");
+        //         console.info(c);
+        //     },
+        // });
     }, [selected]);
 
     return (
@@ -128,20 +137,11 @@ export default function Terminal() {
                 />
             </div>
             <div className="mx-auto max-w-2xl text-center">
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                    Despacho de Recetas
-                </h2>
+                <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
             </div>
-            <form
-                action="#"
-                method="POST"
-                className="mx-auto mt-8 max-w-full sm:mt-12"
-            >
+            <form action="#" method="POST" className="mx-auto mt-8 max-w-full sm:mt-12">
                 <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
-                    <Switch.Group
-                        as="div"
-                        className="flex gap-x-4 col-span-full"
-                    >
+                    <Switch.Group as="div" className="flex gap-x-4 col-span-full">
                         <div className="flex h-6 items-center">
                             <Switch
                                 checked={agreed}
@@ -151,34 +151,22 @@ export default function Terminal() {
                                     "flex w-8 flex-none cursor-pointer rounded-full p-px ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 )}
                             >
-                                <span className="sr-only">
-                                    Receta Eletrónica
-                                </span>
+                                <span className="sr-only">Receta Eletrónica</span>
                                 <span
                                     aria-hidden="true"
                                     className={classNames(
-                                        agreed
-                                            ? "translate-x-3.5"
-                                            : "translate-x-0",
+                                        agreed ? "translate-x-3.5" : "translate-x-0",
                                         "h-4 w-4 transform rounded-full bg-white shadow-sm ring-1 ring-gray-900/5 transition duration-200 ease-in-out"
                                     )}
                                 />
                             </Switch>
                         </div>
-                        <Switch.Label className="text-sm leading-6 text-gray-600">
-                            Despachar Receta Electrónica
-                        </Switch.Label>
+                        <Switch.Label className="text-sm leading-6 text-gray-600">Despachar Receta Electrónica</Switch.Label>
                     </Switch.Group>
 
                     <div className="lg:col-span-2">
-                        <RadioGroup
-                            value={selected}
-                            onChange={setSelected}
-                            className="mt-4"
-                        >
-                            <RadioGroup.Label>
-                                Seleccione un producto
-                            </RadioGroup.Label>
+                        <RadioGroup value={selected} onChange={setSelected} className="mt-4">
+                            <RadioGroup.Label>Seleccione un producto</RadioGroup.Label>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                                 {products.map((item) => (
                                     <RadioGroup.Option
@@ -190,37 +178,25 @@ export default function Terminal() {
                                                 item.stock
                                                     ? "cursor-pointer bg-white text-gray-900 shadow-sm"
                                                     : "cursor-not-allowed bg-gray-50 text-gray-200",
-                                                active
-                                                    ? "ring-2 ring-indigo-500"
-                                                    : "",
+                                                active ? "ring-2 ring-indigo-500" : "",
                                                 "rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6"
                                             )
                                         }
                                     >
                                         {({ active, checked }) => (
                                             <>
-                                                <RadioGroup.Label as="p">
-                                                    {item.nombre}
-                                                </RadioGroup.Label>
+                                                <RadioGroup.Label as="p">{item.nombre}</RadioGroup.Label>
                                                 <RadioGroup.Description
                                                     as="span"
-                                                    className={`inline ${
-                                                        checked
-                                                            ? "text-sky-100"
-                                                            : "text-gray-500"
-                                                    }`}
+                                                    className={`inline ${checked ? "text-sky-100" : "text-gray-500"}`}
                                                 >
                                                     <span>SKU: {item.sku}</span>
                                                 </RadioGroup.Description>
                                                 {item.stock ? (
                                                     <span
                                                         className={classNames(
-                                                            active
-                                                                ? "border"
-                                                                : "border-2",
-                                                            checked
-                                                                ? "border-indigo-500"
-                                                                : "border-transparent",
+                                                            active ? "border" : "border-2",
+                                                            checked ? "border-indigo-500" : "border-transparent",
                                                             "pointer-events-none absolute -inset-px rounded-md"
                                                         )}
                                                         aria-hidden="true"
@@ -258,10 +234,7 @@ export default function Terminal() {
                     <div className="lg:col-span-1">
                         <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
                             <div>
-                                <label
-                                    htmlFor="no-receta"
-                                    className="block text-sm font-semibold leading-6 text-gray-900"
-                                >
+                                <label htmlFor="no-receta" className="block text-sm font-semibold leading-6 text-gray-900">
                                     No. Receta
                                 </label>
                                 <div className="mt-2.5">
@@ -275,10 +248,7 @@ export default function Terminal() {
                                 </div>
                             </div>
                             <div>
-                                <label
-                                    htmlFor="first-name"
-                                    className="block text-sm font-semibold leading-6 text-gray-900"
-                                >
+                                <label htmlFor="first-name" className="block text-sm font-semibold leading-6 text-gray-900">
                                     Paciente
                                 </label>
                                 <div className="mt-2.5">
@@ -297,15 +267,9 @@ export default function Terminal() {
                             </div>
                             <div className="col-span-full border-b border-gray-900/10">
                                 <div className="flow-root">
-                                    <ul
-                                        role="list"
-                                        className="divide-y divide-gray-200"
-                                    >
+                                    <ul role="list" className="divide-y divide-gray-200">
                                         {recetaProductos.map((product) => (
-                                            <li
-                                                key={product.id}
-                                                className="flex my-2"
-                                            >
+                                            <li key={product.id} className="flex my-2">
                                                 {/* <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                                 <img
                                                     src={product.nombre}
@@ -316,16 +280,9 @@ export default function Terminal() {
                                                 <div className="ml-4 flex flex-1 flex-col">
                                                     <div className="flex justify-between text-base font-medium text-gray-900">
                                                         <div>
-                                                            <h3>
-                                                                {product.nombre}
-                                                            </h3>
-                                                            <p className="mt-1 text-sm text-gray-500">
-                                                                {product.sku}
-                                                            </p>
-                                                            <p className="text-gray-500">
-                                                                Qty{" "}
-                                                                {product.stock}
-                                                            </p>
+                                                            <h3>{product.nombre}</h3>
+                                                            <p className="mt-1 text-sm text-gray-500">{product.sku}</p>
+                                                            <p className="text-gray-500">Qty {product.stock}</p>
                                                         </div>
                                                         {/* <p className="ml-4">{product.qty || 0}</p> */}
                                                         <div>
@@ -377,10 +334,7 @@ export default function Terminal() {
                                 </div>
                             </div>
                             <div className="col-span-full">
-                                <label
-                                    htmlFor="message"
-                                    className="block text-sm font-semibold leading-6 text-gray-900"
-                                >
+                                <label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900">
                                     Observación
                                 </label>
                                 <div className="mt-2.5">
@@ -394,10 +348,7 @@ export default function Terminal() {
                                 </div>
                             </div>
                             <div className="mt-6 flex items-center justify-end gap-x-6 col-span-full">
-                                <button
-                                    type="button"
-                                    className="text-sm font-semibold leading-6 text-gray-900"
-                                >
+                                <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
                                     Cancelar
                                 </button>
                                 <button
