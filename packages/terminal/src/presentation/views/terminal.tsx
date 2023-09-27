@@ -1,117 +1,117 @@
-import { useEffect, useState } from 'react'
-import { RadioGroup } from '@headlessui/react'
-import { Switch } from '@headlessui/react'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid'
+import { useEffect, useState } from "react";
+import { RadioGroup } from "@headlessui/react";
+import { Switch } from "@headlessui/react";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 
 interface ProductInterface {
-    id: number
-    nombre: string
-    sku: string
-    stock: string
-    qty: number
+    id: number;
+    nombre: string;
+    sku: string;
+    stock: string;
+    qty: number;
 }
 
 const products = [
     {
         id: 1,
-        nombre: 'Aspirin',
-        sku: 'ASPIRIN-123',
+        nombre: "Aspirin",
+        sku: "ASPIRIN-123",
         stock: 100,
     },
     {
         id: 2,
-        nombre: 'Ibuprofen',
-        sku: 'IBUPROFEN-456',
+        nombre: "Ibuprofen",
+        sku: "IBUPROFEN-456",
         stock: 75,
     },
     {
         id: 3,
-        nombre: 'Antiseptic Ointment',
-        sku: 'ANTISEPTIC-789',
+        nombre: "Antiseptic Ointment",
+        sku: "ANTISEPTIC-789",
         stock: 50,
     },
     {
         id: 4,
-        nombre: 'Cough Syrup',
-        sku: 'COUGH-321',
+        nombre: "Cough Syrup",
+        sku: "COUGH-321",
         stock: 120,
     },
     {
         id: 5,
-        nombre: 'Bandages',
-        sku: 'BANDAGES-654',
+        nombre: "Bandages",
+        sku: "BANDAGES-654",
         stock: 200,
     },
     {
         id: 6,
-        nombre: 'Antacid Tablets',
-        sku: 'ANTACID-987',
+        nombre: "Antacid Tablets",
+        sku: "ANTACID-987",
         stock: 90,
     },
     {
         id: 7,
-        nombre: 'First Aid Kit',
-        sku: 'FIRSTAID-789',
+        nombre: "First Aid Kit",
+        sku: "FIRSTAID-789",
         stock: 15,
     },
     {
         id: 8,
-        nombre: 'Digital Thermometer',
-        sku: 'THERMOMETER-567',
+        nombre: "Digital Thermometer",
+        sku: "THERMOMETER-567",
         stock: 30,
     },
     {
         id: 9,
-        nombre: 'Eye Drops',
-        sku: 'EYEDROPS-234',
+        nombre: "Eye Drops",
+        sku: "EYEDROPS-234",
         stock: 60,
     },
     {
         id: 10,
-        nombre: 'Pain Relief Gel',
-        sku: 'PAINRELIEF-456',
+        nombre: "Pain Relief Gel",
+        sku: "PAINRELIEF-456",
         stock: 40,
     },
     {
         id: 11,
-        nombre: 'Cotton Balls',
-        sku: 'COTTONBALLS-123',
+        nombre: "Cotton Balls",
+        sku: "COTTONBALLS-123",
         stock: 150,
     },
     {
         id: 12,
-        nombre: 'Allergy Medication',
-        sku: 'ALLERGY-789',
+        nombre: "Allergy Medication",
+        sku: "ALLERGY-789",
         stock: 70,
     },
-]
+];
 
 function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ')
+    return classes.filter(Boolean).join(" ");
 }
 
 export default function Terminal() {
-    const [agreed, setAgreed] = useState(false)
-    const [selected, setSelected] = useState<ProductInterface | null>(null)
+    const [agreed, setAgreed] = useState(false);
+    const [selected, setSelected] = useState<ProductInterface | null>(null);
     const [recetaProductos, setRecetaProductos] = useState<ProductInterface[]>(
         []
-    )
+    );
 
     useEffect(() => {
         if (selected !== null) {
-            console.log('Un producto ha sido seleccionado', selected)
+            console.log("Un producto ha sido seleccionado", selected);
             // Check if an object with the same id does not already exist in the array
             const isNotInArray = !recetaProductos.some(
                 (item) => item.id === selected.id
-            )
+            );
 
             if (isNotInArray) {
                 // If it's not in the array, push it
-                setRecetaProductos([...recetaProductos, selected])
+                setRecetaProductos([...recetaProductos, selected]);
             }
-            console.log(recetaProductos)
+            console.log(recetaProductos);
         }
-    }, [selected])
+    }, [selected]);
 
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
@@ -123,7 +123,7 @@ export default function Terminal() {
                     className="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem]"
                     style={{
                         clipPath:
-                            'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+                            "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
                     }}
                 />
             </div>
@@ -147,8 +147,8 @@ export default function Terminal() {
                                 checked={agreed}
                                 onChange={setAgreed}
                                 className={classNames(
-                                    agreed ? 'bg-indigo-600' : 'bg-gray-200',
-                                    'flex w-8 flex-none cursor-pointer rounded-full p-px ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                                    agreed ? "bg-indigo-600" : "bg-gray-200",
+                                    "flex w-8 flex-none cursor-pointer rounded-full p-px ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 )}
                             >
                                 <span className="sr-only">
@@ -158,9 +158,9 @@ export default function Terminal() {
                                     aria-hidden="true"
                                     className={classNames(
                                         agreed
-                                            ? 'translate-x-3.5'
-                                            : 'translate-x-0',
-                                        'h-4 w-4 transform rounded-full bg-white shadow-sm ring-1 ring-gray-900/5 transition duration-200 ease-in-out'
+                                            ? "translate-x-3.5"
+                                            : "translate-x-0",
+                                        "h-4 w-4 transform rounded-full bg-white shadow-sm ring-1 ring-gray-900/5 transition duration-200 ease-in-out"
                                     )}
                                 />
                             </Switch>
@@ -188,12 +188,12 @@ export default function Terminal() {
                                         className={({ active }) =>
                                             classNames(
                                                 item.stock
-                                                    ? 'cursor-pointer bg-white text-gray-900 shadow-sm'
-                                                    : 'cursor-not-allowed bg-gray-50 text-gray-200',
+                                                    ? "cursor-pointer bg-white text-gray-900 shadow-sm"
+                                                    : "cursor-not-allowed bg-gray-50 text-gray-200",
                                                 active
-                                                    ? 'ring-2 ring-indigo-500'
-                                                    : '',
-                                                'rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6'
+                                                    ? "ring-2 ring-indigo-500"
+                                                    : "",
+                                                "rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6"
                                             )
                                         }
                                     >
@@ -206,8 +206,8 @@ export default function Terminal() {
                                                     as="span"
                                                     className={`inline ${
                                                         checked
-                                                            ? 'text-sky-100'
-                                                            : 'text-gray-500'
+                                                            ? "text-sky-100"
+                                                            : "text-gray-500"
                                                     }`}
                                                 >
                                                     <span>SKU: {item.sku}</span>
@@ -216,12 +216,12 @@ export default function Terminal() {
                                                     <span
                                                         className={classNames(
                                                             active
-                                                                ? 'border'
-                                                                : 'border-2',
+                                                                ? "border"
+                                                                : "border-2",
                                                             checked
-                                                                ? 'border-indigo-500'
-                                                                : 'border-transparent',
-                                                            'pointer-events-none absolute -inset-px rounded-md'
+                                                                ? "border-indigo-500"
+                                                                : "border-transparent",
+                                                            "pointer-events-none absolute -inset-px rounded-md"
                                                         )}
                                                         aria-hidden="true"
                                                     />
@@ -323,7 +323,7 @@ export default function Terminal() {
                                                                 {product.sku}
                                                             </p>
                                                             <p className="text-gray-500">
-                                                                Qty{' '}
+                                                                Qty{" "}
                                                                 {product.stock}
                                                             </p>
                                                         </div>
@@ -389,7 +389,7 @@ export default function Terminal() {
                                         id="message"
                                         rows={2}
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        defaultValue={''}
+                                        defaultValue={""}
                                     />
                                 </div>
                             </div>
@@ -412,5 +412,5 @@ export default function Terminal() {
                 </div>
             </form>
         </div>
-    )
+    );
 }
