@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon, ChevronUpIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
+
+interface FilterableListProps {
+    query: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
 interface ProductInterface {
     id: number;
@@ -91,12 +96,33 @@ function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
+function SearchBar({ query, onChange }: FilterableListProps) {
+    return (
+        <div className="relative my-2">
+            <span className="pointer-events-none absolute top-2 left-2 h-6 w-6">
+                <MagnifyingGlassIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+            </span>
+            <input
+                id="producto-nombre"
+                name="producto-nombre"
+                type="text"
+                autoComplete="producto-nombre"
+                className="block w-full rounded-md border-0 px-8 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                placeholder="Digite nombre de producto o SKU para buscar"
+                value={query}
+                onChange={onChange}
+            />
+        </div>
+    );
+}
+
 export default function Terminal() {
     const { useProductoBodegaCollectionLazyQuery } = graphql;
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
-    const [agreed, setAgreed] = useState(false);
-    const [selected, setSelected] = useState<ProductInterface | null>(null);
+    const [agreed, setAgreed] = useState<boolean>(false);
+    const [query, setQuery] = useState<string>("");
     const [recetaProductos, setRecetaProductos] = useState<ProductInterface[]>([]);
+    const [selected, setSelected] = useState<ProductInterface | null>(null);
 
     useEffect(() => {
         if (selected !== null) {
@@ -110,20 +136,27 @@ export default function Terminal() {
             }
             console.log(recetaProductos);
         }
-        getProductoBodegaCollectionLazyQuery({
-            variables: {
-                inputWhere: { bodega_id: { is: 2 }, producto: { nombre: { contains: "ina" } } },
-                inputOrder: { asc: "producto.nombre" },
-            },
-            onCompleted: (c: any) => {
-                console.log("getProductoBodegaCollectionLazyQuery completed");
-                console.info(c);
-            },
-        });
-    }, [selected]);
+
+        if (query.length >= 3) {
+            getProductoBodegaCollectionLazyQuery({
+                variables: {
+                    inputWhere: { bodega_id: { is: 2 }, producto: { nombre: { contains: query } } },
+                    inputOrder: { asc: "producto.nombre" },
+                },
+                onCompleted: (c: any) => {
+                    console.log("getProductoBodegaCollectionLazyQuery completed");
+                    console.info(c);
+                },
+            });
+        }
+    }, [query, selected]);
+
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setQuery(e.target.value);
+    }
 
     return (
-        <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">           
+        <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
             </div>
@@ -153,16 +186,7 @@ export default function Terminal() {
 
                 <div className="lg:col-span-2">
                     <div className="border rounded px-2 py-2">
-                        <div className="my-2">
-                            <input
-                                id="producto-nombre"
-                                name="producto-nombre"
-                                type="text"
-                                autoComplete="producto-nombre"
-                                className="block w-full rounded-md border-0 px-1.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                placeholder="Digite nombre de producto o SKU para buscar"
-                            />
-                        </div>
+                        <SearchBar query={query} onChange={handleChange} />
                         <RadioGroup value={selected} onChange={setSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
