@@ -9,88 +9,12 @@ interface FilterableListProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-interface ProductInterface {
+interface Producto {
+    codigoproducto: string;
     id: number;
     nombre: string;
-    sku: string;
-    stock: string;
-    qty: number;
+    stock: boolean;
 }
-
-const products = [
-    {
-        id: 1,
-        nombre: "Aspirin",
-        sku: "ASPIRIN-123",
-        stock: 100,
-    },
-    {
-        id: 2,
-        nombre: "Ibuprofen",
-        sku: "IBUPROFEN-456",
-        stock: 75,
-    },
-    {
-        id: 3,
-        nombre: "Antiseptic Ointment",
-        sku: "ANTISEPTIC-789",
-        stock: 50,
-    },
-    {
-        id: 4,
-        nombre: "Cough Syrup",
-        sku: "COUGH-321",
-        stock: 120,
-    },
-    {
-        id: 5,
-        nombre: "Bandages",
-        sku: "BANDAGES-654",
-        stock: 200,
-    },
-    {
-        id: 6,
-        nombre: "Antacid Tablets",
-        sku: "ANTACID-987",
-        stock: 90,
-    },
-    {
-        id: 7,
-        nombre: "First Aid Kit",
-        sku: "FIRSTAID-789",
-        stock: 15,
-    },
-    {
-        id: 8,
-        nombre: "Digital Thermometer",
-        sku: "THERMOMETER-567",
-        stock: 30,
-    },
-    {
-        id: 9,
-        nombre: "Eye Drops",
-        sku: "EYEDROPS-234",
-        stock: 60,
-    },
-    {
-        id: 10,
-        nombre: "Pain Relief Gel",
-        sku: "PAINRELIEF-456",
-        stock: 40,
-    },
-    {
-        id: 11,
-        nombre: "Cotton Balls",
-        sku: "COTTONBALLS-123",
-        stock: 150,
-    },
-    {
-        id: 12,
-        nombre: "Allergy Medication",
-        sku: "ALLERGY-789",
-        stock: 70,
-    },
-];
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -120,9 +44,10 @@ export default function Terminal() {
     const { useProductoBodegaCollectionLazyQuery } = graphql;
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [agreed, setAgreed] = useState<boolean>(false);
+    const [productos, setProductos] = useState<Producto[]>([]);
     const [query, setQuery] = useState<string>("");
-    const [recetaProductos, setRecetaProductos] = useState<ProductInterface[]>([]);
-    const [selected, setSelected] = useState<ProductInterface | null>(null);
+    const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
+    const [selected, setSelected] = useState<Producto | null>(null);
 
     useEffect(() => {
         if (selected !== null) {
@@ -144,8 +69,16 @@ export default function Terminal() {
                     inputOrder: { asc: "producto.nombre" },
                 },
                 onCompleted: (c: any) => {
-                    console.log("getProductoBodegaCollectionLazyQuery completed");
-                    console.info(c);
+                    setProductos(
+                        c.productoBodegaCollection.data.map((item: any) => {
+                            return {
+                                codigoproducto: item.producto.codigoproducto,
+                                id: item.producto.id,
+                                nombre: item.producto.nombre,
+                                stock: true,
+                            };
+                        })
+                    );
                 },
             });
         }
@@ -190,7 +123,7 @@ export default function Terminal() {
                         <RadioGroup value={selected} onChange={setSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                {products.map((item) => (
+                                {productos.map((item) => (
                                     <RadioGroup.Option
                                         key={item.id}
                                         value={item}
@@ -212,7 +145,7 @@ export default function Terminal() {
                                                     as="span"
                                                     className={`inline ${checked ? "text-sky-100" : "text-gray-500"}`}
                                                 >
-                                                    <span>SKU: {item.sku}</span>
+                                                    <span>SKU: {item.codigoproducto}</span>
                                                 </RadioGroup.Description>
                                                 {item.stock ? (
                                                     <span
@@ -305,8 +238,10 @@ export default function Terminal() {
                                                     <div className="flex justify-between text-base font-medium text-gray-900">
                                                         <div>
                                                             <h3>{product.nombre}</h3>
-                                                            <p className="mt-1 text-sm text-gray-500">{product.sku}</p>
-                                                            <p className="text-gray-500">Qty {product.stock}</p>
+                                                            <p className="mt-1 text-sm text-gray-500">
+                                                                SKU: {product.codigoproducto}
+                                                            </p>
+                                                            <p className="text-gray-500">Stock: {product.stock}</p>
                                                         </div>
                                                         {/* <p className="ml-4">{product.qty || 0}</p> */}
                                                         <div>
