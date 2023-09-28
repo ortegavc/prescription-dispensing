@@ -99,7 +99,7 @@ function classNames(...classes: string[]) {
 function SearchBar({ query, onChange }: FilterableListProps) {
     return (
         <div className="relative my-2">
-            <span className="pointer-events-none absolute top-2 left-2 h-6 w-6">
+            <span className="pointer-events-auto absolute top-2 left-2 h-6 w-6">
                 <MagnifyingGlassIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
             </span>
             <input
@@ -372,12 +372,15 @@ export default function Terminal() {
                                 </div>
                             </div>
                             <div className="mt-6 flex items-center justify-end gap-x-6 col-span-full">
-                                <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
+                                <button
+                                    type="button"
+                                    className="rounded-md px-3 py-2 text-center font-medium shadow-sm ring-1 ring-slate-700/10 hover:bg-slate-50"
+                                >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
-                                    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                    className="rounded-md bg-indigo-600 px-3 py-2 text-center font-medium leading-5 text-white hover:bg-indigo-500"
                                 >
                                     Aceptar
                                 </button>
