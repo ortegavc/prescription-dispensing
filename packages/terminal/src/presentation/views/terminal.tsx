@@ -4,6 +4,8 @@ import { Switch } from "@headlessui/react";
 import { ChevronDownIcon, ChevronUpIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
 
+const fake_bodega_id = 297;
+
 interface FilterableListProps {
     query: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -11,9 +13,10 @@ interface FilterableListProps {
 
 interface Producto {
     codigoproducto: string;
+    estado: boolean;
     id: number;
     nombre: string;
-    stock: boolean;
+    stock: number;
 }
 
 function classNames(...classes: string[]) {
@@ -41,8 +44,9 @@ function SearchBar({ query, onChange }: FilterableListProps) {
 }
 
 export default function Terminal() {
-    const { useProductoBodegaCollectionLazyQuery } = graphql;
+    const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery } = graphql;
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
+    const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
     const [agreed, setAgreed] = useState<boolean>(false);
     const [productos, setProductos] = useState<Producto[]>([]);
     const [query, setQuery] = useState<string>("");
@@ -57,7 +61,19 @@ export default function Terminal() {
 
             if (isNotInArray) {
                 // If it's not in the array, push it
-                setRecetaProductos([...recetaProductos, selected]);
+                getProductoStockBodegaLazyQuery({
+                    variables: {
+                        bodegaId: fake_bodega_id,
+                        productoId: selected.id,
+                    },
+                    fetchPolicy: "cache-and-network",
+                    onCompleted: (c: any) => {
+                        console.log("getProductoStockBodegaLazyQuery done", c.productoStockBodega);
+                        selected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
+                        setRecetaProductos([...recetaProductos, selected]);
+                    },
+                    onError: () => {},
+                });
             }
             console.log(recetaProductos);
         }
@@ -65,7 +81,7 @@ export default function Terminal() {
         if (query.length >= 3) {
             getProductoBodegaCollectionLazyQuery({
                 variables: {
-                    inputWhere: { bodega_id: { is: 2 }, producto: { nombre: { contains: query } } },
+                    inputWhere: { bodega_id: { is: fake_bodega_id }, producto: { nombre: { contains: query } } },
                     inputOrder: { asc: "producto.nombre" },
                 },
                 onCompleted: (c: any) => {
@@ -73,9 +89,10 @@ export default function Terminal() {
                         c.productoBodegaCollection.data.map((item: any) => {
                             return {
                                 codigoproducto: item.producto.codigoproducto,
+                                estado: true, //!!item.producto.estado,  // FIXME
                                 id: item.producto.id,
                                 nombre: item.producto.nombre,
-                                stock: true,
+                                stock: 0,
                             };
                         })
                     );
@@ -127,10 +144,10 @@ export default function Terminal() {
                                     <RadioGroup.Option
                                         key={item.id}
                                         value={item}
-                                        disabled={!item.stock}
+                                        disabled={!item.estado}
                                         className={({ active }) =>
                                             classNames(
-                                                item.stock
+                                                item.estado
                                                     ? "cursor-pointer bg-white text-gray-900 shadow-sm"
                                                     : "cursor-not-allowed bg-gray-50 text-gray-200",
                                                 active ? "ring-2 ring-indigo-500" : "",
@@ -147,7 +164,7 @@ export default function Terminal() {
                                                 >
                                                     <span>SKU: {item.codigoproducto}</span>
                                                 </RadioGroup.Description>
-                                                {item.stock ? (
+                                                {item.estado ? (
                                                     <span
                                                         className={classNames(
                                                             active ? "border" : "border-2",
