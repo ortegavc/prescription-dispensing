@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
-// import { graphql } from "@msp/shared";
+import { graphql } from "@msp/shared";
 
 interface ProductInterface {
     id: number;
@@ -92,8 +92,8 @@ function classNames(...classes: string[]) {
 }
 
 export default function Terminal() {
-    // const { useProductoBodegaCollectionLazyQuery } = graphql;
-    // const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
+    const { useProductoBodegaCollectionLazyQuery } = graphql;
+    const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [agreed, setAgreed] = useState(false);
     const [selected, setSelected] = useState<ProductInterface | null>(null);
     const [recetaProductos, setRecetaProductos] = useState<ProductInterface[]>([]);
@@ -110,16 +110,16 @@ export default function Terminal() {
             }
             console.log(recetaProductos);
         }
-        // getProductoBodegaCollectionLazyQuery({
-        //     variables: {
-        //         inputWhere: { bodega_id: { is: 2 }, producto: { nombre: { contains: "ina" } } },                
-        //         inputOrder: { asc: "producto.nombre" },
-        //     },
-        //     onCompleted: (c: any) => {
-        //         console.log("getProductoBodegaCollectionLazyQuery completed");
-        //         console.info(c);
-        //     },
-        // });
+        getProductoBodegaCollectionLazyQuery({
+            variables: {
+                inputWhere: { bodega_id: { is: 2 }, producto: { nombre: { contains: "ina" } } },                
+                inputOrder: { asc: "producto.nombre" },
+            },
+            onCompleted: (c: any) => {
+                console.log("getProductoBodegaCollectionLazyQuery completed");
+                console.info(c);
+            },
+        });
     }, [selected]);
 
     return (
