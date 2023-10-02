@@ -105,6 +105,10 @@ export default function Terminal() {
         setQuery(e.target.value);
     }
 
+    function eliminarProductoReceta(productId: number) {
+        setRecetaProductos(recetaProductos.filter((item) => item.id !== productId));
+    }
+
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
@@ -281,6 +285,7 @@ export default function Terminal() {
                                                     <button
                                                         type="button"
                                                         className="px-2 py-2 rounded bg-red-600 font-medium text-center hover:bg-red-500"
+                                                        onClick={() => eliminarProductoReceta(product.id)}
                                                     >
                                                         <TrashIcon className="text-white h-5" aria-hidden="true" />
                                                     </button>{" "}
