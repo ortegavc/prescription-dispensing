@@ -15,7 +15,8 @@
       "@codegen/*": ["codegen/*"] ,
       "@store/*": ["store/*"],
       "@helper/*": ["helper/*"],
-      "@interfaces/*": ["interfaces/*"]
+      "@interfaces/*": ["interfaces/*"],
+      "@graphql/*":["graphql/*"]
   }
 },
   "files": ["src/msp-shared.tsx"],

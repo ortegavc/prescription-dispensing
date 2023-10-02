@@ -13,6 +13,7 @@ import { ApolloProvider } from '@apollo/client';
 import { client } from '@codegen/client'
 import * as configDev from '@config/config.local';
 import * as configProd from '@config/config.prod';
+import * as graphql from "@graphql/__generated__/graphql-types";
 
 interface IlayoutProps {
   children: JSX.Element;
@@ -64,4 +65,4 @@ const Layout = ({ children }: IlayoutProps) => {
 
 
 export default Layout;
-export { Dashboard }
+export { Dashboard, graphql }

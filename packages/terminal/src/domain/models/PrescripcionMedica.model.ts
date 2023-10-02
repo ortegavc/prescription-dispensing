@@ -1,99 +1,100 @@
+// Modelo de datos para la pantalla de despacho de recetas
 export interface IPrescripcionMedica {
+    numeroreceta: string;
+    identificareceptor: string;
+    nombrereceptor: string;
+    recetaelectronica: number;
+    paciente: IPersona;
     oid: string;
-    fecha_receta: string;
-    fecha_caducidad: string;
-    acompaniante_cedula: string | null;
-    acompaniante: string | null;
-    paciente: {
-      persona: IPersona
-    };
-    recetaDetalle: IRecetaDetalle[];
-  }
-  
-  export interface IPersona {
-        tipo_identificacion_id: number;
-        identificacion: string;
-        apellidos: string;
-        nombres: string;
-        fecha_nacimiento: string;
-  }
+    turno_id: number;
+    despachodetalle: IRecetaDetalle[];
+}
 
-  export interface  IRecetaDetalle {
-    cantidad_prescrita: number;
-    duracion_tratamiento: number;
-    cantidad_dispensada: number;
+export interface IRecetaDetalle {
+    cantidaddespachada: number;
+    cantidaddispensada: number;
+    cantidadrequerida: number;
+    costo: number;
+    lote_id: number;
+    producto_id: number;
+    unidadmedida_id: string;
+    receta_oid: number;
+}
+
+export interface IPersona {
+    id: number;
+    cttipoidentificacion_id: number;
+    identificacion: string;
+    nombre: string;
+}
+
+/**
+ * IMPLEMENTACIÓN DE LA CLASE
+ */
+
+export class PrescripcionMedica implements IPrescripcionMedica {
+    numeroreceta: string;
+    identificareceptor: string;
+    nombrereceptor: string;
+    recetaelectronica: number;
+    paciente: IPersona;
     oid: string;
-    medicamento_sku: string;
-  }
+    turno_id: number;
+    despachodetalle: IRecetaDetalle[];
 
-
- export class PrescripcionMedica implements IPrescripcionMedica {
-    oid: string;
-    fecha_receta: string;
-    fecha_caducidad: string;
-    acompaniante_cedula: string | null;
-    acompaniante: string | null;
-    paciente: {
-      persona: IPersona;
-    };
-    recetaDetalle: IRecetaDetalle[];
-  
     constructor(
-      oid: string,
-      fecha_receta: string,
-      fecha_caducidad: string,
-      acompaniante_cedula: string | null,
-      acompaniante: string | null,
-      paciente: {
-        persona: IPersona;
-      },
-      recetaDetalle: IRecetaDetalle[]
+        numeroreceta: string,
+        identificareceptor: string,
+        nombrereceptor: string,
+        recetaelectronica: number,
+        paciente: IPersona,
+        oid: string,
+        turno_id: number,
+        despachodetalle: IRecetaDetalle[]
     ) {
-      this.oid = oid;
-      this.fecha_receta = fecha_receta;
-      this.fecha_caducidad = fecha_caducidad;
-      this.acompaniante_cedula = acompaniante_cedula;
-      this.acompaniante = acompaniante;
-      this.paciente = paciente;
-      this.recetaDetalle = recetaDetalle;
+        this.numeroreceta = numeroreceta;
+        this.identificareceptor = identificareceptor;
+        this.nombrereceptor = nombrereceptor;
+        this.recetaelectronica = recetaelectronica;
+        this.paciente = paciente;
+        this.oid = oid;
+        this.turno_id = turno_id;
+        this.despachodetalle = despachodetalle;
     }
-  }
-  
-  // Ejemplo de uso:
-  const pacientePersona: IPersona = {
-    tipo_identificacion_id: 1,
-    identificacion: "1234567890",
-    apellidos: "Ejemplo Apellidos",
-    nombres: "Ejemplo Nombres",
-    fecha_nacimiento: "2000-01-01",
-  };
-  
-  const recetaDetalle: IRecetaDetalle[] = [
+}
+
+/**
+ * INICIALIZACIÓN DE LA CLASE
+ */
+const pacientePersona: IPersona = {
+    id: 0,
+    cttipoidentificacion_id: 0,
+    identificacion: "",
+    nombre: "",
+};
+
+const recetaDetalle: IRecetaDetalle[] = [
     {
-      cantidad_prescrita: 10,
-      duracion_tratamiento: 7,
-      cantidad_dispensada: 10,
-      oid: "1.0001",
-      medicamento_sku: "MED001",
+        cantidaddespachada: 0,
+        cantidaddispensada: 0,
+        cantidadrequerida: 0,
+        costo: 0,
+        lote_id: 0,
+        producto_id: 0,
+        unidadmedida_id: "",
+        receta_oid: 0,
     },
-    {
-      cantidad_prescrita: 20,
-      duracion_tratamiento: 14,
-      cantidad_dispensada: 0,
-      oid: "1.0002",
-      medicamento_sku: "MED002",
-    },
-  ];
-  
-  const prescripcionMedica = new PrescripcionMedica(
-    "1.000912.00007543",
-    "2023-08-21T16:58:11.000Z",
-    "2023-09-24T04:59:59.000Z",
-    null,
-    null,
-    { persona: pacientePersona },
-    recetaDetalle
-  );
-  
-  console.log(prescripcionMedica);
-  
+];
+
+export const initialState : IPrescripcionMedica = {
+  numeroreceta: "",
+  identificareceptor: "",
+  nombrereceptor: "",
+  recetaelectronica: 0,
+  paciente:pacientePersona,
+  oid: "",
+  turno_id: 0,
+  despachodetalle: recetaDetalle,
+};
+
+//export const initialStatePrescripcionMedica = new PrescripcionMedica("", "", "", 0, pacientePersona, "", 0, recetaDetalle);

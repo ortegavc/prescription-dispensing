@@ -1,5 +1,5 @@
 import { Adapter } from "./adapter.Interface";
-import { PrescripcionMedica } from "@domain/models/PrescripcionMedica.model";
+import { PrescripcionMedica } from "@domain/models";
 import { RecetaElectronica } from "./recetaElectronica.Model";
 
 export class RecetaElectronicaAdapter
