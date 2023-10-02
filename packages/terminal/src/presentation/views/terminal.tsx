@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
-import { ChevronDownIcon, ChevronUpIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
 
 const fake_bodega_id = 297;
@@ -110,7 +110,7 @@ export default function Terminal() {
             <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
             </div>
-            <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
                 <Switch.Group as="div" className="flex gap-x-4 col-span-full">
                     <div className="flex h-6 items-center">
                         <Switch
@@ -134,12 +134,12 @@ export default function Terminal() {
                     <Switch.Label className="text-sm leading-6 text-gray-600">Despachar Receta Electrónica</Switch.Label>
                 </Switch.Group>
 
-                <div className="lg:col-span-2">
+                <div className="">
                     <div className="border rounded px-2 py-2">
                         <SearchBar query={query} onChange={handleChange} />
                         <RadioGroup value={selected} onChange={setSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {productos.map((item) => (
                                     <RadioGroup.Option
                                         key={item.id}
@@ -204,8 +204,8 @@ export default function Terminal() {
                 </div>
 
                 {/* Formulario Receta */}
-                <div className="lg:col-span-1">
-                    <form action="#" method="POST" className="mx-auto mt-8 max-w-full sm:mt-12">
+                <div className="">
+                    <form action="#" method="POST" className="mx-auto max-w-full">
                         <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
                             <div>
                                 <label htmlFor="no-receta" className="block text-sm font-semibold leading-6 text-gray-900">
@@ -235,74 +235,55 @@ export default function Terminal() {
                                     />
                                 </div>
                             </div>
-                            <div className="col-span-full px-2 py-2 flex justify-between text-sm font-medium leading-6 text-gray-900 border-b border-gray-900/10">
-                                <p>Producto</p>
-                                <p>Cantidad</p>
+                            <div className="col-span-full mt-2 px-2 py-2 flex gap-1 justify-between text-sm font-medium leading-6 text-gray-900 bg-gray-400">
+                                <div className="flex-1 w-64">Producto</div>
+                                <div className="flex-initial w-20">Solicitado</div>
+                                <div className="flex-initial w-20">Despachado</div>
+                                <div className="flex-initial w-20">Tratamiento</div>
+                                <div className="flex-initial w-10"></div>
                             </div>
-                            <div className="col-span-full border-b border-gray-900/10">
+                            <div className="col-span-full border-b border-gray-900/10 h-64 overflow-y-auto">
                                 <div className="flow-root">
                                     <ul role="list" className="divide-y divide-gray-200">
                                         {recetaProductos.map((product) => (
-                                            <li key={product.id} className="flex my-2">
-                                                {/* <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                                <img
-                                                    src={product.nombre}
-                                                    alt={product.nombre}
-                                                    className="h-full w-full object-cover object-center"
-                                                />
-                                                </div> */}
-                                                <div className="ml-4 flex flex-1 flex-col">
-                                                    <div className="flex justify-between text-base font-medium text-gray-900">
-                                                        <div>
-                                                            <h3>{product.nombre}</h3>
-                                                            <p className="mt-1 text-sm text-gray-500">
-                                                                SKU: {product.codigoproducto}
-                                                            </p>
-                                                            <p className="text-gray-500">Stock: {product.stock}</p>
-                                                        </div>
-                                                        {/* <p className="ml-4">{product.qty || 0}</p> */}
-                                                        <div>
-                                                            <div className="relative mt-2 rounded-md shadow-sm">
-                                                                {/* <span className="absolute inset-y-0 left-0 flex items-center">
-                                                                    <button
-                                                                    type="button"
-                                                                    className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                                                    >
-                                                                    <ChevronDownIcon
-                                                                        className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                                                                        aria-hidden="true"
-                                                                    />
-                                                                    </button>
-                                                                </span> */}
-                                                                <input
-                                                                    type="number"
-                                                                    name="price"
-                                                                    id="price"
-                                                                    className="block w-20 rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                                                    placeholder="0"
-                                                                />
-                                                                {/* <span className="absolute inset-y-0 right-0 flex items-center">
-                                                                    <button
-                                                                    type="button"
-                                                                    className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                                                    >
-                                                                    <ChevronUpIcon
-                                                                        className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                                                                        aria-hidden="true"
-                                                                    />
-                                                                    </button>
-                                                                </span> */}
-                                                            </div>
-                                                            <div className="flex flex-1 items-end justify-end text-sm pr-1">
-                                                                <button
-                                                                    type="button"
-                                                                    className="font-medium text-indigo-600 hover:text-indigo-500"
-                                                                >
-                                                                    Suprimir
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                            <li key={product.id} className="flex py-2 gap-1">
+                                                <div className="flex-1 w-64 justify-between text-base font-medium text-gray-900">
+                                                    <h3>{product.nombre}</h3>
+                                                    <p className="mt-1 text-sm text-gray-500">SKU: {product.codigoproducto}</p>
+                                                    <p className="text-gray-500">Stock: {product.stock}</p>
+                                                </div>
+                                                <div className="flex-initial w-20">
+                                                    <input
+                                                        type="number"
+                                                        name="price"
+                                                        id="price"
+                                                        className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    />
+                                                </div>
+
+                                                <div className="flex-initial w-20">
+                                                    <input
+                                                        type="number"
+                                                        name="cant-des"
+                                                        id="cant-des"
+                                                        className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    />
+                                                </div>
+                                                <div className="flex-initial w-20">
+                                                    <input
+                                                        type="number"
+                                                        name="tratamiento"
+                                                        id="tratamiento"
+                                                        className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    />
+                                                </div>
+                                                <div className="flex-initial w-10">
+                                                    <button
+                                                        type="button"
+                                                        className="px-2 py-2 rounded bg-red-600 font-medium text-center hover:bg-red-500"
+                                                    >
+                                                        <TrashIcon className="text-white h-5" aria-hidden="true" />
+                                                    </button>{" "}
                                                 </div>
                                             </li>
                                         ))}
