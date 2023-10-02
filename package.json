@@ -5,12 +5,13 @@
   "license": "MIT",
   "scripts": {
     "start:dev": "lerna run start --stream --parallel",
-    "start": "lerna run codegen --scope=@msp/shared && lerna run build-dev --scope=@msp/shared && node ./scripts/start.js",
+    "start": "lerna run build-dev --scope=@msp/shared && node ./scripts/start.js",
     "clean": "lerna clean && lerna run clean --parallel && rm -rf node_modules && lerna bootstrap",
     "bootstrap": "lerna bootstrap",
     "build:shared": "lerna run build-dev --scope=@msp/shared",
     "build": "lerna run build --parallel",
     "prepare": "husky install",
+    "codegen": "lerna run codegen --scope=@msp/shared",
     "generateDirectoryStructure": "node ./scripts/generateDirectoryStructure.js",
     "deploy": "./scripts/deploy.sh",
     "deploy:dev": "./scripts/deploy-dev.sh",
@@ -26,12 +27,8 @@
   },
   "npmClient": "yarn",
   "dependencies": {
-    "@react-keycloak/web": "^3.4.0",
-    "keycloak-js": "^22.0.3",
     "pidtree": "^0.6.0",
-    "prompts": "^2.4.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "prompts": "^2.4.2"
   },
   "devDependencies": {
     "husky": "^7.0.2",

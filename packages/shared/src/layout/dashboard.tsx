@@ -1,4 +1,4 @@
-import React,  { useEffect, useState } from 'react';
+import  React ,  { useEffect, useState } from 'react';
 import * as graphql from '../codegen/__generated__/graphql-types';
 import CardLayout from './cardLayout'
 
@@ -80,7 +80,7 @@ export  function Dashboard() {
                                 icon: null,
                                 title: terminal.nombre || '',
                                 description: terminal.nombre || '',
-                                link: '/menu'
+                                link: '/terminal/usuario'
                               }} />
 
                         )

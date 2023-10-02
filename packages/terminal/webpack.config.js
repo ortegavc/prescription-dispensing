@@ -2,8 +2,10 @@ const { merge } = require("webpack-merge");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const path = require("path");
 const singleSpaDefaults = require("webpack-config-single-spa-react-ts");
-console.log("__dirname__dirname",__dirname)
+//const debug = require("debug")("terminal");
 module.exports = (webpackConfigEnv, argv) => {
+
+  
   const defaultConfig = singleSpaDefaults({
     orgName: "msp",
     projectName: "terminal",
@@ -21,7 +23,7 @@ module.exports = (webpackConfigEnv, argv) => {
       port: 9002,
       https: Boolean(process.env.HTTPS),
     },
-    externals: [/^@msp\//],
+    externals: [/^@msp\/.+/],
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: "main.js"

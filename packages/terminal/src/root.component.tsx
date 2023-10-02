@@ -1,3 +1,5 @@
+
+import React from 'react';
 import Layout, { Dashboard } from '@msp/shared';
 import Terminal from '@presentation/views/terminal';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';

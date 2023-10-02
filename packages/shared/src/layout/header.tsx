@@ -5,6 +5,7 @@ import {
   RiCalendarTodoLine,
   RiBuilding2Line,
   RiApps2Line,
+  RiShutDownLine,
 } from "react-icons/ri";
 import { useState, useEffect } from "react";
 
@@ -29,6 +30,14 @@ export default function Header() {
   }, []);
 
   return (
-    <h1>header</h1>
+    <div>
+ {keycloak.authenticated && (
+      <button  color="white" className="boton" onClick={() => {keycloak.logout();}}>
+        <RiShutDownLine className="h-5 w-5" />
+        Salir
+      </button>
+    )}
+    </div>
+   
   );
 }

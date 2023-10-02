@@ -1,3 +1,4 @@
+import  React ,  { useEffect, useState } from 'react';
 import { NavLink } from "react-router-dom";
 
 export interface ICard {
@@ -12,7 +13,7 @@ export interface ICard {
 const CardLayout = (botones:ICard) => {
 
   return (
-    <div className="flex flex-col items-center m-3 border-2 shadow-lg cursor-pointer w-21 rounded-xl " >
+    <div className="bg-red-500" >
       <div className="flex items-center justify-center mt-3 bg-blue-700 h-9 w-9 rounded-xl">
         {/* icono */}
         <h1 className="absolute mx-auto text-2xl text-center text-white right">

@@ -7,14 +7,14 @@ export class Constantes {
   /**
    * Url para la conexión con key-cloack
    */
-  static URLKEYCLOACK: string = "https://dev-sso.msp.gob.ec/";
+  static URLKEYCLOACK:string = "https://dev-sso.msp.gob.ec/";
 
   /** 
    * realm key-cloack
    */
   static REALMKEYCLOACK: string = "msp-nacional";
 
-  static CLIENTCLOACK: string = "local-inventario-terminal";
+  static CLIENTCLOACK: string = "local-app-inventarios-terminal";
 
   static URLHOME: string = "http://localhost:9000/dashboard";
 

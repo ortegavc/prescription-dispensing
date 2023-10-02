@@ -1,3 +1,4 @@
+//import './index.css';
 import React from 'react';
 import ReactDOMClient from 'react-dom/client';
 import rootComponent from "./root.component";
@@ -8,8 +9,6 @@ export const { bootstrap, mount, unmount } = singleSpaReact({
   ReactDOMClient,
   rootComponent,
   errorBoundary(err, info, props) {
-
-    console.log('------------',err,'0000-----')
     // https://reactjs.org/docs/error-boundaries.html
     return <div>Ocurrio un error</div>;
   },

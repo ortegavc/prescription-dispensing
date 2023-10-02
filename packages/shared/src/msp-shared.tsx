@@ -1,4 +1,4 @@
-import "./global.css?modules=false";
+import "./global.css";
 import React, { Fragment, StrictMode } from 'react';
 import {
   Routes,
@@ -21,14 +21,17 @@ interface IlayoutProps {
 const Layout = ({ children }: IlayoutProps) => {
 
   const isDevelopment = process.env.NODE_ENV === 'development';
-  const config = isDevelopment ? configDev : configProd;
+  const config = isDevelopment ? configDev : configDev;
+
+  
   //Configuramos keycloak
   const keycloak = new Keycloak({
     url: config.Constantes.URLKEYCLOACK,
     realm: config.Constantes.REALMKEYCLOACK,
     clientId: config.Constantes.CLIENTCLOACK,
   });
-
+ 
+  
   return (
     <Fragment>
       <StrictMode>
