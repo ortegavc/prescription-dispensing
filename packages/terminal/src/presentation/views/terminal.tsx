@@ -107,7 +107,7 @@ export default function Terminal() {
                         c.productoBodegaCollection.data.map((item: any) => {
                             return {
                                 codigoproducto: item.producto.codigoproducto,
-                                estado: true, //!!item.producto.estado,  // FIXME
+                                estado: !!item.producto.estado,
                                 id: item.producto.id,
                                 nombre: item.producto.nombre,
                                 stock: 0,
