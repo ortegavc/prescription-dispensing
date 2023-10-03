@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { PRODUCTO_BODEGA_COLLECTION_FIELDS, PRODUCTO_STOCK_BODEGA_FIELDS } from './fragment';
+import { PRODUCTO_BODEGA_COLLECTION_FIELDS, PRODUCTO_STOCK_BODEGA_FIELDS, STOCK_PRODUCTO_BODEGA_FIELDS } from './fragment';
 
 export const GET_PRODUCTO_BODEGA_COLLECTION = () => {
     return gql`
@@ -34,5 +34,28 @@ export const GET_PRODUCTO_STOCK_BODEGA_LIST = () => {
                     ...productoStockBodegaFields
                 }
             }            
+        `
+}
+
+export const GET_STOCK_PRODUCTO_ENTIDAD = () => {
+    return gql`
+        ${STOCK_PRODUCTO_BODEGA_FIELDS}
+            query StockProductoBodegaList(
+                $bodega_id: Int!,
+                $caducado: Boolean!,
+                $cantidad:Int!,
+                $entidad_id:Int!,
+                $producto_id:Int!
+            ){
+                stockProductoBodegaList(
+                    bodega_id: $bodega_id,
+                    caducado: $caducado,
+                    cantidad: $cantidad,
+                    entidad_id:$entidad_id,
+                    producto_id:$producto_id
+                ){
+                    ...stockProductoBodegaFields
+                }
+            }
         `
 }
