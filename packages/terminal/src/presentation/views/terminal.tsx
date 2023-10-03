@@ -15,7 +15,10 @@ interface FilterableListProps {
 
 interface IFormInput {
     noReceta: string;
-    paciente: string;
+    dniPaciente: string;
+    nombrePaciente: string;
+    dniReceptor: string;
+    nombreReceptor: string;
 }
 
 interface Producto {
@@ -226,13 +229,27 @@ export default function Terminal() {
                 <div className="">
                     <form className="mx-auto max-w-full" onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
-                            <div>
+                            <div className="sm:grid-cols-1">
+                                <label htmlFor="fecha-receta" className="block text-sm font-semibold leading-6 text-gray-900">
+                                    Fecha
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="date"
+                                        id="fecha-receta"
+                                        autoComplete="fecha-receta"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:grid-cols-1">
                                 <label htmlFor="no-receta" className="block text-sm font-semibold leading-6 text-gray-900">
                                     No. Receta
                                 </label>
-                                <div className="mt-2.5">
+                                <div className="mt-1">
                                     <input
                                         type="text"
+                                        id="no-receta"
                                         autoComplete="no-receta"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         {...register("noReceta", { required: true, maxLength: 20 })}
@@ -245,15 +262,40 @@ export default function Terminal() {
                                 </div>
                             </div>
                             <div>
-                                <label htmlFor="first-name" className="block text-sm font-semibold leading-6 text-gray-900">
-                                    Paciente
+                                <label htmlFor="dni-paciente" className="block text-sm font-semibold leading-6 text-gray-900">
+                                    Identificación Paciente
                                 </label>
-                                <div className="mt-2.5">
+                                <div className="mt-1">
                                     <input
                                         type="text"
-                                        autoComplete="given-name"
+                                        id="dni-paciente"
+                                        autoComplete="dni-paciente"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        {...register("paciente", {
+                                        {...register("dniPaciente", {
+                                            required: "Identificación de paciente requerido",
+                                        })}
+                                    />
+                                    {errors.dniPaciente && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            {errors.dniPaciente.message}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="nombre-paciente"
+                                    className="block text-sm font-semibold leading-6 text-gray-900"
+                                >
+                                    Nombre Paciente
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="text"
+                                        id="nombre-paciente"
+                                        autoComplete="nombre-paciente"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("nombrePaciente", {
                                             required: "Nombre de paciente requerido",
                                             minLength: {
                                                 value: 6,
@@ -262,9 +304,9 @@ export default function Terminal() {
                                             pattern: /^[A-Za-z]+$/i,
                                         })}
                                     />
-                                    {errors.paciente && (
+                                    {errors.nombrePaciente && (
                                         <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
-                                            {errors.paciente.message}
+                                            {errors.nombrePaciente.message}
                                         </p>
                                     )}
                                 </div>
@@ -323,6 +365,56 @@ export default function Terminal() {
                                             </li>
                                         ))}
                                     </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <label htmlFor="dni-receptor" className="block text-sm font-semibold leading-6 text-gray-900">
+                                    Identificación Receptor
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="text"
+                                        id="dni-receptor"
+                                        autoComplete="dni-receptor"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("dniReceptor", {
+                                            required: "Identificación de receptor requerido",
+                                        })}
+                                    />
+                                    {errors.dniReceptor && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            {errors.dniReceptor.message}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="nombre-receptor"
+                                    className="block text-sm font-semibold leading-6 text-gray-900"
+                                >
+                                    Nombre Receptor
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="text"
+                                        id="nombre-receptor"
+                                        autoComplete="nombre-receptor"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("nombrePaciente", {
+                                            required: "Nombre de receptor requerido",
+                                            minLength: {
+                                                value: 6,
+                                                message: "Nombre de paciente debe tener mínimo seis caracteres",
+                                            },
+                                            pattern: /^[A-Za-z]+$/i,
+                                        })}
+                                    />
+                                    {errors.nombreReceptor && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            {errors.nombreReceptor.message}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                             <div className="col-span-full">
