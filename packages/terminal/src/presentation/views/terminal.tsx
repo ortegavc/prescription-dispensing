@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
-import { MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon, TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
 
 const fake_bodega_id = 7589;
@@ -320,7 +320,8 @@ export default function Terminal() {
                                 <div className="flex-1 w-64">Producto</div>
                                 <div className="flex-initial w-20">Solicitado</div>
                                 <div className="flex-initial w-20">Despachado</div>
-                                <div className="flex-initial w-20">Tratamiento</div>
+                                {/* <div className="flex-initial w-20">Tratamiento</div> */}
+                                <div className="flex-initial w-10"></div>
                                 <div className="flex-initial w-10"></div>
                             </div>
                             <div className="col-span-full border-b border-gray-900/10 h-64 overflow-y-auto">
@@ -350,13 +351,22 @@ export default function Terminal() {
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                                     />
                                                 </div>
-                                                <div className="flex-initial w-20">
+                                                {/* <div className="flex-initial w-20">
                                                     <input
                                                         type="number"
                                                         name="tratamiento"
                                                         id="tratamiento"
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                                     />
+                                                </div> */}
+                                                <div className="flex-initial w-10">
+                                                    <button
+                                                        type="button"
+                                                        className="px-2 py-2 rounded bg-gray-600 font-medium text-center hover:bg-gray-500"
+                                                        onClick={() => alert("open modal")}
+                                                    >
+                                                        <PencilIcon className="text-white h-5" aria-hidden="true" />
+                                                    </button>{" "}
                                                 </div>
                                                 <div className="flex-initial w-10">
                                                     <button
