@@ -6,7 +6,8 @@ import { Switch } from "@headlessui/react";
 import { MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
 
-const fake_bodega_id = 297;
+const fake_bodega_id = 7589;
+const fake_entidad_id = 1781;
 
 interface FilterableListProps {
     query: string;
@@ -25,6 +26,7 @@ interface Producto {
     codigoproducto: string;
     estado: boolean;
     id: number;
+    manejaLote: boolean;
     nombre: string;
     stock: number;
 }
@@ -59,9 +61,11 @@ export default function Terminal() {
         handleSubmit,
         formState: { errors },
     } = useForm<IFormInput>();
-    const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery } = graphql;
+    const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery, useStockProductoBodegaListLazyQuery } =
+        graphql;
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
+    const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
     const [agreed, setAgreed] = useState<boolean>(false);
     const [productos, setProductos] = useState<Producto[]>([]);
     const [query, setQuery] = useState<string>("");
@@ -109,6 +113,7 @@ export default function Terminal() {
                                 codigoproducto: item.producto.codigoproducto,
                                 estado: !!item.producto.estado,
                                 id: item.producto.id,
+                                manejaLote: !!item.producto.manejalote,
                                 nombre: item.producto.nombre,
                                 stock: 0,
                             };
