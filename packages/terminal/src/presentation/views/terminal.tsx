@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import { MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/20/solid";
@@ -9,6 +11,11 @@ const fake_bodega_id = 297;
 interface FilterableListProps {
     query: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+interface IFormInput {
+    noReceta: string;
+    paciente: string;
 }
 
 interface Producto {
@@ -44,6 +51,11 @@ function SearchBar({ query, onChange }: FilterableListProps) {
 }
 
 export default function Terminal() {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<IFormInput>();
     const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery } = graphql;
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
@@ -52,6 +64,9 @@ export default function Terminal() {
     const [query, setQuery] = useState<string>("");
     const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
     const [selected, setSelected] = useState<Producto | null>(null);
+    const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+
+    console.log(errors);
 
     useEffect(() => {
         if (selected !== null) {
@@ -209,7 +224,7 @@ export default function Terminal() {
 
                 {/* Formulario Receta */}
                 <div className="">
-                    <form action="#" method="POST" className="mx-auto max-w-full">
+                    <form className="mx-auto max-w-full" onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
                             <div>
                                 <label htmlFor="no-receta" className="block text-sm font-semibold leading-6 text-gray-900">
@@ -218,11 +233,15 @@ export default function Terminal() {
                                 <div className="mt-2.5">
                                     <input
                                         type="text"
-                                        name="no-receta"
-                                        id="no-receta"
                                         autoComplete="no-receta"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("noReceta", { required: true, maxLength: 20 })}
                                     />
+                                    {errors.noReceta?.type === "required" && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            Número de receta requerido
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                             <div>
@@ -232,11 +251,22 @@ export default function Terminal() {
                                 <div className="mt-2.5">
                                     <input
                                         type="text"
-                                        name="first-name"
-                                        id="first-name"
                                         autoComplete="given-name"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("paciente", {
+                                            required: "Nombre de paciente requerido",
+                                            minLength: {
+                                                value: 6,
+                                                message: "Nombre de paciente debe tener mínimo seis caracteres",
+                                            },
+                                            pattern: /^[A-Za-z]+$/i,
+                                        })}
                                     />
+                                    {errors.paciente && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            {errors.paciente.message}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                             <div className="col-span-full mt-2 px-2 py-2 flex gap-1 justify-between text-sm font-medium leading-6 text-gray-900 bg-gray-400">
