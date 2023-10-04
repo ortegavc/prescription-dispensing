@@ -7,16 +7,18 @@ export const prescripcionMedicaActions = createSlice({
     name: "Despacho",
     initialState,
     reducers: {
+        loadDesapacho(state, action) {
+            return { ...state, ...action.payload };
+        },
         addCabecera: (state, action) => {
-            
             const { numeroreceta, identificareceptor, nombrereceptor, recetaelectronica, oid, turno_id, paciente } =
                 action.payload.recetaCabecera;
-                console.log('pacientepacientepacientepaciente',action.payload.receta)
+            console.log("pacientepacientepacientepaciente", action.payload.receta);
             state.numeroreceta = numeroreceta;
             state.identificareceptor = identificareceptor;
             state.nombrereceptor = nombrereceptor;
             state.recetaelectronica = recetaelectronica;
-            state.paciente =<IDespachoPaciente> {
+            state.paciente = <IDespachoPaciente>{
                 id: parseInt(paciente.id),
                 cttipoidentificacion_id: paciente.cttipoidentificacion_id,
                 identificacion: paciente.identificacion,
@@ -33,7 +35,7 @@ export const prescripcionMedicaActions = createSlice({
             state.identificareceptor = identificareceptor;
             state.nombrereceptor = nombrereceptor;
             state.recetaelectronica = recetaelectronica;
-            state.paciente = <IDespachoPaciente> {
+            state.paciente = <IDespachoPaciente>{
                 id: persona.id,
                 cttipoidentificacion_id: persona.cttipoidentificacion_id,
                 identificacion: persona.identificacion,
@@ -74,4 +76,5 @@ export const prescripcionMedicaActions = createSlice({
     },
 });
 
-export const { addCabecera,updateCabecera, addMedicamento, updateMedicamento, deleteMedicamento } = prescripcionMedicaActions.actions;
+export const {loadDesapacho, addCabecera, updateCabecera, addMedicamento, updateMedicamento, deleteMedicamento } =
+    prescripcionMedicaActions.actions;

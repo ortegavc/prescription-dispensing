@@ -4,13 +4,20 @@ import { IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.M
 import { useDispatch } from "react-redux";
 import { casoUsoRecetaElectronica } from "@application/useCases";
 import { IDespacho } from "@domain/models";
-import { addCabecera, addMedicamento } from "@presentation/actions";
+import { loadDesapacho } from "@presentation/actions";
 import { SearchBar } from "./forms";
+import { CustomAlert } from './alerts';
 
 function RecetaElectronica() {
+  const [showAlert, setShowAlert] = useState({
+    state:false,
+    message:''
+  });
   const dispatch = useDispatch();
   const [query, setQuery] = useState<string>("");
   const [searchResult, setSearchResult] = useState<IRecetaElectronica | null>(null); // Estado para almacenar los resultados de búsqueda
+
+
 
   const { useRecetaLazyQuery } = graphql;
 
@@ -24,48 +31,62 @@ function RecetaElectronica() {
         }
 
         if (error) {
+          setShowAlert({
+            state:true,
+            message:error.message
+          })
+          handleShowAlert();
           return <p>Error: {error.message}</p>;
         }
+        if (data) {
+          const receta: IRecetaElectronica = data?.Receta;
+          // Enviar preparar la información para el despacho
+          const objetoDespacho: IDespacho = await casoUsoRecetaElectronica(receta);
 
-        const receta: IRecetaElectronica = data?.Receta;
-        // Enviar preparar la información para el despacho
-        const objetoDespacho: IDespacho = await casoUsoRecetaElectronica(receta);
-
-        dispatch(
-          addCabecera({
-            recetaCabecera: objetoDespacho,
-          })
-        );
-
-        dispatch(
-          addMedicamento({
-            recetaDetalle: objetoDespacho.despachodetalle,
-          })
-        );
+          dispatch(
+            loadDesapacho({
+              objetoDespacho,
+            })
+          );
+        }
 
       } catch (error) {
         console.error(error);
       }
     };
 
+    console.log('query----------000000', data)
     fetchData();
-  }, [data]);
+
+
+  }, [loading, data, error]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setQuery(e.target.value);
   }
 
   // Función para ejecutar la consulta GraphQL cuando se hace clic en el botón "Buscar"
-  //1.000912.00007543',
+  //100091200007543',
 
   function handleSearch() {
-    console.log('query',query)
+
     executeQuery({
       variables: {
         oid: query,
       },
     });
   }
+
+  const handleShowAlert = () => {
+    
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert({
+      state:false,
+      message:error.message
+    })
+  };
 
   return (
     <div className="w-full">
@@ -83,10 +104,19 @@ function RecetaElectronica() {
           {/* Renderiza los resultados de búsqueda aquí */}
         </div>
       )}
+
+      {showAlert.state && (
+        <CustomAlert
+          message={showAlert.message}
+          onClose={handleCloseAlert}
+        />
+      )}
     </div>
   );
 }
 
 export default RecetaElectronica;
+
+
 
 
