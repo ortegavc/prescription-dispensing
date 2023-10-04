@@ -1,24 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 // Importa las interfaces y la clase desde el módulo models
-import { IRecetaDetalle, IPersona, initialState } from "@domain/models";
+import { IDespachoDetalle, IDespachoPaciente, initialState } from "@domain/models";
 
 export const prescripcionMedicaActions = createSlice({
-    name: "PrescripcionMedica",
+    name: "Despacho",
     initialState,
     reducers: {
         addCabecera: (state, action) => {
-            const { numeroreceta, identificareceptor, nombrereceptor, recetaelectronica, oid, turno_id, persona } =
-                action.payload;
+            
+            const { numeroreceta, identificareceptor, nombrereceptor, recetaelectronica, oid, turno_id, paciente } =
+                action.payload.recetaCabecera;
+                console.log('pacientepacientepacientepaciente',action.payload.receta)
             state.numeroreceta = numeroreceta;
             state.identificareceptor = identificareceptor;
             state.nombrereceptor = nombrereceptor;
             state.recetaelectronica = recetaelectronica;
-            state.paciente = {
-                id: persona.id,
-                cttipoidentificacion_id: persona.cttipoidentificacion_id,
-                identificacion: persona.identificacion,
-                nombre: persona.nombre,
+            state.paciente =<IDespachoPaciente> {
+                id: parseInt(paciente.id),
+                cttipoidentificacion_id: paciente.cttipoidentificacion_id,
+                identificacion: paciente.identificacion,
+                nombre: paciente.nombre,
             };
             state.oid = oid;
             state.turno_id = turno_id;
@@ -31,7 +33,7 @@ export const prescripcionMedicaActions = createSlice({
             state.identificareceptor = identificareceptor;
             state.nombrereceptor = nombrereceptor;
             state.recetaelectronica = recetaelectronica;
-            state.paciente = {
+            state.paciente = <IDespachoPaciente> {
                 id: persona.id,
                 cttipoidentificacion_id: persona.cttipoidentificacion_id,
                 identificacion: persona.identificacion,
@@ -42,7 +44,7 @@ export const prescripcionMedicaActions = createSlice({
         },
 
         addMedicamento: (state, action) => {
-            const nuevoDetalle: IRecetaDetalle = {
+            const nuevoDetalle: IDespachoDetalle = {
                 cantidaddespachada: action.payload.cantidaddespachada,
                 cantidaddispensada: action.payload.cantidaddispensada,
                 cantidadrequerida: action.payload.cantidadrequerida,

@@ -1,15 +1,16 @@
 export interface IRecetaElectronica {
+    id:Number;
     oid: string;
-    fecha_receta: string;
-    fecha_caducidad: string;
-    acompaniante_cedula: string | null;
     acompaniante: string | null;
+    acompaniante_cedula: string | null;
+    fecha_caducidad: string;
+    fecha_receta: string;
     numero_receta: number;
-    paciente: IPersona;
+    paciente: IRecetaPaciente;
     recetaDetalle: IRecetaDetalle[];
 }
 
-export interface IPersona {
+export interface IRecetaPaciente {
     tipo_identificacion_id: number;
     identificacion: string;
     apellidos: string;
@@ -18,6 +19,7 @@ export interface IPersona {
 }
 
 export interface IRecetaDetalle {
+    
     id: number;
     oid: string;
     cantidad_prescrita: number;
@@ -27,25 +29,28 @@ export interface IRecetaDetalle {
 }
 
 export class RecetaElectronica implements IRecetaElectronica {
+    id: number;
     oid: string;
     fecha_receta: string;
     fecha_caducidad: string;
     acompaniante_cedula: string | null;
     acompaniante: string | null;
     numero_receta: number;
-    paciente: IPersona;
+    paciente: IRecetaPaciente;
     recetaDetalle: IRecetaDetalle[];
 
     constructor(
+        id:number,
         oid: string,
         fecha_receta: string,
         fecha_caducidad: string,
         acompaniante_cedula: string | null,
         acompaniante: string | null,
         numero_receta: number,
-        paciente: IPersona,
+        paciente: IRecetaPaciente,
         recetaDetalle: IRecetaDetalle[]
     ) {
+        this.id=id;
         this.oid = oid;
         this.fecha_receta = fecha_receta;
         this.fecha_caducidad = fecha_caducidad;

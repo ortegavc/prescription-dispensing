@@ -12,7 +12,7 @@
       "@domain/*": ["./domain/*"],
       "@application/*": ["./application/*"],
       "@infrastructure/*": ["./infrastructure/*"],
-      "@msp/shared/*": ["../shared/src/*","../../node_modules/@msp/shared"]
+      "@msp/shared/*": ["../shared/src/msp-shared.tsx"]
     }
   },
   "files": ["src/msp-terminal.tsx"],

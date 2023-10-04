@@ -38,7 +38,7 @@ module.exports = mergeWithRules({
     https: Boolean(process.env.HTTPS),
     historyApiFallback: true,  // Esta línea maneja las rutas de historial de navegación en una SPA de React
   },
-  externals: [/^@msp\//],
+  externals: [/^@msp\/.+/],
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: "main.js",
@@ -49,7 +49,7 @@ module.exports = mergeWithRules({
     },
   },
   plugins: [
-    new CleanWebpackPlugin(), // Limpia la carpeta 'dist' antes de compilar
+    //new CleanWebpackPlugin(), // Limpia la carpeta 'dist' antes de compilar
   ],
   devtool: 'source-map',
  

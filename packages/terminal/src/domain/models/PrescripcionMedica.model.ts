@@ -1,27 +1,27 @@
 // Modelo de datos para la pantalla de despacho de recetas
-export interface IPrescripcionMedica {
-    numeroreceta: string;
-    identificareceptor: string;
-    nombrereceptor: string;
+export interface IDespacho {
+     numeroreceta: string;
+    identificareceptor: string | null;
+    nombrereceptor: string | null;
     recetaelectronica: number;
-    paciente: IPersona;
+    paciente: IDespachoPaciente;
     oid: string;
     turno_id: number;
-    despachodetalle: IRecetaDetalle[];
+    despachodetalle: IDespachoDetalle[];
 }
 
-export interface IRecetaDetalle {
+export interface IDespachoDetalle {
     cantidaddespachada: number;
     cantidaddispensada: number;
     cantidadrequerida: number;
     costo: number;
     lote_id: number;
     producto_id: number;
+    receta_oid: string;
     unidadmedida_id: string;
-    receta_oid: number;
 }
 
-export interface IPersona {
+export interface IDespachoPaciente {
     id: number;
     cttipoidentificacion_id: number;
     identificacion: string;
@@ -32,25 +32,25 @@ export interface IPersona {
  * IMPLEMENTACIÓN DE LA CLASE
  */
 
-export class PrescripcionMedica implements IPrescripcionMedica {
+export class PrescripcionMedica implements IDespacho {
     numeroreceta: string;
     identificareceptor: string;
     nombrereceptor: string;
     recetaelectronica: number;
-    paciente: IPersona;
+    paciente: IDespachoPaciente;
     oid: string;
     turno_id: number;
-    despachodetalle: IRecetaDetalle[];
+    despachodetalle: IDespachoDetalle[];
 
     constructor(
         numeroreceta: string,
         identificareceptor: string,
         nombrereceptor: string,
         recetaelectronica: number,
-        paciente: IPersona,
+        paciente: IDespachoPaciente,
         oid: string,
         turno_id: number,
-        despachodetalle: IRecetaDetalle[]
+        despachodetalle: IDespachoDetalle[]
     ) {
         this.numeroreceta = numeroreceta;
         this.identificareceptor = identificareceptor;
@@ -66,14 +66,14 @@ export class PrescripcionMedica implements IPrescripcionMedica {
 /**
  * INICIALIZACIÓN DE LA CLASE
  */
-const pacientePersona: IPersona = {
+const pacientePersona: IDespachoPaciente = {
     id: 0,
     cttipoidentificacion_id: 0,
     identificacion: "",
     nombre: "",
 };
 
-const recetaDetalle: IRecetaDetalle[] = [
+const recetaDetalle: IDespachoDetalle[] = [
     {
         cantidaddespachada: 0,
         cantidaddispensada: 0,
@@ -82,11 +82,11 @@ const recetaDetalle: IRecetaDetalle[] = [
         lote_id: 0,
         producto_id: 0,
         unidadmedida_id: "",
-        receta_oid: 0,
+        receta_oid:' 0',
     },
 ];
 
-export const initialState : IPrescripcionMedica = {
+export const initialState : IDespacho = {
   numeroreceta: "",
   identificareceptor: "",
   nombrereceptor: "",
@@ -96,5 +96,3 @@ export const initialState : IPrescripcionMedica = {
   turno_id: 0,
   despachodetalle: recetaDetalle,
 };
-
-//export const initialStatePrescripcionMedica = new PrescripcionMedica("", "", "", 0, pacientePersona, "", 0, recetaDetalle);

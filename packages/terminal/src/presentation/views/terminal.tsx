@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import { ChevronDownIcon, ChevronUpIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
+
+import RecetaElectronica from "./components/recetaElectronica";
 
 const fake_bodega_id = 297;
 
@@ -54,6 +56,8 @@ export default function Terminal() {
     const [selected, setSelected] = useState<Producto | null>(null);
 
     useEffect(() => {
+
+
         if (selected !== null) {
             console.log("Un producto ha sido seleccionado", selected);
             // Check if an object with the same id does not already exist in the array
@@ -72,7 +76,7 @@ export default function Terminal() {
                         selected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
                         setRecetaProductos([...recetaProductos, selected]);
                     },
-                    onError: () => {},
+                    onError: () => { },
                 });
             }
             console.log(recetaProductos);
@@ -107,9 +111,11 @@ export default function Terminal() {
 
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
+            
             <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
             </div>
+
             <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
                 <Switch.Group as="div" className="flex gap-x-4 col-span-full">
                     <div className="flex h-6 items-center">
@@ -137,6 +143,7 @@ export default function Terminal() {
                 <div className="lg:col-span-2">
                     <div className="border rounded px-2 py-2">
                         <SearchBar query={query} onChange={handleChange} />
+                        <RecetaElectronica  />
                         <RadioGroup value={selected} onChange={setSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
