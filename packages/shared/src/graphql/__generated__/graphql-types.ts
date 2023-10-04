@@ -92,6 +92,11 @@ export type BodegaEgreso = {
     nombre: Scalars["String"]["output"];
 };
 
+export type BodegaEgresoFilterInput = {
+    id?: InputMaybe<NumberWhereInput>;
+    nombre?: InputMaybe<StringWhereInput>;
+};
+
 export type BodegaFilterInput = {
     alias?: InputMaybe<StringWhereInput>;
     bodega_id?: InputMaybe<RelationsWhereInput>;
@@ -778,18 +783,21 @@ export type EgresoDetallesCreateInput = {
 };
 
 export type EgresoFilterInput = {
+    bodegadestino?: InputMaybe<BodegaEgresoFilterInput>;
     bodegadestino_id?: InputMaybe<RelationsWhereInput>;
     bodegaorigen_id?: InputMaybe<RelationsWhereInput>;
     colaborador?: InputMaybe<EgresoColaboradorFilterInput>;
     ctestado_id?: InputMaybe<RelationsWhereInput>;
     documentorespaldo?: InputMaybe<StringWhereInput>;
     ejercicio: NumberWhereInput;
+    entidaddestino?: InputMaybe<EntidadEgresoFilterInput>;
     entidaddestino_id?: InputMaybe<RelationsWhereInput>;
     entidadorigen_id?: InputMaybe<RelationsWhereInput>;
     fechaegreso?: InputMaybe<DateWhereInput>;
     numerotransaccion?: InputMaybe<StringWhereInput>;
     periodo?: InputMaybe<NumberWhereInput>;
     tipodocumento_id?: InputMaybe<RelationsWhereInput>;
+    tipotransaccion?: InputMaybe<TipoTransaccionEgresoFilterInput>;
     tipotransaccion_id?: InputMaybe<RelationsWhereInput>;
     turno?: InputMaybe<EgresoTurnoFilterInput>;
     usuariocreacion?: InputMaybe<UsuarioEgresoFilterInput>;
@@ -940,6 +948,12 @@ export type EntidadEgreso = {
     id: Scalars["Int"]["output"];
     nombre: Scalars["String"]["output"];
     unicodigo: Scalars["String"]["output"];
+};
+
+export type EntidadEgresoFilterInput = {
+    id?: InputMaybe<NumberWhereInput>;
+    nombre?: InputMaybe<StringWhereInput>;
+    unicodigo?: InputMaybe<StringWhereInput>;
 };
 
 export type EntidadFilterInput = {
@@ -3233,6 +3247,7 @@ export type QuerySolicitudCollectionArgs = {
 
 export type QueryStockProductoBodegaListArgs = {
     bodega_id: Scalars["Int"]["input"];
+    caducado: Scalars["Boolean"]["input"];
     cantidad: Scalars["Int"]["input"];
     entidad_id: Scalars["Int"]["input"];
     producto_id: Scalars["Int"]["input"];
@@ -3782,6 +3797,17 @@ export type TipoTransaccionEgreso = {
     requieresustento?: Maybe<Scalars["Int"]["output"]>;
 };
 
+export type TipoTransaccionEgresoFilterInput = {
+    codigo?: InputMaybe<StringWhereInput>;
+    id?: InputMaybe<NumberWhereInput>;
+    nombre?: InputMaybe<StringWhereInput>;
+    requierebodega?: InputMaybe<StateWhereInput>;
+    requiereentidadint?: InputMaybe<StateWhereInput>;
+    requiereproveedor?: InputMaybe<StateWhereInput>;
+    requiereproveedorint?: InputMaybe<StateWhereInput>;
+    requieresustento?: InputMaybe<StateWhereInput>;
+};
+
 export type TipoTransaccionFilterInput = {
     afectaconsumo?: InputMaybe<StateWhereInput>;
     afectapmp?: InputMaybe<StateWhereInput>;
@@ -4213,22 +4239,16 @@ export type ProductoBodegaCollectionFieldsFragment = {
     data?: Array<{
         __typename?: "ProductoBodegaAdministracion";
         bodega_id?: number | null;
-        producto_id?: number | null;
         bodega?: { __typename?: "BodegaAdministracion"; descripcion?: string | null; nombre?: string | null } | null;
         producto?: {
             __typename?: "ProductoAdministracion";
+            codigoproducto?: string | null;
+            estado?: number | null;
             id?: number | null;
             nombre?: string | null;
-            codigoproducto?: string | null;
-            manejalote?: number | null;
+            nombrecomercial?: string | null;
             manejacaducidad?: number | null;
-            cttipoproducto?: { __typename?: "CatalogoDetalleAdministracion"; nombre?: string | null } | null;
-            unidadmedida?: {
-                __typename?: "UnidadMedidaAdministracion";
-                abreviatura?: string | null;
-                id?: number | null;
-                nombre?: string | null;
-            } | null;
+            manejalote?: number | null;
         } | null;
     }> | null;
     pageInfo?: {
@@ -4243,27 +4263,29 @@ export type ProductoBodegaCollectionFieldsFragment = {
 
 export type ProductoStockBodegaFieldsFragment = {
     __typename?: "ProductoStockBodegaStock";
-    id?: number | null;
-    producto_id?: number | null;
     bodega_id?: number | null;
-    valorpromedio?: number | null;
-    consumopromediomensual?: number | null;
-    costoinicial?: number | null;
-    productostockent_id?: number | null;
+    producto_id?: number | null;
     saldo?: number | null;
-    saldodisponible?: number | null;
     stockcomprometido?: number | null;
     stockdespacho?: number | null;
     stockinicial?: number | null;
-    producto?: {
-        __typename?: "ProductoStock";
-        id?: number | null;
-        codigoproducto?: string | null;
-        nombrecomercial?: string | null;
-        nombre?: string | null;
-        unidadmedida?: { __typename?: "UnidadMedidaStock"; id?: number | null; abreviatura?: string | null } | null;
-        cttipoproducto?: { __typename?: "CatalogoDetalleStock"; id?: number | null; nombre?: string | null } | null;
-    } | null;
+    valorpromedio?: number | null;
+};
+
+export type StockProductoBodegaFieldsFragment = {
+    __typename?: "StockProductoBodegaList";
+    CANTIDAD?: number | null;
+    CANTIDADDISTRIBUIDA?: number | null;
+    CODIGOPRODUCTO?: string | null;
+    COSTO?: number | null;
+    FECHACADUCIDAD?: any | null;
+    LOTEID?: string | null;
+    NOMBRE?: string | null;
+    NUMEROLOTE?: string | null;
+    PRODUCTOID?: number | null;
+    UNIDADMEDIDAABREVIATURA?: string | null;
+    UNIDADMEDIDAID?: number | null;
+    UNIDADMEDIDANOMBRE?: string | null;
 };
 
 export type RecetaElectronicaFieldsFragment = {
@@ -4307,22 +4329,16 @@ export type ProductoBodegaCollectionQuery = {
         data?: Array<{
             __typename?: "ProductoBodegaAdministracion";
             bodega_id?: number | null;
-            producto_id?: number | null;
             bodega?: { __typename?: "BodegaAdministracion"; descripcion?: string | null; nombre?: string | null } | null;
             producto?: {
                 __typename?: "ProductoAdministracion";
+                codigoproducto?: string | null;
+                estado?: number | null;
                 id?: number | null;
                 nombre?: string | null;
-                codigoproducto?: string | null;
-                manejalote?: number | null;
+                nombrecomercial?: string | null;
                 manejacaducidad?: number | null;
-                cttipoproducto?: { __typename?: "CatalogoDetalleAdministracion"; nombre?: string | null } | null;
-                unidadmedida?: {
-                    __typename?: "UnidadMedidaAdministracion";
-                    abreviatura?: string | null;
-                    id?: number | null;
-                    nombre?: string | null;
-                } | null;
+                manejalote?: number | null;
             } | null;
         }> | null;
         pageInfo?: {
@@ -4345,27 +4361,13 @@ export type ProductoStockBodegaQuery = {
     __typename?: "Query";
     productoStockBodega?: Array<{
         __typename?: "ProductoStockBodegaStock";
-        id?: number | null;
-        producto_id?: number | null;
         bodega_id?: number | null;
-        valorpromedio?: number | null;
-        consumopromediomensual?: number | null;
-        costoinicial?: number | null;
-        productostockent_id?: number | null;
+        producto_id?: number | null;
         saldo?: number | null;
-        saldodisponible?: number | null;
         stockcomprometido?: number | null;
         stockdespacho?: number | null;
         stockinicial?: number | null;
-        producto?: {
-            __typename?: "ProductoStock";
-            id?: number | null;
-            codigoproducto?: string | null;
-            nombrecomercial?: string | null;
-            nombre?: string | null;
-            unidadmedida?: { __typename?: "UnidadMedidaStock"; id?: number | null; abreviatura?: string | null } | null;
-            cttipoproducto?: { __typename?: "CatalogoDetalleStock"; id?: number | null; nombre?: string | null } | null;
-        } | null;
+        valorpromedio?: number | null;
     }> | null;
 };
 
@@ -4404,6 +4406,33 @@ export type RecetaQuery = {
     } | null;
 };
 
+export type StockProductoBodegaListQueryVariables = Exact<{
+    bodega_id: Scalars["Int"]["input"];
+    caducado: Scalars["Boolean"]["input"];
+    cantidad: Scalars["Int"]["input"];
+    entidad_id: Scalars["Int"]["input"];
+    producto_id: Scalars["Int"]["input"];
+}>;
+
+export type StockProductoBodegaListQuery = {
+    __typename?: "Query";
+    stockProductoBodegaList?: Array<{
+        __typename?: "StockProductoBodegaList";
+        CANTIDAD?: number | null;
+        CANTIDADDISTRIBUIDA?: number | null;
+        CODIGOPRODUCTO?: string | null;
+        COSTO?: number | null;
+        FECHACADUCIDAD?: any | null;
+        LOTEID?: string | null;
+        NOMBRE?: string | null;
+        NUMEROLOTE?: string | null;
+        PRODUCTOID?: number | null;
+        UNIDADMEDIDAABREVIATURA?: string | null;
+        UNIDADMEDIDAID?: number | null;
+        UNIDADMEDIDANOMBRE?: string | null;
+    }> | null;
+};
+
 export const TerminalUsuarioListFieldsFragmentDoc = gql`
     fragment terminalUsuarioListFields on TerminalUsuarioList {
         terminal {
@@ -4416,25 +4445,18 @@ export const ProductoBodegaCollectionFieldsFragmentDoc = gql`
     fragment productoBodegaCollectionFields on ProductoBodegaCollectionType {
         data {
             bodega_id
-            producto_id
             bodega {
                 descripcion
                 nombre
             }
             producto {
+                codigoproducto
+                estado
                 id
                 nombre
-                codigoproducto
-                cttipoproducto {
-                    nombre
-                }
-                manejalote
+                nombrecomercial
                 manejacaducidad
-                unidadmedida {
-                    abreviatura
-                    id
-                    nombre
-                }
+                manejalote
             }
         }
         pageInfo {
@@ -4448,32 +4470,29 @@ export const ProductoBodegaCollectionFieldsFragmentDoc = gql`
 `;
 export const ProductoStockBodegaFieldsFragmentDoc = gql`
     fragment productoStockBodegaFields on ProductoStockBodegaStock {
-        id
-        producto_id
         bodega_id
-        valorpromedio
-        consumopromediomensual
-        costoinicial
-        productostockent_id
+        producto_id
         saldo
-        saldodisponible
         stockcomprometido
         stockdespacho
         stockinicial
-        producto {
-            id
-            codigoproducto
-            nombrecomercial
-            unidadmedida {
-                id
-                abreviatura
-            }
-            cttipoproducto {
-                id
-                nombre
-            }
-            nombre
-        }
+        valorpromedio
+    }
+`;
+export const StockProductoBodegaFieldsFragmentDoc = gql`
+    fragment stockProductoBodegaFields on StockProductoBodegaList {
+        CANTIDAD
+        CANTIDADDISTRIBUIDA
+        CODIGOPRODUCTO
+        COSTO
+        FECHACADUCIDAD
+        LOTEID
+        NOMBRE
+        NUMEROLOTE
+        PRODUCTOID
+        UNIDADMEDIDAABREVIATURA
+        UNIDADMEDIDAID
+        UNIDADMEDIDANOMBRE
     }
 `;
 export const RecetaElectronicaFieldsFragmentDoc = gql`
@@ -4667,7 +4686,7 @@ export const RecetaDocument = gql`
  *   variables: {
  *      oid: // value for 'oid'
  *   },
- * }); 
+ * });
  */
 export function useRecetaQuery(baseOptions: Apollo.QueryHookOptions<RecetaQuery, RecetaQueryVariables>) {
     const options = { ...defaultOptions, ...baseOptions };
@@ -4680,17 +4699,84 @@ export function useRecetaLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Rec
 export type RecetaQueryHookResult = ReturnType<typeof useRecetaQuery>;
 export type RecetaLazyQueryHookResult = ReturnType<typeof useRecetaLazyQuery>;
 export type RecetaQueryResult = Apollo.QueryResult<RecetaQuery, RecetaQueryVariables>;
+export const StockProductoBodegaListDocument = gql`
+    query StockProductoBodegaList(
+        $bodega_id: Int!
+        $caducado: Boolean!
+        $cantidad: Int!
+        $entidad_id: Int!
+        $producto_id: Int!
+    ) {
+        stockProductoBodegaList(
+            bodega_id: $bodega_id
+            caducado: $caducado
+            cantidad: $cantidad
+            entidad_id: $entidad_id
+            producto_id: $producto_id
+        ) {
+            ...stockProductoBodegaFields
+        }
+    }
+    ${StockProductoBodegaFieldsFragmentDoc}
+`;
+
+/**
+ * __useStockProductoBodegaListQuery__
+ *
+ * To run a query within a React component, call `useStockProductoBodegaListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStockProductoBodegaListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStockProductoBodegaListQuery({
+ *   variables: {
+ *      bodega_id: // value for 'bodega_id'
+ *      caducado: // value for 'caducado'
+ *      cantidad: // value for 'cantidad'
+ *      entidad_id: // value for 'entidad_id'
+ *      producto_id: // value for 'producto_id'
+ *   },
+ * });
+ */
+export function useStockProductoBodegaListQuery(
+    baseOptions: Apollo.QueryHookOptions<StockProductoBodegaListQuery, StockProductoBodegaListQueryVariables>
+) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useQuery<StockProductoBodegaListQuery, StockProductoBodegaListQueryVariables>(
+        StockProductoBodegaListDocument,
+        options
+    );
+}
+export function useStockProductoBodegaListLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<StockProductoBodegaListQuery, StockProductoBodegaListQueryVariables>
+) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useLazyQuery<StockProductoBodegaListQuery, StockProductoBodegaListQueryVariables>(
+        StockProductoBodegaListDocument,
+        options
+    );
+}
+export type StockProductoBodegaListQueryHookResult = ReturnType<typeof useStockProductoBodegaListQuery>;
+export type StockProductoBodegaListLazyQueryHookResult = ReturnType<typeof useStockProductoBodegaListLazyQuery>;
+export type StockProductoBodegaListQueryResult = Apollo.QueryResult<
+    StockProductoBodegaListQuery,
+    StockProductoBodegaListQueryVariables
+>;
 export const namedOperations = {
     Query: {
         TerminalUsuarioList: "TerminalUsuarioList",
         ProductoBodegaCollection: "ProductoBodegaCollection",
         ProductoStockBodega: "ProductoStockBodega",
         Receta: "Receta",
+        StockProductoBodegaList: "StockProductoBodegaList",
     },
     Fragment: {
         terminalUsuarioListFields: "terminalUsuarioListFields",
         productoBodegaCollectionFields: "productoBodegaCollectionFields",
         productoStockBodegaFields: "productoStockBodegaFields",
+        stockProductoBodegaFields: "stockProductoBodegaFields",
         recetaElectronicaFields: "recetaElectronicaFields",
     },
 };

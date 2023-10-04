@@ -1,22 +1,33 @@
 import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
-import { ChevronDownIcon, ChevronUpIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon, TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
-
 import RecetaElectronica from "./components/recetaElectronica";
 
-const fake_bodega_id = 297;
+const fake_bodega_id = 7589;
+const fake_entidad_id = 1781;
 
 interface FilterableListProps {
     query: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+interface IFormInput {
+    noReceta: string;
+    dniPaciente: string;
+    nombrePaciente: string;
+    dniReceptor: string;
+    nombreReceptor: string;
+}
+
 interface Producto {
     codigoproducto: string;
     estado: boolean;
     id: number;
+    manejaLote: boolean;
     nombre: string;
     stock: number;
 }
@@ -46,18 +57,26 @@ function SearchBar({ query, onChange }: FilterableListProps) {
 }
 
 export default function Terminal() {
-    const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery } = graphql;
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<IFormInput>();
+    const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery, useStockProductoBodegaListLazyQuery } =
+        graphql;
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
+    const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
     const [agreed, setAgreed] = useState<boolean>(false);
     const [productos, setProductos] = useState<Producto[]>([]);
     const [query, setQuery] = useState<string>("");
     const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
     const [selected, setSelected] = useState<Producto | null>(null);
+    const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+
+    console.log(errors);
 
     useEffect(() => {
-
-
         if (selected !== null) {
             console.log("Un producto ha sido seleccionado", selected);
             // Check if an object with the same id does not already exist in the array
@@ -76,7 +95,7 @@ export default function Terminal() {
                         selected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
                         setRecetaProductos([...recetaProductos, selected]);
                     },
-                    onError: () => { },
+                    onError: () => {},
                 });
             }
             console.log(recetaProductos);
@@ -93,8 +112,9 @@ export default function Terminal() {
                         c.productoBodegaCollection.data.map((item: any) => {
                             return {
                                 codigoproducto: item.producto.codigoproducto,
-                                estado: true, //!!item.producto.estado,  // FIXME
+                                estado: !!item.producto.estado,
                                 id: item.producto.id,
+                                manejaLote: !!item.producto.manejalote,
                                 nombre: item.producto.nombre,
                                 stock: 0,
                             };
@@ -109,14 +129,16 @@ export default function Terminal() {
         setQuery(e.target.value);
     }
 
+    function eliminarProductoReceta(productId: number) {
+        setRecetaProductos(recetaProductos.filter((item) => item.id !== productId));
+    }
+
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
-            
             <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
             </div>
-
-            <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
                 <Switch.Group as="div" className="flex gap-x-4 col-span-full">
                     <div className="flex h-6 items-center">
                         <Switch
@@ -140,13 +162,13 @@ export default function Terminal() {
                     <Switch.Label className="text-sm leading-6 text-gray-600">Despachar Receta Electrónica</Switch.Label>
                 </Switch.Group>
 
-                <div className="lg:col-span-2">
+                <div className="">
                     <div className="border rounded px-2 py-2">
                         <SearchBar query={query} onChange={handleChange} />
-                        <RecetaElectronica  />
+                        <RecetaElectronica/>
                         <RadioGroup value={selected} onChange={setSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {productos.map((item) => (
                                     <RadioGroup.Option
                                         key={item.id}
@@ -211,109 +233,205 @@ export default function Terminal() {
                 </div>
 
                 {/* Formulario Receta */}
-                <div className="lg:col-span-1">
-                    <form action="#" method="POST" className="mx-auto mt-8 max-w-full sm:mt-12">
+                <div className="">
+                    <form className="mx-auto max-w-full" onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
-                            <div>
+                            <div className="sm:grid-cols-1">
+                                <label htmlFor="fecha-receta" className="block text-sm font-semibold leading-6 text-gray-900">
+                                    Fecha
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="date"
+                                        id="fecha-receta"
+                                        autoComplete="fecha-receta"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:grid-cols-1">
                                 <label htmlFor="no-receta" className="block text-sm font-semibold leading-6 text-gray-900">
                                     No. Receta
                                 </label>
-                                <div className="mt-2.5">
+                                <div className="mt-1">
                                     <input
                                         type="text"
-                                        name="no-receta"
                                         id="no-receta"
                                         autoComplete="no-receta"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("noReceta", { required: true, maxLength: 20 })}
                                     />
+                                    {errors.noReceta?.type === "required" && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            Número de receta requerido
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                             <div>
-                                <label htmlFor="first-name" className="block text-sm font-semibold leading-6 text-gray-900">
-                                    Paciente
+                                <label htmlFor="dni-paciente" className="block text-sm font-semibold leading-6 text-gray-900">
+                                    Identificación Paciente
                                 </label>
-                                <div className="mt-2.5">
+                                <div className="mt-1">
                                     <input
                                         type="text"
-                                        name="first-name"
-                                        id="first-name"
-                                        autoComplete="given-name"
+                                        id="dni-paciente"
+                                        autoComplete="dni-paciente"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("dniPaciente", {
+                                            required: "Identificación de paciente requerido",
+                                        })}
                                     />
+                                    {errors.dniPaciente && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            {errors.dniPaciente.message}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
-                            <div className="col-span-full px-2 py-2 flex justify-between text-sm font-medium leading-6 text-gray-900 border-b border-gray-900/10">
-                                <p>Producto</p>
-                                <p>Cantidad</p>
+                            <div>
+                                <label
+                                    htmlFor="nombre-paciente"
+                                    className="block text-sm font-semibold leading-6 text-gray-900"
+                                >
+                                    Nombre Paciente
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="text"
+                                        id="nombre-paciente"
+                                        autoComplete="nombre-paciente"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("nombrePaciente", {
+                                            required: "Nombre de paciente requerido",
+                                            minLength: {
+                                                value: 6,
+                                                message: "Nombre de paciente debe tener mínimo seis caracteres",
+                                            },
+                                            pattern: /^[A-Za-z]+$/i,
+                                        })}
+                                    />
+                                    {errors.nombrePaciente && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            {errors.nombrePaciente.message}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                            <div className="col-span-full border-b border-gray-900/10">
+                            <div className="col-span-full mt-2 px-2 py-2 flex gap-1 justify-between text-sm font-medium leading-6 text-gray-900 bg-gray-400">
+                                <div className="flex-1 w-64">Producto</div>
+                                <div className="flex-initial w-20">Solicitado</div>
+                                <div className="flex-initial w-20">Despachado</div>
+                                {/* <div className="flex-initial w-20">Tratamiento</div> */}
+                                <div className="flex-initial w-10"></div>
+                                <div className="flex-initial w-10"></div>
+                            </div>
+                            <div className="col-span-full border-b border-gray-900/10 h-64 overflow-y-auto">
                                 <div className="flow-root">
                                     <ul role="list" className="divide-y divide-gray-200">
                                         {recetaProductos.map((product) => (
-                                            <li key={product.id} className="flex my-2">
-                                                {/* <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                                <img
-                                                    src={product.nombre}
-                                                    alt={product.nombre}
-                                                    className="h-full w-full object-cover object-center"
-                                                />
+                                            <li key={product.id} className="flex py-2 gap-1">
+                                                <div className="flex-1 w-64 justify-between text-base font-medium text-gray-900">
+                                                    <h3>{product.nombre}</h3>
+                                                    <p className="mt-1 text-sm text-gray-500">SKU: {product.codigoproducto}</p>
+                                                    <p className="text-gray-500">Stock: {product.stock}</p>
+                                                </div>
+                                                <div className="flex-initial w-20">
+                                                    <input
+                                                        type="number"
+                                                        name="price"
+                                                        id="price"
+                                                        className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    />
+                                                </div>
+
+                                                <div className="flex-initial w-20">
+                                                    <input
+                                                        type="number"
+                                                        name="cant-des"
+                                                        id="cant-des"
+                                                        className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    />
+                                                </div>
+                                                {/* <div className="flex-initial w-20">
+                                                    <input
+                                                        type="number"
+                                                        name="tratamiento"
+                                                        id="tratamiento"
+                                                        className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    />
                                                 </div> */}
-                                                <div className="ml-4 flex flex-1 flex-col">
-                                                    <div className="flex justify-between text-base font-medium text-gray-900">
-                                                        <div>
-                                                            <h3>{product.nombre}</h3>
-                                                            <p className="mt-1 text-sm text-gray-500">
-                                                                SKU: {product.codigoproducto}
-                                                            </p>
-                                                            <p className="text-gray-500">Stock: {product.stock}</p>
-                                                        </div>
-                                                        {/* <p className="ml-4">{product.qty || 0}</p> */}
-                                                        <div>
-                                                            <div className="relative mt-2 rounded-md shadow-sm">
-                                                                {/* <span className="absolute inset-y-0 left-0 flex items-center">
-                                                                    <button
-                                                                    type="button"
-                                                                    className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                                                    >
-                                                                    <ChevronDownIcon
-                                                                        className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                                                                        aria-hidden="true"
-                                                                    />
-                                                                    </button>
-                                                                </span> */}
-                                                                <input
-                                                                    type="number"
-                                                                    name="price"
-                                                                    id="price"
-                                                                    className="block w-20 rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                                                    placeholder="0"
-                                                                />
-                                                                {/* <span className="absolute inset-y-0 right-0 flex items-center">
-                                                                    <button
-                                                                    type="button"
-                                                                    className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                                                    >
-                                                                    <ChevronUpIcon
-                                                                        className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                                                                        aria-hidden="true"
-                                                                    />
-                                                                    </button>
-                                                                </span> */}
-                                                            </div>
-                                                            <div className="flex flex-1 items-end justify-end text-sm pr-1">
-                                                                <button
-                                                                    type="button"
-                                                                    className="font-medium text-indigo-600 hover:text-indigo-500"
-                                                                >
-                                                                    Suprimir
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                <div className="flex-initial w-10">
+                                                    <button
+                                                        type="button"
+                                                        className="px-2 py-2 rounded bg-gray-600 font-medium text-center hover:bg-gray-500"
+                                                        onClick={() => alert("open modal")}
+                                                    >
+                                                        <PencilIcon className="text-white h-5" aria-hidden="true" />
+                                                    </button>{" "}
+                                                </div>
+                                                <div className="flex-initial w-10">
+                                                    <button
+                                                        type="button"
+                                                        className="px-2 py-2 rounded bg-red-600 font-medium text-center hover:bg-red-500"
+                                                        onClick={() => eliminarProductoReceta(product.id)}
+                                                    >
+                                                        <TrashIcon className="text-white h-5" aria-hidden="true" />
+                                                    </button>{" "}
                                                 </div>
                                             </li>
                                         ))}
                                     </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <label htmlFor="dni-receptor" className="block text-sm font-semibold leading-6 text-gray-900">
+                                    Identificación Receptor
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="text"
+                                        id="dni-receptor"
+                                        autoComplete="dni-receptor"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("dniReceptor", {
+                                            required: "Identificación de receptor requerido",
+                                        })}
+                                    />
+                                    {errors.dniReceptor && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            {errors.dniReceptor.message}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="nombre-receptor"
+                                    className="block text-sm font-semibold leading-6 text-gray-900"
+                                >
+                                    Nombre Receptor
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="text"
+                                        id="nombre-receptor"
+                                        autoComplete="nombre-receptor"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        {...register("nombrePaciente", {
+                                            required: "Nombre de receptor requerido",
+                                            minLength: {
+                                                value: 6,
+                                                message: "Nombre de paciente debe tener mínimo seis caracteres",
+                                            },
+                                            pattern: /^[A-Za-z]+$/i,
+                                        })}
+                                    />
+                                    {errors.nombreReceptor && (
+                                        <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
+                                            {errors.nombreReceptor.message}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                             <div className="col-span-full">

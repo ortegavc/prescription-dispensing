@@ -9,7 +9,8 @@ interface FilterableListProps {
 
 export function SearchBar({ query, onChange, placeholder }: FilterableListProps) {
     return (
-        <div className="relative my-2">
+
+<div className="relative my-2">
             <span className="pointer-events-auto absolute top-2 left-2 h-6 w-6">
                 <MagnifyingGlassIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
             </span>
@@ -24,5 +25,9 @@ export function SearchBar({ query, onChange, placeholder }: FilterableListProps)
                 onChange={onChange}
             />
         </div>
+
+
+
+
     );
 }

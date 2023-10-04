@@ -4,25 +4,18 @@ export const PRODUCTO_BODEGA_COLLECTION_FIELDS = gql`
     fragment productoBodegaCollectionFields on ProductoBodegaCollectionType {
         data {
             bodega_id
-            producto_id            
             bodega {
                 descripcion
                 nombre
             }
             producto {
+                codigoproducto
+                estado
                 id
                 nombre
-                codigoproducto
-                cttipoproducto {
-                    nombre
-                }
-                manejalote
+                nombrecomercial
                 manejacaducidad
-                unidadmedida{
-                    abreviatura
-                    id
-                    nombre
-                }
+                manejalote
             }
         }
         pageInfo {
@@ -36,33 +29,32 @@ export const PRODUCTO_BODEGA_COLLECTION_FIELDS = gql`
 `
 
 export const PRODUCTO_STOCK_BODEGA_FIELDS = gql`
-    fragment productoStockBodegaFields on ProductoStockBodegaStock{
-        id
-        producto_id
+    fragment productoStockBodegaFields on ProductoStockBodegaStock{        
         bodega_id
-        valorpromedio
-        consumopromediomensual
-        costoinicial
-        productostockent_id
+        producto_id
         saldo
-        saldodisponible
         stockcomprometido
         stockdespacho
         stockinicial
-        producto {
-            id
-            codigoproducto
-            nombrecomercial
-            unidadmedida {
-                id
-                abreviatura
-            }
-            cttipoproducto {
-                id
-                nombre
-            }
-            nombre
-        }
+        valorpromedio        
+    }
+`
+
+export const STOCK_PRODUCTO_BODEGA_FIELDS = gql`
+    fragment stockProductoBodegaFields on StockProductoBodegaList
+    {        
+        CANTIDAD
+        CANTIDADDISTRIBUIDA
+        CODIGOPRODUCTO
+        COSTO
+        FECHACADUCIDAD
+        LOTEID
+        NOMBRE
+        NUMEROLOTE
+        PRODUCTOID
+        UNIDADMEDIDAABREVIATURA
+        UNIDADMEDIDAID
+        UNIDADMEDIDANOMBRE
     }
 `
 

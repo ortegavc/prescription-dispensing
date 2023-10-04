@@ -63,10 +63,7 @@ export  function Dashboard() {
     
     return (
         <div className="p-7">
-            {/* <Header
-        title="Tailwind CSS & React Cards - Material Tailwind PRO"
-        description="A card is used to display content and actions about a single topic. See below our examples of Card Components built with Tailwind CSS and React."
-      /> */}
+          
             <h5>{heading.title}</h5>
             <label className='font-medium text-gray-500'>{heading.description}</label>
             <hr className="mt-5 "></hr>
