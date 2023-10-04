@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment, useRef } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import ReactDOM from "react-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import { MagnifyingGlassIcon, TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { graphql } from "@msp/shared";
 
 const fake_bodega_id = 7589;
@@ -12,6 +14,11 @@ const fake_entidad_id = 1781;
 interface FilterableListProps {
     query: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+interface ModalDistribucionLoteProps {
+    isOpen: boolean;
+    setIsOpen: (e: any) => void;
 }
 
 interface IFormInput {
@@ -55,6 +62,68 @@ function SearchBar({ query, onChange }: FilterableListProps) {
     );
 }
 
+function ModalDistribucionLote({ isOpen, setIsOpen }: ModalDistribucionLoteProps) {
+    return (
+        <Transition appear show={isOpen} as={Fragment}>
+            <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
+                <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-black bg-opacity-25" />
+                </Transition.Child>
+
+                <div className="fixed inset-0 overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4 text-center">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 scale-95"
+                            enterTo="opacity-100 scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 scale-100"
+                            leaveTo="opacity-0 scale-95"
+                        >
+                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                                    Distribución Producto Lote
+                                </Dialog.Title>
+                                <div className="mt-2 table w-full border">
+                                    <div className="table-header-group">
+                                        <div className="table-row text-center">
+                                            <div className="table-cell border">SKU</div>
+                                            <div className="table-cell border">Nombre</div>
+                                            <div className="table-cell border">Lote</div>
+                                            <div className="table-cell border">Unidad</div>
+                                            <div className="table-cell border">Vence</div>
+                                            <div className="table-cell border">Stok</div>
+                                            <div className="table-cell border">Cant.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-4 sm:flex sm:flex-row-reverse sm:px-6">
+                                    <button
+                                        type="button"
+                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                        onClick={setIsOpen}
+                                    >
+                                        Aceptar
+                                    </button>
+                                </div>
+                            </Dialog.Panel>
+                        </Transition.Child>
+                    </div>
+                </div>
+            </Dialog>
+        </Transition>
+    );
+}
+
 export default function Terminal() {
     const {
         register,
@@ -71,6 +140,7 @@ export default function Terminal() {
     const [query, setQuery] = useState<string>("");
     const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
     const [selected, setSelected] = useState<Producto | null>(null);
+    const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
     const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
 
     console.log(errors);
@@ -130,6 +200,10 @@ export default function Terminal() {
 
     function eliminarProductoReceta(productId: number) {
         setRecetaProductos(recetaProductos.filter((item) => item.id !== productId));
+    }
+
+    function openCloseModalDistLote() {
+        setModalDistLoteIsOpen(!modalDistLoteIsOpen);
     }
 
     return (
@@ -464,6 +538,7 @@ export default function Terminal() {
                     </form>
                 </div>
             </div>
+            <ModalDistribucionLote isOpen={modalDistLoteIsOpen} setIsOpen={openCloseModalDistLote} />
         </div>
     );
 }
