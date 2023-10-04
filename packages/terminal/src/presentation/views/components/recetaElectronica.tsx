@@ -66,7 +66,7 @@ function RecetaElectronica() {
   }
 
   // Función para ejecutar la consulta GraphQL cuando se hace clic en el botón "Buscar"
-  //100091200007543',
+  // 1.000912.00007543
 
   function handleSearch() {
 

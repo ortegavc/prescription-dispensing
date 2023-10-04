@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Fragment, useRef } from "react";
+import { useDispatch, useSelector} from "react-redux";
 import { Dialog, Transition } from "@headlessui/react";
 import ReactDOM from "react-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -8,6 +9,9 @@ import { MagnifyingGlassIcon, TrashIcon, PencilIcon } from "@heroicons/react/20/
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { graphql } from "@msp/shared";
 import RecetaElectronica from "./components/recetaElectronica";
+import { IDespacho  as IFormInput} from "@domain/models";
+import { RootState } from "@presentation/stores";
+import { updateDespacho } from "@presentation/actions";
 
 const fake_bodega_id = 7589;
 const fake_entidad_id = 1781;
@@ -22,13 +26,6 @@ interface ModalDistribucionLoteProps {
     setIsOpen: (e: any) => void;
 }
 
-interface IFormInput {
-    noReceta: string;
-    dniPaciente: string;
-    nombrePaciente: string;
-    dniReceptor: string;
-    nombreReceptor: string;
-}
 
 interface Producto {
     codigoproducto: string;
@@ -126,6 +123,11 @@ function ModalDistribucionLote({ isOpen, setIsOpen }: ModalDistribucionLoteProps
 }
 
 export default function Terminal() {
+    const dispatch = useDispatch();
+    const {
+        objetoDespacho
+      }: any = useSelector<RootState>((state) => state.despacho);
+
     const {
         register,
         handleSubmit,
@@ -146,7 +148,12 @@ export default function Terminal() {
 
     console.log(errors);
 
+    useEffect(()=>{
+        console.log('objetoDespacho',objetoDespacho)
+    },[objetoDespacho])
+
     useEffect(() => {
+
         if (selected !== null) {
             console.log("Un producto ha sido seleccionado", selected);
             // Check if an object with the same id does not already exist in the array
@@ -197,6 +204,12 @@ export default function Terminal() {
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         setQuery(e.target.value);
+
+        // dispatch(
+        //     updateDespacho({
+        //        data:{numeroreceta:'prueba'} 
+        //     })
+        //   );
     }
 
     function eliminarProductoReceta(productId: number) {
@@ -333,9 +346,9 @@ export default function Terminal() {
                                         id="no-receta"
                                         autoComplete="no-receta"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        {...register("noReceta", { required: true, maxLength: 20 })}
+                                        {...register("numeroreceta", { required: true, maxLength: 20 })}
                                     />
-                                    {errors.noReceta?.type === "required" && (
+                                    {errors.numeroreceta?.type === "required" && (
                                         <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
                                             Número de receta requerido
                                         </p>
@@ -349,16 +362,17 @@ export default function Terminal() {
                                 <div className="mt-1">
                                     <input
                                         type="text"
+                                        value={objetoDespacho?.paciente.identificacion}
                                         id="dni-paciente"
                                         autoComplete="dni-paciente"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        {...register("dniPaciente", {
+                                        {...register("paciente.identificacion", {
                                             required: "Identificación de paciente requerido",
                                         })}
                                     />
-                                    {errors.dniPaciente && (
+                                    {errors.paciente?.identificacion && (
                                         <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
-                                            {errors.dniPaciente.message}
+                                            {errors.paciente.identificacion.message}
                                         </p>
                                     )}
                                 </div>
@@ -376,7 +390,7 @@ export default function Terminal() {
                                         id="nombre-paciente"
                                         autoComplete="nombre-paciente"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        {...register("nombrePaciente", {
+                                        {...register("paciente.nombre", {
                                             required: "Nombre de paciente requerido",
                                             minLength: {
                                                 value: 6,
@@ -385,9 +399,9 @@ export default function Terminal() {
                                             pattern: /^[A-Za-z]+$/i,
                                         })}
                                     />
-                                    {errors.nombrePaciente && (
+                                    {errors.paciente?.nombre && (
                                         <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
-                                            {errors.nombrePaciente.message}
+                                            {errors.paciente.nombre.message}
                                         </p>
                                     )}
                                 </div>
@@ -468,13 +482,13 @@ export default function Terminal() {
                                         id="dni-receptor"
                                         autoComplete="dni-receptor"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        {...register("dniReceptor", {
+                                        {...register("identificareceptor", {
                                             required: "Identificación de receptor requerido",
                                         })}
                                     />
-                                    {errors.dniReceptor && (
+                                    {errors.identificareceptor && (
                                         <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
-                                            {errors.dniReceptor.message}
+                                            {errors.identificareceptor.message}
                                         </p>
                                     )}
                                 </div>
@@ -492,7 +506,7 @@ export default function Terminal() {
                                         id="nombre-receptor"
                                         autoComplete="nombre-receptor"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        {...register("nombrePaciente", {
+                                        {...register("nombrereceptor", {
                                             required: "Nombre de receptor requerido",
                                             minLength: {
                                                 value: 6,
@@ -501,9 +515,9 @@ export default function Terminal() {
                                             pattern: /^[A-Za-z]+$/i,
                                         })}
                                     />
-                                    {errors.nombreReceptor && (
+                                    {errors.nombrereceptor && (
                                         <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
-                                            {errors.nombreReceptor.message}
+                                            {errors.nombrereceptor.message}
                                         </p>
                                     )}
                                 </div>

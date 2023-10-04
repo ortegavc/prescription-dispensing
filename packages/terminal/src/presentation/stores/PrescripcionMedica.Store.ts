@@ -1,9 +1,9 @@
 import {configureStore} from '@reduxjs/toolkit';
-import { prescripcionMedicaActions } from '@presentation/actions';
+import { despachoActions } from '@presentation/actions';
 
 export const store =configureStore({
     reducer:{
-        prescripcionMedica: prescripcionMedicaActions.reducer
+        despacho: despachoActions.reducer
         
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck: false,}),

@@ -1,1 +1,1 @@
-export * from './PrescripcionMedica.Actions';
+export * from './despacho.Actions';
