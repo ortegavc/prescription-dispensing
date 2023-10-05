@@ -1,31 +1,19 @@
-import React, { useEffect, useState, Fragment, useRef } from "react";
-import { useDispatch, useSelector} from "react-redux";
-import { Dialog, Transition } from "@headlessui/react";
-import ReactDOM from "react-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
-import { MagnifyingGlassIcon, TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
 import RecetaElectronica from "./components/recetaElectronica";
-import { IDespacho  as IFormInput} from "@domain/models";
+import { IDespacho as IFormInput } from "@domain/models";
 import { RootState } from "@presentation/stores";
 import { updateDespacho } from "@presentation/actions";
+import { SearchBar, ModalDistribucionLote } from "./components/forms";
 
 const fake_bodega_id = 7589;
 const fake_entidad_id = 1781;
-
-interface FilterableListProps {
-    query: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-interface ModalDistribucionLoteProps {
-    isOpen: boolean;
-    setIsOpen: (e: any) => void;
-}
-
 
 interface Producto {
     codigoproducto: string;
@@ -40,93 +28,9 @@ function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
-function SearchBar({ query, onChange }: FilterableListProps) {
-    return (
-        <div className="relative my-2">
-            <span className="pointer-events-auto absolute top-2 left-2 h-6 w-6">
-                <MagnifyingGlassIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-            </span>
-            <input
-                id="producto-nombre"
-                name="producto-nombre"
-                type="text"
-                autoComplete="producto-nombre"
-                className="block w-full rounded-md border-0 px-8 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="Digite nombre de producto o SKU para buscar"
-                value={query}
-                onChange={onChange}
-            />
-        </div>
-    );
-}
-
-function ModalDistribucionLote({ isOpen, setIsOpen }: ModalDistribucionLoteProps) {
-    return (
-        <Transition appear show={isOpen} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
-                <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="fixed inset-0 bg-black bg-opacity-25" />
-                </Transition.Child>
-
-                <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4 text-center">
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 scale-95"
-                            enterTo="opacity-100 scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 scale-100"
-                            leaveTo="opacity-0 scale-95"
-                        >
-                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                                    Distribución Producto Lote
-                                </Dialog.Title>
-                                <div className="mt-2 table w-full border">
-                                    <div className="table-header-group">
-                                        <div className="table-row text-center">
-                                            <div className="table-cell border">SKU</div>
-                                            <div className="table-cell border">Nombre</div>
-                                            <div className="table-cell border">Lote</div>
-                                            <div className="table-cell border">Unidad</div>
-                                            <div className="table-cell border">Vence</div>
-                                            <div className="table-cell border">Stok</div>
-                                            <div className="table-cell border">Cant.</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mt-4 sm:flex sm:flex-row-reverse sm:px-6">
-                                    <button
-                                        type="button"
-                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                        onClick={setIsOpen}
-                                    >
-                                        Aceptar
-                                    </button>
-                                </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
-                    </div>
-                </div>
-            </Dialog>
-        </Transition>
-    );
-}
-
 export default function Terminal() {
     const dispatch = useDispatch();
-    const {
-        objetoDespacho
-      }: any = useSelector<RootState>((state) => state.despacho);
+    const { objetoDespacho }: any = useSelector<RootState>((state) => state.despacho);
 
     const {
         register,
@@ -148,16 +52,15 @@ export default function Terminal() {
 
     console.log(errors);
 
-    useEffect(()=>{
-        console.log('objetoDespacho',objetoDespacho)
-    },[objetoDespacho])
+    useEffect(() => {
+        console.log("objetoDespacho", objetoDespacho);
+    }, [objetoDespacho]);
 
     useEffect(() => {
-
         if (selected !== null) {
             console.log("Un producto ha sido seleccionado", selected);
             // Check if an object with the same id does not already exist in the array
-            const isNotInArray = !recetaProductos.some((item) => item.id === selected.id);
+            const isNotInArray = !recetaProductos.some((item: Producto) => item.id === selected.id);
 
             if (isNotInArray) {
                 // If it's not in the array, push it
@@ -207,7 +110,7 @@ export default function Terminal() {
 
         // dispatch(
         //     updateDespacho({
-        //        data:{numeroreceta:'prueba'} 
+        //        data:{numeroreceta:'prueba'}
         //     })
         //   );
     }
@@ -251,8 +154,12 @@ export default function Terminal() {
 
                 <div className="">
                     <div className="border rounded px-2 py-2">
-                        <SearchBar query={query} onChange={handleChange} />
-                        <RecetaElectronica/>
+                        <SearchBar
+                            query={query}
+                            onChange={handleChange}
+                            placeholder="Digite nombre de producto o SKU para buscar"
+                        />
+                        {/* <RecetaElectronica /> */}
                         <RadioGroup value={selected} onChange={setSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
