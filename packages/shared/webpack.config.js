@@ -72,10 +72,10 @@ module.exports = mergeWithRules({
       //   exclude: [path.resolve(__dirname, 'node_modules')],
       //   loader: 'babel-loader',
       // },
-      // {
-      //   test: /\.tsx?$/,
-      //   loader: 'ts-loader',
-      // },
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+      },
     ],
   },
 });
