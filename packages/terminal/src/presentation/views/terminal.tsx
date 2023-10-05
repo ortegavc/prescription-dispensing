@@ -7,7 +7,7 @@ import { Switch } from "@headlessui/react";
 import { TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
 import RecetaElectronica from "./components/recetaElectronica";
-import { IDespacho as IFormInput } from "@domain/models";
+import { IDespacho, initialState } from "@domain/models";
 import { RootState } from "@presentation/stores";
 import { updateDespacho } from "@presentation/actions";
 import { SearchBar, ModalDistribucionLote } from "./components/forms";
@@ -30,15 +30,24 @@ function classNames(...classes: string[]) {
 
 export default function Terminal() {
     const dispatch = useDispatch();
-    const { objetoDespacho }: any = useSelector<RootState>((state) => state.despacho);
+    const datosDespacho = useSelector((state: RootState) => state.despacho);
+    const [defaultValues, setDefaultValues] = useState<IDespacho>(datosDespacho);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<IFormInput>();
+        reset,
+    } = useForm<IDespacho>({ defaultValues });
+
+    useEffect(() => {
+        //setDefaultValues(datosDespacho);
+        reset(datosDespacho);
+    }, [datosDespacho, reset]);
+
     const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery, useStockProductoBodegaListLazyQuery } =
         graphql;
+
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
     const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
@@ -48,17 +57,14 @@ export default function Terminal() {
     const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
     const [selected, setSelected] = useState<Producto | null>(null);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
-    const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+    const onSubmit: SubmitHandler<IDespacho> = (data) => console.log(data);
 
     console.log(errors);
 
     useEffect(() => {
-        console.log("objetoDespacho", objetoDespacho);
-    }, [objetoDespacho]);
-
-    useEffect(() => {
         if (selected !== null) {
             console.log("Un producto ha sido seleccionado", selected);
+
             // Check if an object with the same id does not already exist in the array
             const isNotInArray = !recetaProductos.some((item: Producto) => item.id === selected.id);
 
@@ -269,7 +275,6 @@ export default function Terminal() {
                                 <div className="mt-1">
                                     <input
                                         type="text"
-                                        value={objetoDespacho?.paciente.identificacion}
                                         id="dni-paciente"
                                         autoComplete="dni-paciente"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"

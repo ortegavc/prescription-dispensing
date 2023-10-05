@@ -45,7 +45,7 @@ function RecetaElectronica() {
 
           dispatch(
             loadDesapacho({
-              objetoDespacho,
+            objetoDespacho,
             })
           );
         }
@@ -90,7 +90,7 @@ function RecetaElectronica() {
 
   return (
     <div className="w-full">
-      <label htmlFor="search" className="block text-gray-700 font-bold">Buscar receta electrónica</label>
+      <label htmlFor="search" className="block text-gray-700 font-bold">Buscar receta electrónica Ej: 1.000912.00007543</label>
       <div className="flex items-center mt-2">
         <SearchBar query={query} onChange={handleChange} placeholder="Digite el número de receta electrónica" />
         <div className="ml-2">
