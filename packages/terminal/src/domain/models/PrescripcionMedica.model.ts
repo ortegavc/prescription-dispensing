@@ -1,6 +1,6 @@
 // Modelo de datos para la pantalla de despacho de recetas
 export interface IDespacho {
-     numeroreceta: string;
+    numeroreceta: string;
     identificareceptor: string | null;
     nombrereceptor: string | null;
     recetaelectronica: number;
@@ -73,26 +73,13 @@ const pacientePersona: IDespachoPaciente = {
     nombre: "",
 };
 
-const recetaDetalle: IDespachoDetalle[] = [
-    {
-        cantidaddespachada: 0,
-        cantidaddispensada: 0,
-        cantidadrequerida: 0,
-        costo: 0,
-        lote_id: 0,
-        producto_id: 0,
-        unidadmedida_id: "",
-        receta_oid:' 0',
-    },
-];
-
-export const initialState : IDespacho = {
-  numeroreceta: "",
-  identificareceptor: "",
-  nombrereceptor: "",
-  recetaelectronica: 0,
-  paciente:pacientePersona,
-  oid: "",
-  turno_id: 0,
-  despachodetalle: recetaDetalle,
+export const initialState: IDespacho = {
+    numeroreceta: "",
+    identificareceptor: "",
+    nombrereceptor: "",
+    recetaelectronica: 0,
+    paciente: pacientePersona,
+    oid: "",
+    turno_id: 0,
+    despachodetalle: [],
 };

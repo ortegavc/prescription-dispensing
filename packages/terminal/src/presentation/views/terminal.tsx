@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import { TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
 import { graphql } from "@msp/shared";
 import RecetaElectronica from "./components/recetaElectronica";
-import { IDespacho, initialState } from "@domain/models";
+import { IDespacho, IDespachoDetalle, initialState } from "@domain/models";
 import { RootState } from "@presentation/stores";
-import { updateDespacho } from "@presentation/actions";
+import { addMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { SearchBar, ModalDistribucionLote } from "./components/forms";
 
 const fake_bodega_id = 7589;
@@ -22,6 +21,7 @@ interface Producto {
     manejaLote: boolean;
     nombre: string;
     stock: number;
+    cantidad: number;
 }
 
 function classNames(...classes: string[]) {
@@ -34,14 +34,37 @@ export default function Terminal() {
     const [defaultValues, setDefaultValues] = useState<IDespacho>(datosDespacho);
 
     const {
-        register,
-        handleSubmit,
+        control,
         formState: { errors },
+        handleSubmit,
+        register,
         reset,
+        watch,
     } = useForm<IDespacho>({ defaultValues });
 
+    const { fields, remove, append } = useFieldArray({
+        name: "despachodetalle",
+        control,
+    });
+
+    // const watchFields = watch(["numeroreceta"]); // you can also target specific fields by their names
+    // Callback version of watch.  It's your responsibility to unsubscribe when done.
     useEffect(() => {
-        //setDefaultValues(datosDespacho);
+        const subscription = watch((value, { name, type }) => {
+            console.log(value, name, type);
+            if (name !== undefined && type === "change") {
+                let pattern = /^despachodetalle/;
+                if (pattern.test(name)) {
+                    dispatch(updateMedicamento(value.despachodetalle));
+                }
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, [watch]);
+
+    useEffect(() => {
+        console.log("useEffect reset(datosDespacho)", datosDespacho);
         reset(datosDespacho);
     }, [datosDespacho, reset]);
 
@@ -57,11 +80,16 @@ export default function Terminal() {
     const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
     const [selected, setSelected] = useState<Producto | null>(null);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
-    const onSubmit: SubmitHandler<IDespacho> = (data) => console.log(data);
 
-    console.log(errors);
+    const onSubmit: SubmitHandler<IDespacho> = (data) => {
+        console.log(data);
+    };
+
+    console.log("Validation errors", errors);
 
     useEffect(() => {
+        console.log("useEffect para [query, selected]");
+
         if (selected !== null) {
             console.log("Un producto ha sido seleccionado", selected);
 
@@ -80,6 +108,18 @@ export default function Terminal() {
                         console.log("getProductoStockBodegaLazyQuery done", c.productoStockBodega);
                         selected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
                         setRecetaProductos([...recetaProductos, selected]);
+                        dispatch(
+                            addMedicamento({
+                                cantidaddespachada: 0,
+                                cantidaddispensada: 0,
+                                cantidadrequerida: 0,
+                                costo: 0,
+                                lote_id: selected.codigoproducto,
+                                producto_id: selected.id,
+                                unidadmedida_id: "",
+                                receta_oid: " 0",
+                            })
+                        );
                     },
                     onError: () => {},
                 });
@@ -103,6 +143,7 @@ export default function Terminal() {
                                 manejaLote: !!item.producto.manejalote,
                                 nombre: item.producto.nombre,
                                 stock: 0,
+                                cantidad: 0,
                             };
                         })
                     );
@@ -111,18 +152,29 @@ export default function Terminal() {
         }
     }, [query, selected]);
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleChangeSearchBar(e: React.ChangeEvent<HTMLInputElement>) {
         setQuery(e.target.value);
-
-        // dispatch(
-        //     updateDespacho({
-        //        data:{numeroreceta:'prueba'}
-        //     })
-        //   );
     }
 
     function eliminarProductoReceta(productId: number) {
-        setRecetaProductos(recetaProductos.filter((item) => item.id !== productId));
+        setRecetaProductos(recetaProductos.filter((item: Producto) => item.id !== productId));
+    }
+
+    function fetchProductosLote(productId: number, cantidad: number) {
+        getStockProductoBodegaListLazyQuery({
+            variables: {
+                bodega_id: fake_bodega_id,
+                cantidad: cantidad,
+                entidad_id: fake_entidad_id,
+                producto_id: productId,
+                caducado: false,
+            },
+            fetchPolicy: "cache-and-network",
+            onCompleted: (c: any) => {
+                console.log("getStockProductoBodegaListLazyQuery done", c.stockProductoBodegaList);
+                openCloseModalDistLote();
+            },
+        });
     }
 
     function openCloseModalDistLote() {
@@ -162,7 +214,7 @@ export default function Terminal() {
                     <div className="border rounded px-2 py-2">
                         <SearchBar
                             query={query}
-                            onChange={handleChange}
+                            onChange={handleChangeSearchBar}
                             placeholder="Digite nombre de producto o SKU para buscar"
                         />
                         {/* <RecetaElectronica /> */}
@@ -329,7 +381,7 @@ export default function Terminal() {
                             <div className="col-span-full border-b border-gray-900/10 h-64 overflow-y-auto">
                                 <div className="flow-root">
                                     <ul role="list" className="divide-y divide-gray-200">
-                                        {recetaProductos.map((product) => (
+                                        {recetaProductos.map((product, index) => (
                                             <li key={product.id} className="flex py-2 gap-1">
                                                 <div className="flex-1 w-64 justify-between text-base font-medium text-gray-900">
                                                     <h3>{product.nombre}</h3>
@@ -339,16 +391,15 @@ export default function Terminal() {
                                                 <div className="flex-initial w-20">
                                                     <input
                                                         type="number"
-                                                        name="price"
-                                                        id="price"
+                                                        id="cant-req"
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                        {...register(`despachodetalle.${index}.cantidadrequerida`)}
                                                     />
                                                 </div>
 
                                                 <div className="flex-initial w-20">
                                                     <input
                                                         type="number"
-                                                        name="cant-des"
                                                         id="cant-des"
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                                     />
@@ -365,7 +416,7 @@ export default function Terminal() {
                                                     <button
                                                         type="button"
                                                         className="px-2 py-2 rounded bg-gray-600 font-medium text-center hover:bg-gray-500"
-                                                        onClick={() => alert("open modal")}
+                                                        onClick={() => fetchProductosLote(product.id, product.cantidad)}
                                                     >
                                                         <PencilIcon className="text-white h-5" aria-hidden="true" />
                                                     </button>{" "}

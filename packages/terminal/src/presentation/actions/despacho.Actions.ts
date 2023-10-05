@@ -15,8 +15,7 @@ export const despachoActions = createSlice({
         },
 
         updateDespacho: (state, action) => {
-            return { ...state, ...action.payload };
-          
+            return { ...state, ...action.payload.data };
         },
 
         addMedicamento: (state, action) => {
@@ -34,14 +33,7 @@ export const despachoActions = createSlice({
             state.despachodetalle.push(nuevoDetalle);
         },
         updateMedicamento: (state, action) => {
-            const medicamentoActualizado = action.payload;
-            const detalleIndex = state.despachodetalle.findIndex(
-                (detalle) => detalle.receta_oid === medicamentoActualizado.oid
-            );
-
-            if (detalleIndex !== -1) {
-                state.despachodetalle[detalleIndex] = medicamentoActualizado;
-            }
+            state.despachodetalle = action.payload
         },
         deleteMedicamento: (state, action) => {
             const medicamentoAEliminar = action.payload.oid;
@@ -50,5 +42,5 @@ export const despachoActions = createSlice({
     },
 });
 
-export const {loadDesapacho, addDespacho, updateDespacho, addMedicamento, updateMedicamento, deleteMedicamento } =
-despachoActions.actions;
+export const { loadDesapacho, addDespacho, updateDespacho, addMedicamento, updateMedicamento, deleteMedicamento } =
+    despachoActions.actions;
