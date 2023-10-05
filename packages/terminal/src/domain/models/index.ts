@@ -1,1 +1,1 @@
-export * from './prescripcionMedica.Model';
+export * from './PrescripcionMedica.model';
