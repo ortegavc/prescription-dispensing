@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment, useRef } from "react";
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Dialog, Transition } from "@headlessui/react";
 import ReactDOM from "react-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -9,7 +9,7 @@ import { MagnifyingGlassIcon, TrashIcon, PencilIcon } from "@heroicons/react/20/
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { graphql } from "@msp/shared";
 import RecetaElectronica from "./components/recetaElectronica";
-import { IDespacho  as IFormInput} from "@domain/models";
+import { IDespacho, initialState } from "@domain/models";
 import { RootState } from "@presentation/stores";
 import { updateDespacho } from "@presentation/actions";
 
@@ -124,17 +124,25 @@ function ModalDistribucionLote({ isOpen, setIsOpen }: ModalDistribucionLoteProps
 
 export default function Terminal() {
     const dispatch = useDispatch();
-    const {
-        objetoDespacho
-      }: any = useSelector<RootState>((state) => state.despacho);
-
+    const datosDespacho = useSelector((state: RootState) => state.despacho);
+    const [defaultValues, setDefaultValues] = useState<IDespacho>(datosDespacho);
+    
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<IFormInput>();
+        reset,
+    } = useForm<IDespacho>({ defaultValues });
+
+    useEffect(() => {
+        //setDefaultValues(datosDespacho);
+        reset(datosDespacho);
+      }, [datosDespacho,reset]);
+
+
     const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery, useStockProductoBodegaListLazyQuery } =
         graphql;
+
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
     const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
@@ -144,18 +152,18 @@ export default function Terminal() {
     const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
     const [selected, setSelected] = useState<Producto | null>(null);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
-    const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+    const onSubmit: SubmitHandler<IDespacho> = (data) => console.log(data);
 
     console.log(errors);
 
-    useEffect(()=>{
-        console.log('objetoDespacho',objetoDespacho)
-    },[objetoDespacho])
+
 
     useEffect(() => {
 
         if (selected !== null) {
+
             console.log("Un producto ha sido seleccionado", selected);
+
             // Check if an object with the same id does not already exist in the array
             const isNotInArray = !recetaProductos.some((item) => item.id === selected.id);
 
@@ -172,7 +180,7 @@ export default function Terminal() {
                         selected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
                         setRecetaProductos([...recetaProductos, selected]);
                     },
-                    onError: () => {},
+                    onError: () => { },
                 });
             }
             console.log(recetaProductos);
@@ -220,6 +228,8 @@ export default function Terminal() {
         setModalDistLoteIsOpen(!modalDistLoteIsOpen);
     }
 
+
+
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
@@ -252,7 +262,7 @@ export default function Terminal() {
                 <div className="">
                     <div className="border rounded px-2 py-2">
                         <SearchBar query={query} onChange={handleChange} />
-                        <RecetaElectronica/>
+                        <RecetaElectronica />
                         <RadioGroup value={selected} onChange={setSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -362,7 +372,6 @@ export default function Terminal() {
                                 <div className="mt-1">
                                     <input
                                         type="text"
-                                        value={objetoDespacho?.paciente.identificacion}
                                         id="dni-paciente"
                                         autoComplete="dni-paciente"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"

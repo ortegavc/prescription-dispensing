@@ -8,7 +8,7 @@ export const despachoActions = createSlice({
     initialState,
     reducers: {
         loadDesapacho(state, action) {
-            return { ...state, ...action.payload };
+            return { ...state, ...action.payload.objetoDespacho };
         },
         addDespacho: (state, action) => {
             return { ...state, ...action.payload };
