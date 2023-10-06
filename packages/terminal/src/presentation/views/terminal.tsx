@@ -21,7 +21,8 @@ interface Producto {
     manejaLote: boolean;
     nombre: string;
     stock: number;
-    cantidad: number;
+    cantidadrequerida: number;
+    cantidaddespachada: number;
 }
 
 function classNames(...classes: string[]) {
@@ -51,7 +52,7 @@ export default function Terminal() {
     const [agreed, setAgreed] = useState<boolean>(false);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
     const [stockProductoBodegaList, setStockProductoBodegaList] = useState<any[]>([]);
-    const [productos, setProductos] = useState<Producto[]>([]);
+    const [productosRadioGroup, setProductosRadioGroup] = useState<Producto[]>([]);
     const [query, setQuery] = useState<string>("");
     const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
     const [productoModal, setProductoModal] = useState<Producto | null>(null);
@@ -123,6 +124,7 @@ export default function Terminal() {
                                 receta_oid: "",
                             })
                         );
+                        console.log("recetaProductos", recetaProductos);
                     },
                     onError: () => {},
                 });
@@ -136,7 +138,7 @@ export default function Terminal() {
                     inputOrder: { asc: "producto.nombre" },
                 },
                 onCompleted: (c: any) => {
-                    setProductos(
+                    setProductosRadioGroup(
                         c.productoBodegaCollection.data.map((item: any) => {
                             return {
                                 codigoproducto: item.producto.codigoproducto,
@@ -144,8 +146,8 @@ export default function Terminal() {
                                 id: item.producto.id,
                                 manejaLote: !!item.producto.manejalote,
                                 nombre: item.producto.nombre,
-                                stock: 0,
-                                cantidad: 0,
+                                // stock: 0,
+                                // cantidad: 0,
                             };
                         })
                     );
@@ -165,12 +167,25 @@ export default function Terminal() {
 
     function fetchProductosLote(productId: number) {
         const prodInState = datosDespacho.despachodetalle.find((item: IDespachoDetalle) => item.producto_id === productId);
+        console.log("recetaProductos", recetaProductos);
+        console.log(
+            "open modal dist lote para ",
+            recetaProductos.find((item: Producto) => item.id === productId)
+        );
         setProductoModal(recetaProductos.find((item: Producto) => item.id === productId) || null);
+        // if (prodInState !== undefined) {
+        //     const updatedProductModal = {
+        //         ...recetaProductos.find((item: Producto) => item.id === productId),
+        //         cantidaddespachada: prodInState.cantidaddespachada
+        //     }
+        //     setProductoModal(updatedProductModal);
+        //     // setProductoModal({ ...productoModal, cantidaddespachada: prodInState.cantidaddespachada });
+        // }
         setStockProductoBodegaList([]);
         getStockProductoBodegaListLazyQuery({
             variables: {
                 bodega_id: fake_bodega_id,
-                cantidad: prodInState?.cantidadrequerida,
+                cantidad: prodInState?.cantidaddespachada,
                 entidad_id: fake_entidad_id,
                 producto_id: productId,
                 caducado: false,
@@ -228,7 +243,7 @@ export default function Terminal() {
                         <RadioGroup value={productoGridSelected} onChange={setProductoGridSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {productos.map((item) => (
+                                {productosRadioGroup.map((item) => (
                                     <RadioGroup.Option
                                         key={item.id}
                                         value={item}
@@ -410,6 +425,9 @@ export default function Terminal() {
                                                         type="number"
                                                         id="cant-des"
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                        {...register(`despachodetalle.${index}.cantidaddespachada`, {
+                                                            setValueAs: (v) => parseInt(v),
+                                                        })}
                                                     />
                                                 </div>
                                                 {/* <div className="flex-initial w-20">
