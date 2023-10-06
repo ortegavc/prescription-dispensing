@@ -36,8 +36,7 @@ export const despachoActions = createSlice({
             state.despachodetalle = action.payload
         },
         deleteMedicamento: (state, action) => {
-            const medicamentoAEliminar = action.payload.oid;
-            state.despachodetalle = state.despachodetalle.filter((detalle) => detalle.receta_oid !== medicamentoAEliminar);
+            state.despachodetalle = state.despachodetalle.filter((detalle) => detalle.producto_id !== action.payload.producto_id);
         },
     },
 });

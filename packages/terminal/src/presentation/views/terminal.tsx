@@ -4,12 +4,12 @@ import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import { TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
+import { IDespacho } from "@domain/models";
 import { graphql } from "@msp/shared";
-import RecetaElectronica from "./components/recetaElectronica";
-import { IDespacho, IDespachoDetalle, initialState } from "@domain/models";
+import { addMedicamento, deleteMedicamento, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
-import { addMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { SearchBar, ModalDistribucionLote } from "./components/forms";
+import RecetaElectronica from "./components/recetaElectronica";
 
 const fake_bodega_id = 7589;
 const fake_entidad_id = 1781;
@@ -117,7 +117,7 @@ export default function Terminal() {
                                 lote_id: selected.codigoproducto,
                                 producto_id: selected.id,
                                 unidadmedida_id: "",
-                                receta_oid: " 0",
+                                receta_oid: "",
                             })
                         );
                     },
@@ -157,6 +157,7 @@ export default function Terminal() {
     }
 
     function eliminarProductoReceta(productId: number) {
+        dispatch(deleteMedicamento({ producto_id: productId }));
         setRecetaProductos(recetaProductos.filter((item: Producto) => item.id !== productId));
     }
 
