@@ -4,7 +4,7 @@ import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
 import { TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
-import { IDespacho } from "@domain/models";
+import { IDespacho, IDespachoDetalle } from "@domain/models";
 import { graphql } from "@msp/shared";
 import { addMedicamento, deleteMedicamento, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
@@ -42,10 +42,37 @@ export default function Terminal() {
         watch,
     } = useForm<IDespacho>({ defaultValues });
 
+    const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery, useStockProductoBodegaListLazyQuery } =
+        graphql;
+    const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
+    const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
+    const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
+
+    const [agreed, setAgreed] = useState<boolean>(false);
+    const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
+    const [stockProductoBodegaList, setStockProductoBodegaList] = useState<any[]>([]);
+    const [productos, setProductos] = useState<Producto[]>([]);
+    const [query, setQuery] = useState<string>("");
+    const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
+    const [productoModal, setProductoModal] = useState<Producto | null>(null);
+    const [productoGridSelected, setProductoGridSelected] = useState<Producto | null>(null);
+
+    const onSubmit: SubmitHandler<IDespacho> = (data) => {
+        console.log(data);
+    };
+
+    // Watch in Field Array
     const { fields, remove, append } = useFieldArray({
         name: "despachodetalle",
         control,
     });
+
+    console.log("Validation errors", errors);
+
+    useEffect(() => {
+        console.log("useEffect reset(datosDespacho)", datosDespacho);
+        reset(datosDespacho);
+    }, [datosDespacho, reset]);
 
     // const watchFields = watch(["numeroreceta"]); // you can also target specific fields by their names
     // Callback version of watch.  It's your responsibility to unsubscribe when done.
@@ -64,58 +91,34 @@ export default function Terminal() {
     }, [watch]);
 
     useEffect(() => {
-        console.log("useEffect reset(datosDespacho)", datosDespacho);
-        reset(datosDespacho);
-    }, [datosDespacho, reset]);
-
-    const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery, useStockProductoBodegaListLazyQuery } =
-        graphql;
-
-    const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
-    const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
-    const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
-    const [agreed, setAgreed] = useState<boolean>(false);
-    const [productos, setProductos] = useState<Producto[]>([]);
-    const [query, setQuery] = useState<string>("");
-    const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
-    const [selected, setSelected] = useState<Producto | null>(null);
-    const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
-
-    const onSubmit: SubmitHandler<IDespacho> = (data) => {
-        console.log(data);
-    };
-
-    console.log("Validation errors", errors);
-
-    useEffect(() => {
         console.log("useEffect para [query, selected]");
 
-        if (selected !== null) {
-            console.log("Un producto ha sido seleccionado", selected);
+        if (productoGridSelected !== null) {
+            console.log("Un producto ha sido seleccionado", productoGridSelected);
 
             // Check if an object with the same id does not already exist in the array
-            const isNotInArray = !recetaProductos.some((item: Producto) => item.id === selected.id);
+            const isNotInArray = !recetaProductos.some((item: Producto) => item.id === productoGridSelected.id);
 
             if (isNotInArray) {
                 // If it's not in the array, push it
                 getProductoStockBodegaLazyQuery({
                     variables: {
                         bodegaId: fake_bodega_id,
-                        productoId: selected.id,
+                        productoId: productoGridSelected.id,
                     },
                     fetchPolicy: "cache-and-network",
                     onCompleted: (c: any) => {
                         console.log("getProductoStockBodegaLazyQuery done", c.productoStockBodega);
-                        selected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
-                        setRecetaProductos([...recetaProductos, selected]);
+                        productoGridSelected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
+                        setRecetaProductos([...recetaProductos, productoGridSelected]);
                         dispatch(
                             addMedicamento({
                                 cantidaddespachada: 0,
                                 cantidaddispensada: 0,
                                 cantidadrequerida: 0,
                                 costo: 0,
-                                lote_id: selected.codigoproducto,
-                                producto_id: selected.id,
+                                lote_id: productoGridSelected.codigoproducto,
+                                producto_id: productoGridSelected.id,
                                 unidadmedida_id: "",
                                 receta_oid: "",
                             })
@@ -124,7 +127,6 @@ export default function Terminal() {
                     onError: () => {},
                 });
             }
-            console.log(recetaProductos);
         }
 
         if (query.length >= 3) {
@@ -150,7 +152,7 @@ export default function Terminal() {
                 },
             });
         }
-    }, [query, selected]);
+    }, [query, productoGridSelected]);
 
     function handleChangeSearchBar(e: React.ChangeEvent<HTMLInputElement>) {
         setQuery(e.target.value);
@@ -161,18 +163,21 @@ export default function Terminal() {
         setRecetaProductos(recetaProductos.filter((item: Producto) => item.id !== productId));
     }
 
-    function fetchProductosLote(productId: number, cantidad: number) {
+    function fetchProductosLote(productId: number) {
+        const prodInState = datosDespacho.despachodetalle.find((item: IDespachoDetalle) => item.producto_id === productId);
+        setProductoModal(recetaProductos.find((item: Producto) => item.id === productId) || null);
+        setStockProductoBodegaList([]);
         getStockProductoBodegaListLazyQuery({
             variables: {
                 bodega_id: fake_bodega_id,
-                cantidad: cantidad,
+                cantidad: prodInState?.cantidadrequerida,
                 entidad_id: fake_entidad_id,
                 producto_id: productId,
                 caducado: false,
             },
             fetchPolicy: "cache-and-network",
             onCompleted: (c: any) => {
-                console.log("getStockProductoBodegaListLazyQuery done", c.stockProductoBodegaList);
+                setStockProductoBodegaList(c.stockProductoBodegaList);
                 openCloseModalDistLote();
             },
         });
@@ -219,7 +224,8 @@ export default function Terminal() {
                             placeholder="Digite nombre de producto o SKU para buscar"
                         />
                         {/* <RecetaElectronica /> */}
-                        <RadioGroup value={selected} onChange={setSelected} className="">
+                        {/* Filterable Product Grid */}
+                        <RadioGroup value={productoGridSelected} onChange={setProductoGridSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {productos.map((item) => (
@@ -375,7 +381,6 @@ export default function Terminal() {
                                 <div className="flex-1 w-64">Producto</div>
                                 <div className="flex-initial w-20">Solicitado</div>
                                 <div className="flex-initial w-20">Despachado</div>
-                                {/* <div className="flex-initial w-20">Tratamiento</div> */}
                                 <div className="flex-initial w-10"></div>
                                 <div className="flex-initial w-10"></div>
                             </div>
@@ -394,7 +399,9 @@ export default function Terminal() {
                                                         type="number"
                                                         id="cant-req"
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                                        {...register(`despachodetalle.${index}.cantidadrequerida`)}
+                                                        {...register(`despachodetalle.${index}.cantidadrequerida`, {
+                                                            setValueAs: (v) => parseInt(v),
+                                                        })}
                                                     />
                                                 </div>
 
@@ -417,7 +424,7 @@ export default function Terminal() {
                                                     <button
                                                         type="button"
                                                         className="px-2 py-2 rounded bg-gray-600 font-medium text-center hover:bg-gray-500"
-                                                        onClick={() => fetchProductosLote(product.id, product.cantidad)}
+                                                        onClick={() => fetchProductosLote(product.id)}
                                                     >
                                                         <PencilIcon className="text-white h-5" aria-hidden="true" />
                                                     </button>{" "}
@@ -518,7 +525,12 @@ export default function Terminal() {
                     </form>
                 </div>
             </div>
-            <ModalDistribucionLote isOpen={modalDistLoteIsOpen} setIsOpen={openCloseModalDistLote} />
+            <ModalDistribucionLote
+                isOpen={modalDistLoteIsOpen}
+                lotes={stockProductoBodegaList}
+                producto={productoModal}
+                setIsOpen={openCloseModalDistLote}
+            />
         </div>
     );
 }
