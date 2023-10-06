@@ -1,31 +1,18 @@
-import React, { useEffect, useState, Fragment, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Dialog, Transition } from "@headlessui/react";
-import ReactDOM from "react-dom";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
-import { MagnifyingGlassIcon, TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
+import { IDespacho } from "@domain/models";
 import { graphql } from "@msp/shared";
-import RecetaElectronica from "./components/recetaElectronica";
-import { IDespacho, initialState } from "@domain/models";
+import { addMedicamento, deleteMedicamento, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
-import { updateDespacho } from "@presentation/actions";
+import { SearchBar, ModalDistribucionLote } from "./components/forms";
+import RecetaElectronica from "./components/recetaElectronica";
 
 const fake_bodega_id = 7589;
 const fake_entidad_id = 1781;
-
-interface FilterableListProps {
-    query: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-interface ModalDistribucionLoteProps {
-    isOpen: boolean;
-    setIsOpen: (e: any) => void;
-}
-
 
 interface Producto {
     codigoproducto: string;
@@ -34,111 +21,52 @@ interface Producto {
     manejaLote: boolean;
     nombre: string;
     stock: number;
+    cantidad: number;
 }
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
-function SearchBar({ query, onChange }: FilterableListProps) {
-    return (
-        <div className="relative my-2">
-            <span className="pointer-events-auto absolute top-2 left-2 h-6 w-6">
-                <MagnifyingGlassIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-            </span>
-            <input
-                id="producto-nombre"
-                name="producto-nombre"
-                type="text"
-                autoComplete="producto-nombre"
-                className="block w-full rounded-md border-0 px-8 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="Digite nombre de producto o SKU para buscar"
-                value={query}
-                onChange={onChange}
-            />
-        </div>
-    );
-}
-
-function ModalDistribucionLote({ isOpen, setIsOpen }: ModalDistribucionLoteProps) {
-    return (
-        <Transition appear show={isOpen} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
-                <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="fixed inset-0 bg-black bg-opacity-25" />
-                </Transition.Child>
-
-                <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4 text-center">
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 scale-95"
-                            enterTo="opacity-100 scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 scale-100"
-                            leaveTo="opacity-0 scale-95"
-                        >
-                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                                    Distribución Producto Lote
-                                </Dialog.Title>
-                                <div className="mt-2 table w-full border">
-                                    <div className="table-header-group">
-                                        <div className="table-row text-center">
-                                            <div className="table-cell border">SKU</div>
-                                            <div className="table-cell border">Nombre</div>
-                                            <div className="table-cell border">Lote</div>
-                                            <div className="table-cell border">Unidad</div>
-                                            <div className="table-cell border">Vence</div>
-                                            <div className="table-cell border">Stok</div>
-                                            <div className="table-cell border">Cant.</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mt-4 sm:flex sm:flex-row-reverse sm:px-6">
-                                    <button
-                                        type="button"
-                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                        onClick={setIsOpen}
-                                    >
-                                        Aceptar
-                                    </button>
-                                </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
-                    </div>
-                </div>
-            </Dialog>
-        </Transition>
-    );
-}
-
 export default function Terminal() {
     const dispatch = useDispatch();
     const datosDespacho = useSelector((state: RootState) => state.despacho);
     const [defaultValues, setDefaultValues] = useState<IDespacho>(datosDespacho);
-    
+
     const {
-        register,
-        handleSubmit,
+        control,
         formState: { errors },
+        handleSubmit,
+        register,
         reset,
+        watch,
     } = useForm<IDespacho>({ defaultValues });
 
-    useEffect(() => {
-        //setDefaultValues(datosDespacho);
-        reset(datosDespacho);
-      }, [datosDespacho,reset]);
+    const { fields, remove, append } = useFieldArray({
+        name: "despachodetalle",
+        control,
+    });
 
+    // const watchFields = watch(["numeroreceta"]); // you can also target specific fields by their names
+    // Callback version of watch.  It's your responsibility to unsubscribe when done.
+    useEffect(() => {
+        const subscription = watch((value, { name, type }) => {
+            console.log(value, name, type);
+            if (name !== undefined && type === "change") {
+                let pattern = /^despachodetalle/;
+                if (pattern.test(name)) {
+                    dispatch(updateMedicamento(value.despachodetalle));
+                }
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, [watch]);
+
+    useEffect(() => {
+        console.log("useEffect reset(datosDespacho)", datosDespacho);
+        reset(datosDespacho);
+    }, [datosDespacho, reset]);
 
     const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery, useStockProductoBodegaListLazyQuery } =
         graphql;
@@ -152,20 +80,21 @@ export default function Terminal() {
     const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
     const [selected, setSelected] = useState<Producto | null>(null);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
-    const onSubmit: SubmitHandler<IDespacho> = (data) => console.log(data);
 
-    console.log(errors);
+    const onSubmit: SubmitHandler<IDespacho> = (data) => {
+        console.log(data);
+    };
 
-
+    console.log("Validation errors", errors);
 
     useEffect(() => {
+        console.log("useEffect para [query, selected]");
 
         if (selected !== null) {
-
             console.log("Un producto ha sido seleccionado", selected);
 
             // Check if an object with the same id does not already exist in the array
-            const isNotInArray = !recetaProductos.some((item) => item.id === selected.id);
+            const isNotInArray = !recetaProductos.some((item: Producto) => item.id === selected.id);
 
             if (isNotInArray) {
                 // If it's not in the array, push it
@@ -179,8 +108,20 @@ export default function Terminal() {
                         console.log("getProductoStockBodegaLazyQuery done", c.productoStockBodega);
                         selected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
                         setRecetaProductos([...recetaProductos, selected]);
+                        dispatch(
+                            addMedicamento({
+                                cantidaddespachada: 0,
+                                cantidaddispensada: 0,
+                                cantidadrequerida: 0,
+                                costo: 0,
+                                lote_id: selected.codigoproducto,
+                                producto_id: selected.id,
+                                unidadmedida_id: "",
+                                receta_oid: "",
+                            })
+                        );
                     },
-                    onError: () => { },
+                    onError: () => {},
                 });
             }
             console.log(recetaProductos);
@@ -202,6 +143,7 @@ export default function Terminal() {
                                 manejaLote: !!item.producto.manejalote,
                                 nombre: item.producto.nombre,
                                 stock: 0,
+                                cantidad: 0,
                             };
                         })
                     );
@@ -210,25 +152,35 @@ export default function Terminal() {
         }
     }, [query, selected]);
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleChangeSearchBar(e: React.ChangeEvent<HTMLInputElement>) {
         setQuery(e.target.value);
-
-        // dispatch(
-        //     updateDespacho({
-        //        data:{numeroreceta:'prueba'} 
-        //     })
-        //   );
     }
 
     function eliminarProductoReceta(productId: number) {
-        setRecetaProductos(recetaProductos.filter((item) => item.id !== productId));
+        dispatch(deleteMedicamento({ producto_id: productId }));
+        setRecetaProductos(recetaProductos.filter((item: Producto) => item.id !== productId));
+    }
+
+    function fetchProductosLote(productId: number, cantidad: number) {
+        getStockProductoBodegaListLazyQuery({
+            variables: {
+                bodega_id: fake_bodega_id,
+                cantidad: cantidad,
+                entidad_id: fake_entidad_id,
+                producto_id: productId,
+                caducado: false,
+            },
+            fetchPolicy: "cache-and-network",
+            onCompleted: (c: any) => {
+                console.log("getStockProductoBodegaListLazyQuery done", c.stockProductoBodegaList);
+                openCloseModalDistLote();
+            },
+        });
     }
 
     function openCloseModalDistLote() {
         setModalDistLoteIsOpen(!modalDistLoteIsOpen);
     }
-
-
 
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
@@ -261,8 +213,12 @@ export default function Terminal() {
 
                 <div className="">
                     <div className="border rounded px-2 py-2">
-                        <SearchBar query={query} onChange={handleChange} />
-                        <RecetaElectronica />
+                        <SearchBar
+                            query={query}
+                            onChange={handleChangeSearchBar}
+                            placeholder="Digite nombre de producto o SKU para buscar"
+                        />
+                        {/* <RecetaElectronica /> */}
                         <RadioGroup value={selected} onChange={setSelected} className="">
                             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -426,7 +382,7 @@ export default function Terminal() {
                             <div className="col-span-full border-b border-gray-900/10 h-64 overflow-y-auto">
                                 <div className="flow-root">
                                     <ul role="list" className="divide-y divide-gray-200">
-                                        {recetaProductos.map((product) => (
+                                        {recetaProductos.map((product, index) => (
                                             <li key={product.id} className="flex py-2 gap-1">
                                                 <div className="flex-1 w-64 justify-between text-base font-medium text-gray-900">
                                                     <h3>{product.nombre}</h3>
@@ -436,16 +392,15 @@ export default function Terminal() {
                                                 <div className="flex-initial w-20">
                                                     <input
                                                         type="number"
-                                                        name="price"
-                                                        id="price"
+                                                        id="cant-req"
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                        {...register(`despachodetalle.${index}.cantidadrequerida`)}
                                                     />
                                                 </div>
 
                                                 <div className="flex-initial w-20">
                                                     <input
                                                         type="number"
-                                                        name="cant-des"
                                                         id="cant-des"
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                                     />
@@ -462,7 +417,7 @@ export default function Terminal() {
                                                     <button
                                                         type="button"
                                                         className="px-2 py-2 rounded bg-gray-600 font-medium text-center hover:bg-gray-500"
-                                                        onClick={() => alert("open modal")}
+                                                        onClick={() => fetchProductosLote(product.id, product.cantidad)}
                                                     >
                                                         <PencilIcon className="text-white h-5" aria-hidden="true" />
                                                     </button>{" "}
