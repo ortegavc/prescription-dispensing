@@ -10,10 +10,17 @@ export interface ICard {
   }
 }
 
+
+<div className="max-w-md p-4 mx-auto mt-4 bg-gray-200 sm:shadow-md sm::rounded-md sm:bg-gray-100 sm:p-6 md:bg-green-100">
+<h2 className="text-lg font-semibold text-center text-blue-500 sm:text-xl">Me adapto a todo</h2>
+<p className="mt-3 text-gray-600">Esta caja es adaptable. Diseño primero para las dimensiones pequeñas y voy aumentando para las grandes.</p>
+</div>
+
+
 const CardLayout = (botones:ICard) => {
 
   return (
-    <div className="bg-while-500" >
+    <div className="max-w-md p-4 mx-auto mt-4 bg-gray-200 sm:shadow-md sm::rounded-md sm:bg-gray-100 sm:p-6 md:bg-green-100" >
       <div className="flex items-center justify-center mt-3 bg-blue-700 h-9 w-9 rounded-xl">
         {/* icono */}
         <h1 className="absolute mx-auto text-2xl text-center text-white right">
