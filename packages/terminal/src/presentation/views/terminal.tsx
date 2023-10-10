@@ -544,7 +544,8 @@ export default function Terminal() {
             </div>
             <ModalDistribucionLote
                 isOpen={modalDistLoteIsOpen}
-                lotes={stockProductoBodegaList}
+                stockProductoBodegaList={stockProductoBodegaList}
+                setStockProductoBodegaList={setStockProductoBodegaList}
                 producto={productoModal}
                 setIsOpen={openCloseModalDistLote}
             />

@@ -6,10 +6,17 @@ interface ModalDistribucionLoteProps {
     isOpen: boolean;
     setIsOpen: (e: any) => void;
     producto: any | null;
-    lotes: any[];
+    stockProductoBodegaList: any[];
+    setStockProductoBodegaList: (e: any) => void;
 }
 
-export function ModalDistribucionLote({ isOpen, setIsOpen, producto, lotes }: ModalDistribucionLoteProps) {
+export function ModalDistribucionLote({
+    isOpen,
+    setIsOpen,
+    producto,
+    stockProductoBodegaList,
+    setStockProductoBodegaList,
+}: ModalDistribucionLoteProps) {
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
@@ -69,7 +76,11 @@ export function ModalDistribucionLote({ isOpen, setIsOpen, producto, lotes }: Mo
                                         />
                                     </div>
                                 </div>
-                                <StockProductoBodegaListComponent lotes={lotes} />
+                                <StockProductoBodegaListComponent
+                                    cantidadrequerida={producto?.cantidadrequerida}
+                                    stockProductoBodegaList={stockProductoBodegaList}
+                                    setStockProductoBodegaList={setStockProductoBodegaList}
+                                />
                                 <div className="mt-4 sm:flex sm:flex-row-reverse sm:px-6">
                                     <button
                                         type="button"
