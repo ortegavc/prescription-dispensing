@@ -167,20 +167,19 @@ export default function Terminal() {
 
     function fetchProductosLote(productId: number) {
         const prodInState = datosDespacho.despachodetalle.find((item: IDespachoDetalle) => item.producto_id === productId);
-        console.log("recetaProductos", recetaProductos);
-        console.log(
-            "open modal dist lote para ",
-            recetaProductos.find((item: Producto) => item.id === productId)
-        );
-        setProductoModal(recetaProductos.find((item: Producto) => item.id === productId) || null);
-        // if (prodInState !== undefined) {
-        //     const updatedProductModal = {
-        //         ...recetaProductos.find((item: Producto) => item.id === productId),
-        //         cantidaddespachada: prodInState.cantidaddespachada
-        //     }
-        //     setProductoModal(updatedProductModal);
-        //     // setProductoModal({ ...productoModal, cantidaddespachada: prodInState.cantidaddespachada });
-        // }
+        const prodInReceta = recetaProductos.find((item: Producto) => item.id === productId);
+        setProductoModal(null);
+
+        if (prodInReceta && prodInState) {
+            setProductoModal({
+                ...prodInReceta,
+                ...{
+                    cantidaddespachada: prodInState.cantidaddespachada,
+                    cantidadrequerida: prodInState.cantidadrequerida,
+                },
+            });
+        }
+
         setStockProductoBodegaList([]);
         getStockProductoBodegaListLazyQuery({
             variables: {
