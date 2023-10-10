@@ -38,7 +38,7 @@ export function ModalDistribucionLote({ isOpen, setIsOpen, producto, lotes }: Mo
                         >
                             <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                                 <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                                    Distribución Producto Lote {producto?.cantidaddespachada}
+                                    Distribución Producto Lote
                                 </Dialog.Title>
                                 <div className="col-span-full mt-2 px-2 py-2 flex gap-1 justify-between text-sm font-medium leading-6 text-gray-900 bg-gray-400">
                                     <div className="flex-1 w-64">Producto</div>
@@ -55,6 +55,7 @@ export function ModalDistribucionLote({ isOpen, setIsOpen, producto, lotes }: Mo
                                             type="number"
                                             id="cant-req"
                                             value={producto?.cantidadrequerida}
+                                            readOnly
                                             className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         />
                                     </div>
@@ -63,6 +64,7 @@ export function ModalDistribucionLote({ isOpen, setIsOpen, producto, lotes }: Mo
                                             type="number"
                                             id="cant-des"
                                             value={producto?.cantidaddespachada}
+                                            readOnly
                                             className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         />
                                     </div>
