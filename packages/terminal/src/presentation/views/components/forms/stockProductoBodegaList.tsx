@@ -12,6 +12,7 @@ export function StockProductoBodegaListComponent({
     setStockProductoBodegaList,
 }: StockProductoBodegaListProps) {
     function handleChangeCantidad(e: any) {
+        console.log("handleChangeCantidadDistribuida");
         const index = e.target.id.slice(8);
         // Copy the read only array using the Spread Operator
         const auxlist = [...stockProductoBodegaList];
@@ -66,7 +67,7 @@ export function StockProductoBodegaListComponent({
                                 id={`cant-des${index}`}
                                 min={0}
                                 className="w-full rounded-md border-0 py-0 pl-2 pr-0 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-3 text-right"
-                                value={producto.CANTIDADDISTRIBUIDA}
+                                value={producto.CANTIDADDISTRIBUIDA ?? 0}
                                 onChange={handleChangeCantidad}
                             />
                         </div>

@@ -25,6 +25,22 @@ interface Producto {
     cantidaddespachada: number;
 }
 
+interface StockProductoBodegaItem {
+    CANTIDAD: number;
+    CANTIDADDISTRIBUIDA: number;
+    CODIGOPRODUCTO: string;
+    COSTO: number;
+    FECHACADUCIDAD: string;
+    FECHAELABORACION: string;
+    LOTEID: string;
+    NOMBRE: string;
+    NUMEROLOTE: string;
+    PRODUCTOID: number;
+    UNIDADMEDIDAABREVIATURA: string;
+    UNIDADMEDIDAID: number;
+    UNIDADMEDIDANOMBRE: string;
+}
+
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
@@ -51,12 +67,18 @@ export default function Terminal() {
 
     const [agreed, setAgreed] = useState<boolean>(false);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
-    const [stockProductoBodegaList, setStockProductoBodegaList] = useState<any[]>([]);
+    const [stockProductoBodegaList, setStockProductoBodegaList] = useState<StockProductoBodegaItem[]>([]);
     const [productosRadioGroup, setProductosRadioGroup] = useState<Producto[]>([]);
     const [query, setQuery] = useState<string>("");
     const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
     const [productoModal, setProductoModal] = useState<Producto | null>(null);
     const [productoGridSelected, setProductoGridSelected] = useState<Producto | null>(null);
+
+    const handleChangeCantidadFromModal = () => {
+        if (productoModal && productoModal.cantidadrequerida > 0) {
+            fetchProductosLote(productoModal.id);
+        }
+    };
 
     const onSubmit: SubmitHandler<IDespacho> = (data) => {
         console.log(data);
@@ -113,20 +135,32 @@ export default function Terminal() {
                     onCompleted: (c: any) => {
                         console.log("getProductoStockBodegaLazyQuery done", c.productoStockBodega);
                         productoGridSelected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
-                        setRecetaProductos([...recetaProductos, productoGridSelected]);
-                        dispatch(
-                            addMedicamento({
-                                cantidaddespachada: 0,
-                                cantidaddispensada: 0,
-                                cantidadrequerida: 0,
-                                costo: 0,
-                                lote_id: productoGridSelected.codigoproducto,
-                                producto_id: productoGridSelected.id,
-                                unidadmedida_id: "",
-                                receta_oid: "",
-                            })
-                        );
-                        console.log("recetaProductos", recetaProductos);
+                        if (productoGridSelected.manejaLote) {
+                            console.log("producto maneja lote");
+                            console.log("setProductoModal(productoGridSelected)", productoGridSelected);
+
+                            // presentar modas
+                            setProductoModal({
+                                ...productoGridSelected,
+                                ...{
+                                    cantidaddespachada: 0,
+                                    cantidadrequerida: 0,
+                                },
+                            });
+                            openCloseModalDistLote();
+                            // dispatch(
+                            //     addMedicamento({
+                            //         cantidaddespachada: 0,
+                            //         cantidadrequerida: 0,
+                            //         costo: 0,
+                            //         // lote_id: 0,
+                            //         producto_id: productoGridSelected.id,
+                            //     })
+                            // );
+                            // Los productos que requieren distribución por lote se agregan al finalizar el modal de distribución
+                        } else {
+                            setRecetaProductos([...recetaProductos, productoGridSelected]);
+                        }
                     },
                     onError: () => {},
                 });
@@ -168,33 +202,46 @@ export default function Terminal() {
     }
 
     function fetchProductosLote(productId: number) {
-        const prodInState = datosDespacho.despachodetalle.find((item: IDespachoDetalle) => item.producto_id === productId);
-        const prodInReceta = recetaProductos.find((item: Producto) => item.id === productId);
-        setProductoModal(null);
+        // const prodInState = datosDespacho.despachodetalle.find((item: IDespachoDetalle) => item.producto_id === productId);
+        // const prodInReceta = recetaProductos.find((item: Producto) => item.id === productId);
+        // setProductoModal(null);
 
-        if (prodInReceta && prodInState) {
-            setProductoModal({
-                ...prodInReceta,
-                ...{
-                    cantidaddespachada: prodInState.cantidaddespachada,
-                    cantidadrequerida: prodInState.cantidadrequerida,
-                },
-            });
-        }
+        // if (prodInReceta && prodInState) {
+        //     setProductoModal({
+        //         ...prodInReceta,
+        //         ...{
+        //             cantidaddespachada: prodInState.cantidaddespachada,
+        //             cantidadrequerida: prodInState.cantidadrequerida,
+        //         },
+        //     });
+        // }
 
-        setStockProductoBodegaList([]);
+        // setStockProductoBodegaList([]);
         getStockProductoBodegaListLazyQuery({
             variables: {
                 bodega_id: fake_bodega_id,
-                cantidad: prodInState?.cantidaddespachada,
+                cantidad: productoModal?.cantidadrequerida,
                 entidad_id: fake_entidad_id,
                 producto_id: productId,
                 caducado: false,
             },
             fetchPolicy: "cache-and-network",
             onCompleted: (c: any) => {
+                console.log("getStockProductoBodegaListLazyQuery completed...");
                 setStockProductoBodegaList(c.stockProductoBodegaList);
-                openCloseModalDistLote();
+                c.stockProductoBodegaList.forEach((item: StockProductoBodegaItem) => {
+                    dispatch(
+                        addMedicamento({
+                            cantidaddespachada: item.CANTIDADDISTRIBUIDA ?? 0,
+                            cantidadrequerida: item.CANTIDAD,
+                            costo: item.COSTO,
+                            lote_id: parseInt(item.LOTEID),
+                            producto_id: item.PRODUCTOID,
+                        })
+                    );
+                });
+
+                // openCloseModalDistLote();
             },
         });
     }
@@ -548,7 +595,9 @@ export default function Terminal() {
                 isOpen={modalDistLoteIsOpen}
                 stockProductoBodegaList={stockProductoBodegaList}
                 setStockProductoBodegaList={setStockProductoBodegaList}
+                onChangeCantidadRequerida={handleChangeCantidadFromModal}
                 producto={productoModal}
+                setProducto={setProductoModal}
                 setIsOpen={openCloseModalDistLote}
             />
         </div>
