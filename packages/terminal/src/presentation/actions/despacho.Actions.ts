@@ -15,7 +15,7 @@ export const despachoActions = createSlice({
         },
 
         updateDespacho: (state, action) => {
-            return { ...state, ...action.payload.data };
+            return { ...state, ...action.payload };
         },
 
         addMedicamento: (state, action) => {

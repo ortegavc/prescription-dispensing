@@ -6,7 +6,7 @@ import { Switch } from "@headlessui/react";
 import { TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
 import { IDespacho, IDespachoDetalle } from "@domain/models";
 import { graphql } from "@msp/shared";
-import { addMedicamento, deleteMedicamento, updateMedicamento } from "@presentation/actions";
+import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
 import { SearchBar, ModalDistribucionLote } from "./components/forms";
 import RecetaElectronica from "./components/recetaElectronica";
@@ -79,11 +79,13 @@ export default function Terminal() {
     // Callback version of watch.  It's your responsibility to unsubscribe when done.
     useEffect(() => {
         const subscription = watch((value, { name, type }) => {
-            console.log(value, name, type);
             if (name !== undefined && type === "change") {
+                console.log(value, name, type);
                 let pattern = /^despachodetalle/;
                 if (pattern.test(name)) {
                     dispatch(updateMedicamento(value.despachodetalle));
+                } else {
+                    dispatch(updateDespacho(value));
                 }
             }
         });
