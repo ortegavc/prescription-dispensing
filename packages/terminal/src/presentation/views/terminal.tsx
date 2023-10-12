@@ -505,14 +505,6 @@ export default function Terminal() {
                                                         onChange={handleChangeCantidad}
                                                     />
                                                 </div>
-                                                {/* <div className="flex-initial w-20">
-                                                    <input
-                                                        type="number"
-                                                        name="tratamiento"
-                                                        id="tratamiento"
-                                                        className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                                    />
-                                                </div> */}
                                                 <div className="flex-initial w-10">
                                                     <button
                                                         type="button"
@@ -585,20 +577,6 @@ export default function Terminal() {
                                             {errors.nombrereceptor.message}
                                         </p>
                                     )}
-                                </div>
-                            </div>
-                            <div className="col-span-full">
-                                <label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900">
-                                    Observación
-                                </label>
-                                <div className="mt-2.5">
-                                    <textarea
-                                        name="message"
-                                        id="message"
-                                        rows={2}
-                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        defaultValue={""}
-                                    />
                                 </div>
                             </div>
                             <div className="mt-6 flex items-center justify-end gap-x-6 col-span-full">
