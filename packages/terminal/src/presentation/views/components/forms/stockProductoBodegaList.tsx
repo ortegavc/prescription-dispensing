@@ -24,8 +24,6 @@ export function StockProductoBodegaListComponent({
         auxlist[index] = updatedItem;
         if (cantDistribuidaIsValid(updatedItem)) {
             setStockProductoBodegaList(auxlist);
-        } else {
-            console.error("Nueva cantidad excede una de los umbrales");
         }
     }
 

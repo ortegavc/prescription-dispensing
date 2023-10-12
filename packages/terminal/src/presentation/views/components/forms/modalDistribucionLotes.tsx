@@ -21,7 +21,7 @@ interface StockProductoBodegaItem {
 
 interface ModalDistribucionLoteProps {
     isOpen: boolean;
-    setIsOpen: (e: any) => void;
+    finalizar: (e: any) => void;
     producto: any | null;
     setProducto: (e: any) => void;
     stockProductoBodegaList: StockProductoBodegaItem[];
@@ -33,7 +33,7 @@ export function ModalDistribucionLote({
     isOpen,
     onChangeCantidadRequerida,
     producto,
-    setIsOpen,
+    finalizar,
     setProducto,
     stockProductoBodegaList,
     setStockProductoBodegaList,
@@ -42,8 +42,10 @@ export function ModalDistribucionLote({
     const [tmpStockProductoBodegaList, setTmpStockProductoBodegaList] = useState<any[]>([]);
     const handleAcceptClick = () => {
         console.log("handleAcceptClick");
+        console.log("producto", producto);
+        console.log("tmpStockProductoBodegaList", tmpStockProductoBodegaList);
         setStockProductoBodegaList(tmpStockProductoBodegaList);
-        setIsOpen(false);
+        finalizar(false);
     };
     const handleChangeCantidadRequerida = (e: any) => {
         console.log("handleChangeCantidadRequerida", e.target.value);
@@ -68,7 +70,7 @@ export function ModalDistribucionLote({
 
     return (
         <Transition appear show={isOpen} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
+            <Dialog as="div" className="relative z-10" onClose={finalizar}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"

@@ -74,10 +74,39 @@ export default function Terminal() {
     const [productoModal, setProductoModal] = useState<Producto | null>(null);
     const [productoGridSelected, setProductoGridSelected] = useState<Producto | null>(null);
 
+    const finalizarDistribucionLote = () => {
+        // Agregar producto modal a la lista si es que aun no lo tiene
+        if (productoModal && !recetaProductos.some((item: Producto) => item.id === productoModal.id)) {
+            console.log("productoModal no está en lista", productoModal);
+            setRecetaProductos([...recetaProductos, productoModal]);
+        }
+        setModalDistLoteIsOpen(false);
+        setProductoModal(null);
+    };
+
     const handleChangeCantidadFromModal = () => {
         if (productoModal && productoModal.cantidadrequerida > 0) {
             fetchProductosLote(productoModal.id);
         }
+    };
+
+    /**
+     * Manejar cantidad despachada/requerida en fila de producto sin lote
+     *
+     * @param e
+     */
+    const handleChangeCantidad = (e: any) => {
+        let detalle = [...datosDespacho.despachodetalle];
+        let index = detalle.findIndex((item) => item.producto_id == e.target.id.slice(9));
+        let item = { ...detalle[index] };
+        let cantidad = parseInt(e.target.value);
+        if (e.target.id.includes("des")) {
+            item.cantidaddespachada = cantidad;
+        } else if (e.target.id.includes("req")) {
+            item.cantidadrequerida = cantidad;
+        }
+        detalle[index] = item;
+        dispatch(updateMedicamento(detalle));
     };
 
     const onSubmit: SubmitHandler<IDespacho> = (data) => {
@@ -90,7 +119,7 @@ export default function Terminal() {
         control,
     });
 
-    console.log("Validation errors", errors);
+    // console.log("Validation errors", errors);
 
     useEffect(() => {
         console.log("useEffect reset(datosDespacho)", datosDespacho);
@@ -100,6 +129,7 @@ export default function Terminal() {
     // const watchFields = watch(["numeroreceta"]); // you can also target specific fields by their names
     // Callback version of watch.  It's your responsibility to unsubscribe when done.
     useEffect(() => {
+        console.log("useEffect", "watch");
         const subscription = watch((value, { name, type }) => {
             if (name !== undefined && type === "change") {
                 console.log(value, name, type);
@@ -116,11 +146,7 @@ export default function Terminal() {
     }, [watch]);
 
     useEffect(() => {
-        console.log("useEffect para [query, selected]");
-
         if (productoGridSelected !== null) {
-            console.log("Un producto ha sido seleccionado", productoGridSelected);
-
             // Check if an object with the same id does not already exist in the array
             const isNotInArray = !recetaProductos.some((item: Producto) => item.id === productoGridSelected.id);
 
@@ -133,13 +159,9 @@ export default function Terminal() {
                     },
                     fetchPolicy: "cache-and-network",
                     onCompleted: (c: any) => {
-                        console.log("getProductoStockBodegaLazyQuery done", c.productoStockBodega);
                         productoGridSelected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
-                        if (productoGridSelected.manejaLote) {
-                            console.log("producto maneja lote");
-                            console.log("setProductoModal(productoGridSelected)", productoGridSelected);
 
-                            // presentar modas
+                        if (productoGridSelected.manejaLote) {
                             setProductoModal({
                                 ...productoGridSelected,
                                 ...{
@@ -147,19 +169,24 @@ export default function Terminal() {
                                     cantidadrequerida: 0,
                                 },
                             });
+
                             openCloseModalDistLote();
-                            // dispatch(
-                            //     addMedicamento({
-                            //         cantidaddespachada: 0,
-                            //         cantidadrequerida: 0,
-                            //         costo: 0,
-                            //         // lote_id: 0,
-                            //         producto_id: productoGridSelected.id,
-                            //     })
-                            // );
+
                             // Los productos que requieren distribución por lote se agregan al finalizar el modal de distribución
                         } else {
+                            console.log("Producto no maneja lote");
+
                             setRecetaProductos([...recetaProductos, productoGridSelected]);
+                            dispatch(
+                                addMedicamento({
+                                    cantidaddespachada: 0,
+                                    cantidaddispensada: 0,
+                                    cantidadrequerida: 0,
+                                    costo: 0,
+                                    lote_id: null,
+                                    producto_id: productoGridSelected.id,
+                                })
+                            );
                         }
                     },
                     onError: () => {},
@@ -182,8 +209,6 @@ export default function Terminal() {
                                 id: item.producto.id,
                                 manejaLote: !!item.producto.manejalote,
                                 nombre: item.producto.nombre,
-                                // stock: 0,
-                                // cantidad: 0,
                             };
                         })
                     );
@@ -233,7 +258,8 @@ export default function Terminal() {
                     dispatch(
                         addMedicamento({
                             cantidaddespachada: item.CANTIDADDISTRIBUIDA ?? 0,
-                            cantidadrequerida: item.CANTIDAD,
+                            cantidaddispensada: 0, // en receta manual es cero, sino en debe colocar valor que retorna receta electronica
+                            cantidadrequerida: productoModal?.cantidadrequerida,
                             costo: item.COSTO,
                             lote_id: parseInt(item.LOTEID),
                             producto_id: item.PRODUCTOID,
@@ -460,22 +486,23 @@ export default function Terminal() {
                                                 <div className="flex-initial w-20">
                                                     <input
                                                         type="number"
-                                                        id="cant-req"
+                                                        id={`cant-req-${product.id}`}
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                                        {...register(`despachodetalle.${index}.cantidadrequerida`, {
-                                                            setValueAs: (v) => parseInt(v),
-                                                        })}
+                                                        value={product.cantidadrequerida}
+                                                        readOnly={product.manejaLote}
+                                                        onChange={handleChangeCantidad}
                                                     />
                                                 </div>
 
                                                 <div className="flex-initial w-20">
                                                     <input
                                                         type="number"
-                                                        id="cant-des"
+                                                        id={`cant-des-${product.id}`}
                                                         className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                                        {...register(`despachodetalle.${index}.cantidaddespachada`, {
-                                                            setValueAs: (v) => parseInt(v),
-                                                        })}
+                                                        max={product.stock}
+                                                        value={product.cantidaddespachada}
+                                                        readOnly={product.manejaLote}
+                                                        onChange={handleChangeCantidad}
                                                     />
                                                 </div>
                                                 {/* <div className="flex-initial w-20">
@@ -489,7 +516,8 @@ export default function Terminal() {
                                                 <div className="flex-initial w-10">
                                                     <button
                                                         type="button"
-                                                        className="px-2 py-2 rounded bg-gray-600 font-medium text-center hover:bg-gray-500"
+                                                        className="px-2 py-2 rounded bg-gray-600 font-medium text-center hover:bg-gray-500 disabled:opacity-75"
+                                                        disabled={!product.manejaLote}
                                                         onClick={() => fetchProductosLote(product.id)}
                                                     >
                                                         <PencilIcon className="text-white h-5" aria-hidden="true" />
@@ -598,7 +626,7 @@ export default function Terminal() {
                 onChangeCantidadRequerida={handleChangeCantidadFromModal}
                 producto={productoModal}
                 setProducto={setProductoModal}
-                setIsOpen={openCloseModalDistLote}
+                finalizar={finalizarDistribucionLote}
             />
         </div>
     );
