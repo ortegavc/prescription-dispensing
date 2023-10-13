@@ -68,7 +68,7 @@ export class PrescripcionMedica implements IDespacho {
  */
 const pacientePersona: IDespachoPaciente = {
     id: 0,
-    cttipoidentificacion_id: 0,
+    cttipoidentificacion_id: 49,
     identificacion: "",
     nombre: "",
 };
@@ -80,6 +80,6 @@ export const initialState: IDespacho = {
     recetaelectronica: 0,
     paciente: pacientePersona,
     oid: "",
-    turno_id: 0,
+    turno_id: 125,
     despachodetalle: [],
 };

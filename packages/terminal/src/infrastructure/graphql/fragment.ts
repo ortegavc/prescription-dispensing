@@ -1,5 +1,14 @@
 import { gql } from '@apollo/client';
 
+
+export const DESPACHO_CREATE_FIELDS = gql`
+    fragment despachoCreateFields on DespachoResult {
+        code
+        message
+        status
+    }
+`
+
 export const PRODUCTO_BODEGA_COLLECTION_FIELDS = gql`
     fragment productoBodegaCollectionFields on ProductoBodegaCollectionType {
         data {
@@ -16,6 +25,7 @@ export const PRODUCTO_BODEGA_COLLECTION_FIELDS = gql`
                 nombrecomercial
                 manejacaducidad
                 manejalote
+                unidadmedida_id
             }
         }
         pageInfo {

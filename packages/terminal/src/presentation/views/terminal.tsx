@@ -3,13 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { Switch } from "@headlessui/react";
-import { TrashIcon, PencilIcon } from "@heroicons/react/20/solid";
-import { IDespacho, IDespachoDetalle } from "@domain/models";
+import { AdjustmentsHorizontalIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { IDespacho } from "@domain/models";
 import { graphql } from "@msp/shared";
 import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
 import { SearchBar, ModalDistribucionLote } from "./components/forms";
-import RecetaElectronica from "./components/recetaElectronica";
+// import RecetaElectronica from "./components/recetaElectronica";
+import { createDespachoService } from "@application/services/despachoCreateService";
 
 const fake_bodega_id = 7589;
 const fake_entidad_id = 1781;
@@ -23,6 +24,7 @@ interface Producto {
     stock: number;
     cantidadrequerida: number;
     cantidaddespachada: number;
+    unidadmedida_id: number;
 }
 
 interface StockProductoBodegaItem {
@@ -59,11 +61,17 @@ export default function Terminal() {
         watch,
     } = useForm<IDespacho>({ defaultValues });
 
-    const { useProductoBodegaCollectionLazyQuery, useProductoStockBodegaLazyQuery, useStockProductoBodegaListLazyQuery } =
-        graphql;
+    const {
+        useDespachoCreateMutation,
+        useProductoBodegaCollectionLazyQuery,
+        useProductoStockBodegaLazyQuery,
+        useStockProductoBodegaListLazyQuery,
+    } = graphql;
+
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
     const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
+    const [setDespachoCreate] = useDespachoCreateMutation();
 
     const [agreed, setAgreed] = useState<boolean>(false);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
@@ -110,7 +118,11 @@ export default function Terminal() {
     };
 
     const onSubmit: SubmitHandler<IDespacho> = (data) => {
-        console.log(data);
+        console.log("SubmitHandler started");
+        const mutator: {} = { create: setDespachoCreate };
+        data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0); // Descartar lotes no utilizados
+        createDespachoService(data, mutator);
+        console.log("Submit End");
     };
 
     // Watch in Field Array
@@ -161,32 +173,37 @@ export default function Terminal() {
                     onCompleted: (c: any) => {
                         productoGridSelected.stock = c.productoStockBodega.length ? c.productoStockBodega[0].saldo : 0;
 
-                        if (productoGridSelected.manejaLote) {
-                            setProductoModal({
-                                ...productoGridSelected,
-                                ...{
-                                    cantidaddespachada: 0,
-                                    cantidadrequerida: 0,
-                                },
-                            });
+                        if (c.productoStockBodega.length) {
+                            if (productoGridSelected.manejaLote) {
+                                setProductoModal({
+                                    ...productoGridSelected,
+                                    ...{
+                                        cantidaddespachada: 0,
+                                        cantidadrequerida: 0,
+                                    },
+                                });
 
-                            openCloseModalDistLote();
+                                openCloseModalDistLote();
 
-                            // Los productos que requieren distribución por lote se agregan al finalizar el modal de distribución
+                                // Los productos que requieren distribución por lote se agregan al finalizar el modal de distribución
+                            } else {
+                                console.log("Producto no maneja lote", productoGridSelected);
+
+                                setRecetaProductos([...recetaProductos, productoGridSelected]);
+                                dispatch(
+                                    addMedicamento({
+                                        cantidaddespachada: 0,
+                                        cantidaddispensada: 0,
+                                        cantidadrequerida: 0,
+                                        costo: 0,
+                                        lote_id: null,
+                                        producto_id: productoGridSelected.id,
+                                        unidadmedida_id: productoGridSelected.unidadmedida_id,
+                                    })
+                                );
+                            }
                         } else {
-                            console.log("Producto no maneja lote");
-
-                            setRecetaProductos([...recetaProductos, productoGridSelected]);
-                            dispatch(
-                                addMedicamento({
-                                    cantidaddespachada: 0,
-                                    cantidaddispensada: 0,
-                                    cantidadrequerida: 0,
-                                    costo: 0,
-                                    lote_id: null,
-                                    producto_id: productoGridSelected.id,
-                                })
-                            );
+                            alert("El producto seleccionado no tiene stock.");
                         }
                     },
                     onError: () => {},
@@ -209,6 +226,7 @@ export default function Terminal() {
                                 id: item.producto.id,
                                 manejaLote: !!item.producto.manejalote,
                                 nombre: item.producto.nombre,
+                                unidadmedida_id: item.producto.unidadmedida_id,
                             };
                         })
                     );
@@ -263,6 +281,7 @@ export default function Terminal() {
                             costo: item.COSTO,
                             lote_id: parseInt(item.LOTEID),
                             producto_id: item.PRODUCTOID,
+                            unidadmedida_id: item.UNIDADMEDIDAID,
                         })
                     );
                 });
@@ -456,7 +475,7 @@ export default function Terminal() {
                                                 value: 6,
                                                 message: "Nombre de paciente debe tener mínimo seis caracteres",
                                             },
-                                            pattern: /^[A-Za-z]+$/i,
+                                            pattern: /^[A-Za-z\s'-]+$/i,
                                         })}
                                     />
                                     {errors.paciente?.nombre && (
@@ -512,7 +531,10 @@ export default function Terminal() {
                                                         disabled={!product.manejaLote}
                                                         onClick={() => fetchProductosLote(product.id)}
                                                     >
-                                                        <PencilIcon className="text-white h-5" aria-hidden="true" />
+                                                        <AdjustmentsHorizontalIcon
+                                                            className="text-white h-5"
+                                                            aria-hidden="true"
+                                                        />
                                                     </button>{" "}
                                                 </div>
                                                 <div className="flex-initial w-10">
@@ -539,15 +561,13 @@ export default function Terminal() {
                                         id="dni-receptor"
                                         autoComplete="dni-receptor"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                        {...register("identificareceptor", {
-                                            required: "Identificación de receptor requerido",
-                                        })}
+                                        {...register("identificareceptor")}
                                     />
-                                    {errors.identificareceptor && (
+                                    {/* {errors.identificareceptor && (
                                         <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">
                                             {errors.identificareceptor.message}
                                         </p>
-                                    )}
+                                    )} */}
                                 </div>
                             </div>
                             <div>
@@ -564,12 +584,12 @@ export default function Terminal() {
                                         autoComplete="nombre-receptor"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         {...register("nombrereceptor", {
-                                            required: "Nombre de receptor requerido",
+                                            // required: "Nombre de receptor requerido",
                                             minLength: {
                                                 value: 6,
                                                 message: "Nombre de paciente debe tener mínimo seis caracteres",
                                             },
-                                            pattern: /^[A-Za-z]+$/i,
+                                            pattern: /^[A-Za-z\s'-]+$/i,
                                         })}
                                     />
                                     {errors.nombrereceptor && (
