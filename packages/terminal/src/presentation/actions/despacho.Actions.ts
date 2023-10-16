@@ -23,10 +23,8 @@ export const despachoActions = createSlice({
                 cantidaddespachada: action.payload.cantidaddespachada,
                 cantidaddispensada: action.payload.cantidaddispensada,
                 cantidadrequerida: action.payload.cantidadrequerida,
-                costo: action.payload.costo,
                 lote_id: action.payload.lote_id,
                 producto_id: action.payload.producto_id,
-                unidadmedida_id: action.payload.unidadmedida_id,
                 receta_oid: action.payload.oid,
             };
 

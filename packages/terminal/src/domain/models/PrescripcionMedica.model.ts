@@ -14,11 +14,9 @@ export interface IDespachoDetalle {
     cantidaddespachada: number;
     cantidaddispensada: number;
     cantidadrequerida: number;
-    costo: number;
     lote_id: number;
     producto_id: number;
     receta_oid: string;
-    unidadmedida_id: string;
 }
 
 export interface IDespachoPaciente {

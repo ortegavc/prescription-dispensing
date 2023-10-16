@@ -12,7 +12,7 @@ import { SearchBar, ModalDistribucionLote } from "./components/forms";
 // import RecetaElectronica from "./components/recetaElectronica";
 import { createDespachoService } from "@application/services/despachoCreateService";
 
-const fake_bodega_id = 7589;
+const fake_bodega_id = 2;
 const fake_entidad_id = 1781;
 
 interface Producto {
@@ -195,10 +195,8 @@ export default function Terminal() {
                                         cantidaddespachada: 0,
                                         cantidaddispensada: 0,
                                         cantidadrequerida: 0,
-                                        costo: 0,
                                         lote_id: null,
                                         producto_id: productoGridSelected.id,
-                                        unidadmedida_id: productoGridSelected.unidadmedida_id,
                                     })
                                 );
                             }
@@ -278,10 +276,8 @@ export default function Terminal() {
                             cantidaddespachada: item.CANTIDADDISTRIBUIDA ?? 0,
                             cantidaddispensada: 0, // en receta manual es cero, sino en debe colocar valor que retorna receta electronica
                             cantidadrequerida: productoModal?.cantidadrequerida,
-                            costo: item.COSTO,
                             lote_id: parseInt(item.LOTEID),
                             producto_id: item.PRODUCTOID,
-                            unidadmedida_id: item.UNIDADMEDIDAID,
                         })
                     );
                 });
