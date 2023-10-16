@@ -31,7 +31,7 @@ export function GridProductos({
     setProductosRadioGroup,
 }: GridProductosProps) {
     return (
-        <RadioGroup value={productoGridSelected} onChange={setProductoGridSelected} className="">
+        <RadioGroup value={productoGridSelected} onChange={setProductoGridSelected} className="h-96 overflow-y-auto">
             <RadioGroup.Label className="sr-only">Seleccione un producto</RadioGroup.Label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {productosRadioGroup.map((item) => (
