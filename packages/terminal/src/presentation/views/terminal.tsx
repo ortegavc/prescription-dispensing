@@ -10,6 +10,8 @@ import { RootState } from "@presentation/stores";
 import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
 import RecetaElectronica from "./components/recetaElectronica";
 import { createDespachoService } from "@application/services/despachoCreateService";
+import { IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
+import { casoUsoRecetaElectronica } from "@application/useCases";
 
 const fake_bodega_id = 7589;
 const fake_entidad_id = 1781;
@@ -64,11 +66,13 @@ export default function Terminal() {
         useDespachoCreateMutation,
         useProductoBodegaCollectionLazyQuery,
         useProductoStockBodegaLazyQuery,
+        useRecetaLazyQuery,
         useStockProductoBodegaListLazyQuery,
     } = graphql;
 
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
+    const [getRecetaLazyQuery] = useRecetaLazyQuery();
     const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
     const [setDespachoCreate] = useDespachoCreateMutation();
     const [esRecetaElectronica, setEsRecetaElectronica] = useState<boolean>(false);
@@ -245,7 +249,16 @@ export default function Terminal() {
 
     function handleClickSearchReceta() {
         if (datosDespacho.numeroreceta.trim()) {
-            console.log("handleClickSearchReceta", datosDespacho.numeroreceta);
+            getRecetaLazyQuery({
+                variables: {
+                    oid: datosDespacho.numeroreceta.trim(),
+                },
+                onCompleted: async (data: any) => {
+                    const receta: IRecetaElectronica = data?.Receta;
+                    const objetoDespacho: IDespacho = await casoUsoRecetaElectronica(receta);
+                    dispatch(updateDespacho(objetoDespacho));
+                },
+            });
         }
     }
 
