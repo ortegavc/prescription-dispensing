@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { Switch } from "@headlessui/react";
-import { AdjustmentsHorizontalIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { AdjustmentsHorizontalIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { IDespacho } from "@domain/models";
 import { graphql } from "@msp/shared";
 import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
-import { SearchBar, ModalDistribucionLote, GridProductos } from "./components/forms";
-// import RecetaElectronica from "./components/recetaElectronica";
+import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
+import RecetaElectronica from "./components/recetaElectronica";
 import { createDespachoService } from "@application/services/despachoCreateService";
 
-const fake_bodega_id = 2;
+const fake_bodega_id = 7589;
 const fake_entidad_id = 1781;
 
 interface Producto {
@@ -71,8 +71,7 @@ export default function Terminal() {
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
     const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
     const [setDespachoCreate] = useDespachoCreateMutation();
-
-    const [agreed, setAgreed] = useState<boolean>(false);
+    const [esRecetaElectronica, setEsRecetaElectronica] = useState<boolean>(false);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
     const [stockProductoBodegaList, setStockProductoBodegaList] = useState<StockProductoBodegaItem[]>([]);
     const [productosRadioGroup, setProductosRadioGroup] = useState<Producto[]>([]);
@@ -131,6 +130,14 @@ export default function Terminal() {
     });
 
     // console.log("Validation errors", errors);
+
+    useEffect(() => {
+        if (esRecetaElectronica) {
+            console.log("Modo receta electronica activado");
+        } else {
+            console.log("Modo receta electronica desactivado");
+        }
+    }, [esRecetaElectronica]);
 
     useEffect(() => {
         console.log("useEffect reset(datosDespacho)", datosDespacho);
@@ -236,6 +243,12 @@ export default function Terminal() {
         setQuery(e.target.value);
     }
 
+    function handleClickSearchReceta() {
+        if (datosDespacho.numeroreceta.trim()) {
+            console.log("handleClickSearchReceta", datosDespacho.numeroreceta);
+        }
+    }
+
     function eliminarProductoReceta(productId: number) {
         dispatch(deleteMedicamento({ producto_id: productId }));
         setRecetaProductos(recetaProductos.filter((item: Producto) => item.id !== productId));
@@ -296,29 +309,6 @@ export default function Terminal() {
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
             </div>
             <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
-                <Switch.Group as="div" className="flex gap-x-4 col-span-full">
-                    <div className="flex h-6 items-center">
-                        <Switch
-                            checked={agreed}
-                            onChange={setAgreed}
-                            className={classNames(
-                                agreed ? "bg-indigo-600" : "bg-gray-200",
-                                "flex w-8 flex-none cursor-pointer rounded-full p-px ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            )}
-                        >
-                            <span className="sr-only">Receta Eletrónica</span>
-                            <span
-                                aria-hidden="true"
-                                className={classNames(
-                                    agreed ? "translate-x-3.5" : "translate-x-0",
-                                    "h-4 w-4 transform rounded-full bg-white shadow-sm ring-1 ring-gray-900/5 transition duration-200 ease-in-out"
-                                )}
-                            />
-                        </Switch>
-                    </div>
-                    <Switch.Label className="text-sm leading-6 text-gray-600">Despachar Receta Electrónica</Switch.Label>
-                </Switch.Group>
-
                 <div className="">
                     <div className="border rounded px-2 py-2">
                         <SearchBar
@@ -326,8 +316,6 @@ export default function Terminal() {
                             onChange={handleChangeSearchBar}
                             placeholder="Digite nombre de producto o SKU para buscar"
                         />
-                        {/* <RecetaElectronica /> */}
-                        {/* Filterable Product Grid */}
                         <GridProductos
                             productoGridSelected={productoGridSelected}
                             setProductoGridSelected={setProductoGridSelected}
@@ -341,8 +329,9 @@ export default function Terminal() {
                 <div className="">
                     <form className="mx-auto max-w-full" onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
-                            <div className="sm:grid-cols-1">
-                                <label htmlFor="fecha-receta" className="block text-sm font-semibold leading-6 text-gray-900">
+                            <div className="sm:grid-cols-1 py-8">
+                                <RadioGroupTipoReceta setTipoReceta={setEsRecetaElectronica} />
+                                {/* <label htmlFor="fecha-receta" className="block text-sm font-semibold leading-6 text-gray-900">
                                     Fecha
                                 </label>
                                 <div className="mt-1">
@@ -352,18 +341,35 @@ export default function Terminal() {
                                         autoComplete="fecha-receta"
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
-                                </div>
+                                </div> */}
                             </div>
                             <div className="sm:grid-cols-1">
                                 <label htmlFor="no-receta" className="block text-sm font-semibold leading-6 text-gray-900">
                                     No. Receta
                                 </label>
-                                <div className="mt-1">
+                                <div className="mt-1 relative">
+                                    {esRecetaElectronica && (
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="absolute top-1 left-2 flex h-6 w-6 items-center justify-center rounded-lg"
+                                                onClick={handleClickSearchReceta}
+                                            >
+                                                <svg
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="-ml-0.5 mr-1.5 h-5 w-5 fill-gray-400 hover:fill-gray-900"
+                                                >
+                                                    <path d="M20.47 21.53a.75.75 0 1 0 1.06-1.06l-1.06 1.06Zm-9.97-4.28a6.75 6.75 0 0 1-6.75-6.75h-1.5a8.25 8.25 0 0 0 8.25 8.25v-1.5ZM3.75 10.5a6.75 6.75 0 0 1 6.75-6.75v-1.5a8.25 8.25 0 0 0-8.25 8.25h1.5Zm6.75-6.75a6.75 6.75 0 0 1 6.75 6.75h1.5a8.25 8.25 0 0 0-8.25-8.25v1.5Zm11.03 16.72-5.196-5.197-1.061 1.06 5.197 5.197 1.06-1.06Zm-4.28-9.97c0 1.864-.755 3.55-1.977 4.773l1.06 1.06A8.226 8.226 0 0 0 18.75 10.5h-1.5Zm-1.977 4.773A6.727 6.727 0 0 1 10.5 17.25v1.5a8.226 8.226 0 0 0 5.834-2.416l-1.061-1.061Z"></path>
+                                                </svg>
+                                            </button>
+                                        </>
+                                    )}
                                     <input
                                         type="text"
                                         id="no-receta"
                                         autoComplete="no-receta"
-                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        className="block w-full rounded-md border-0 px-3.5 py-1.5 text-gray-900 text-right shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         {...register("numeroreceta", { required: true, maxLength: 20 })}
                                     />
                                     {errors.numeroreceta?.type === "required" && (
@@ -382,7 +388,7 @@ export default function Terminal() {
                                         type="text"
                                         id="dni-paciente"
                                         autoComplete="dni-paciente"
-                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        className="block w-full rounded-md border-0 px-3.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         {...register("paciente.identificacion", {
                                             required: "Identificación de paciente requerido",
                                         })}
@@ -406,7 +412,7 @@ export default function Terminal() {
                                         type="text"
                                         id="nombre-paciente"
                                         autoComplete="nombre-paciente"
-                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        className="block w-full rounded-md border-0 px-3.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         {...register("paciente.nombre", {
                                             required: "Nombre de paciente requerido",
                                             minLength: {
