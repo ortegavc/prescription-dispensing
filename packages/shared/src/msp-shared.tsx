@@ -6,7 +6,7 @@ import {
   BrowserRouter
 } from "react-router-dom";
 import { AuthClientTokens } from '@react-keycloak/core/lib/types';
-import { Main, Dashboard, onEvent, onTokens, RequireAuth } from "layout";
+import { Main, onEvent, onTokens, RequireAuth } from "layout";
 import Keycloak from "keycloak-js";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 import { ApolloProvider } from '@apollo/client';
@@ -65,4 +65,4 @@ const Layout = ({ children }: IlayoutProps) => {
 
 
 export default Layout;
-export { Dashboard, graphql }
+export { graphql }

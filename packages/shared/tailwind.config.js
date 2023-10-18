@@ -4,19 +4,6 @@ module.exports = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}"
   ],
-  theme: {
-    container: {
-      center: true,
-    },
-    extend: {},
-  },
-  plugins: [],
-}
-
-
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [],
   presets: [],
   darkMode: 'media', // or 'class'
   theme: {

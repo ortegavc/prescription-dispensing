@@ -46,7 +46,7 @@ function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
-export default function Terminal() {
+export  function Terminal() {
     const dispatch = useDispatch();
     const datosDespacho = useSelector((state: RootState) => state.despacho);
     const [defaultValues, setDefaultValues] = useState<IDespacho>(datosDespacho);
