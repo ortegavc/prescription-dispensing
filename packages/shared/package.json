@@ -78,6 +78,7 @@
     "@types/react-dom": "^18.2.7",
     "@types/systemjs": "^6.13.2",
     "@types/webpack-env": "^1.18.1",
+    "date-fns-tz": "^2.0.0",
     "graphql": "^16.8.1",
     "postcss-cli": "^10.1.0",
     "react": "^18.2.0",

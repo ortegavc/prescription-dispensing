@@ -66,3 +66,4 @@ const Layout = ({ children }: IlayoutProps) => {
 
 export default Layout;
 export { graphql }
+export * as sharedService from '@services/sharedServices'

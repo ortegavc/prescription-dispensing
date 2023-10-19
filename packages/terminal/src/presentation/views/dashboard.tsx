@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { graphql } from "@msp/shared";
 import { TerminalEstado } from "@presentation/views/components";
+import { setViewNotificacion, setLoadView } from '@presentation/actions'
+import { turnoOpen } from "@application/services";
 /**
  * Obtiene las terminales del usuario logeado y por entidad
  * @returns Terminales
  */
 export function Dashboard() {
     const {
-        useTerminalUsuarioListLazyQuery
+        useTerminalUsuarioListLazyQuery,
+        useTurnoOpenMutation
     } = graphql;
 
-    //const { useTerminalUsuarioListLazyQuery } = graphql;
-    const [listarConsolas, { data, loading, error }] = useTerminalUsuarioListLazyQuery();
 
+    const [listarConsolas, { data, loading, error }] = useTerminalUsuarioListLazyQuery();
+    const [TurnoOpenMutation] = useTurnoOpenMutation();
     const [state, setState] = useState({
         usuario: sessionStorage.getItem("usuarioNombre_terminal"),
         perfil: sessionStorage.getItem("perfilNombre_terminal"),
@@ -56,9 +59,21 @@ export function Dashboard() {
 
     }, [sessionStorage.getItem("usuarioNombre_terminal")])
 
+
+
     const handleIngresarClick = (idTerminal: number) => {
-        // Agrega aquí el código que deseas ejecutar cuando se hace clic en el botón
-        alert('Hiciste clic en el botón "Ingresar"');
+        //
+        const dataSave: {} = {
+            create: TurnoOpenMutation,
+        };
+
+        dispatch(setViewNotificacion(
+            {
+                open: true, title: estadoCrud,
+                onConfirm: () => turnoOpen(metodos, dataSave)
+
+            }
+        ))
     };
 
     return (

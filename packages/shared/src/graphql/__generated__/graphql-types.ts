@@ -4694,6 +4694,17 @@ export type TerminalUsuarioListQuery = {
     }> | null;
 };
 
+export type TurnoOpenCreateFieldsFragment = { __typename?: "Turno"; terminal_id?: number | null };
+
+export type TurnoOpenMutationVariables = Exact<{
+    dataInput: TurnoOpenInput;
+}>;
+
+export type TurnoOpenMutation = {
+    __typename?: "Mutation";
+    turnoOpen?: { __typename?: "Turno"; terminal_id?: number | null } | null;
+};
+
 export const DespachoCreateFieldsFragmentDoc = gql`
     fragment despachoCreateFields on DespachoResult {
         code
@@ -4799,6 +4810,11 @@ export const TerminalUsuarioListFieldsFragmentDoc = gql`
                 nombre
             }
         }
+    }
+`;
+export const TurnoOpenCreateFieldsFragmentDoc = gql`
+    fragment turnoOpenCreateFields on Turno {
+        terminal_id
     }
 `;
 export const DespachoCreateDocument = gql`
@@ -5080,6 +5096,40 @@ export function useTerminalUsuarioListLazyQuery(
 export type TerminalUsuarioListQueryHookResult = ReturnType<typeof useTerminalUsuarioListQuery>;
 export type TerminalUsuarioListLazyQueryHookResult = ReturnType<typeof useTerminalUsuarioListLazyQuery>;
 export type TerminalUsuarioListQueryResult = Apollo.QueryResult<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>;
+export const TurnoOpenDocument = gql`
+    mutation TurnoOpen($dataInput: TurnoOpenInput!) {
+        turnoOpen(dataInput: $dataInput) {
+            ...turnoOpenCreateFields
+        }
+    }
+    ${TurnoOpenCreateFieldsFragmentDoc}
+`;
+export type TurnoOpenMutationFn = Apollo.MutationFunction<TurnoOpenMutation, TurnoOpenMutationVariables>;
+
+/**
+ * __useTurnoOpenMutation__
+ *
+ * To run a mutation, you first call `useTurnoOpenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTurnoOpenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [turnoOpenMutation, { data, loading, error }] = useTurnoOpenMutation({
+ *   variables: {
+ *      dataInput: // value for 'dataInput'
+ *   },
+ * });
+ */
+export function useTurnoOpenMutation(baseOptions?: Apollo.MutationHookOptions<TurnoOpenMutation, TurnoOpenMutationVariables>) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useMutation<TurnoOpenMutation, TurnoOpenMutationVariables>(TurnoOpenDocument, options);
+}
+export type TurnoOpenMutationHookResult = ReturnType<typeof useTurnoOpenMutation>;
+export type TurnoOpenMutationResult = Apollo.MutationResult<TurnoOpenMutation>;
+export type TurnoOpenMutationOptions = Apollo.BaseMutationOptions<TurnoOpenMutation, TurnoOpenMutationVariables>;
 export const namedOperations = {
     Query: {
         ProductoBodegaCollection: "ProductoBodegaCollection",
@@ -5090,6 +5140,7 @@ export const namedOperations = {
     },
     Mutation: {
         DespachoCreate: "DespachoCreate",
+        TurnoOpen: "TurnoOpen",
     },
     Fragment: {
         despachoCreateFields: "despachoCreateFields",
@@ -5098,5 +5149,6 @@ export const namedOperations = {
         stockProductoBodegaFields: "stockProductoBodegaFields",
         recetaElectronicaFields: "recetaElectronicaFields",
         terminalUsuarioListFields: "terminalUsuarioListFields",
+        turnoOpenCreateFields: "turnoOpenCreateFields",
     },
 };

@@ -16,7 +16,8 @@
       "@store/*": ["store/*"],
       "@helper/*": ["helper/*"],
       "@interfaces/*": ["interfaces/*"],
-      "@graphql/*":["graphql/*"]
+      "@graphql/*":["graphql/*"],
+      "@services/*":["services/*"]
   }
 },
   "files": ["src/msp-shared.tsx"],

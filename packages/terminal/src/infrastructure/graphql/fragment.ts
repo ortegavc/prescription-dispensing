@@ -115,7 +115,7 @@ export const TERMINAL_USUARIO_FIELDS = gql`
        }
    `
 export const TURNO_OPEN_FIELDS = gql`
-    fragment turnoOpenCreateFields on TurnoOpen {
+    fragment turnoOpenCreateFields on Turno {
         terminal_id
     }
 `
