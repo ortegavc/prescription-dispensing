@@ -7,7 +7,7 @@ import { IDespacho } from "@domain/models";
 import { graphql } from "@msp/shared";
 import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
-import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
+import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta , TurnoCloseButton} from "./components";
 import RecetaElectronica from "./components/recetaElectronica";
 import { createDespachoService } from "@application/services/despachoCreateService";
 import { IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
@@ -50,6 +50,7 @@ function classNames(...classes: string[]) {
 
 export  function Terminal() {
     const dispatch = useDispatch();
+    
     const datosDespacho = useSelector((state: RootState) => state.despacho);
     const [defaultValues, setDefaultValues] = useState<IDespacho>(datosDespacho);
 
@@ -318,8 +319,10 @@ export  function Terminal() {
 
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
+            <TurnoCloseButton/>
             <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
+                
             </div>
             <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
                 <div className="">

@@ -1,8 +1,10 @@
-
-interface EntidadModel {
+export interface IEntidad {
     id?: number;
     nombre: String;
     unicodigo: String;
 }
 
-export { EntidadModel } 
+export const initialState: IEntidad = {
+    nombre: "",
+    unicodigo: "",
+};

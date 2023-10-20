@@ -89,3 +89,6 @@ export const GET_TERMINAL_USUARIOS = ()=>{
             }            
         `
 }
+
+
+

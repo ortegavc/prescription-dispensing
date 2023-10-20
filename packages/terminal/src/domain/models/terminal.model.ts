@@ -1,17 +1,21 @@
-import { Bodega } from './bodega.model';
-export { EntidadModel } from './entidad.model';
+import { IBodega, initialState as initialStateBodega } from "./bodega.model";
+import { IEntidad, initialState as initialStateEntidad } from "./entidad.model";
+import { ITurno, initialState as initialStateTurno } from "./turno.model";
 
-export interface Terminal {
-    bodega: Bodega;
-    bodega_id: number;
-    codigo: String;
-    entidad: EntidadModel;
-    entidad_id: number;
-    enuso: number;
-    estado: number;
+export interface ITerminal {
+    entidad: IEntidad;
+    bodega: IBodega;
+    turno: ITurno;
     id: number;
-    nombre: String
-    observacion: String
-    recetaelectronica: number;
-    tipotransaccion_id: number;
+    nombre: String;
+    recetaElectronica:boolean;
 }
+
+export const initialState: ITerminal = {
+    entidad: initialStateEntidad,
+    bodega: initialStateBodega,
+    turno: initialStateTurno,
+    id: 0,
+    nombre: "",
+    recetaElectronica: false
+};

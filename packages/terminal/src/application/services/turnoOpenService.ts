@@ -1,5 +1,4 @@
-//import {  } from '@presentation/actions'
-import { sharedService } from '@msp/shared';
+//import { sharedService } from '@msp/shared';
 
 export const turnoOpen = (metodos: any, dataSave: any) => {
 
@@ -10,7 +9,7 @@ export const turnoOpen = (metodos: any, dataSave: any) => {
     dataSave.create({
         variables: {
             inputCreate: {
-                terminal_id: dataTerminal.id
+                terminal_id: dataTerminal.terminal_id
             }
         },
         refetchQueries: [

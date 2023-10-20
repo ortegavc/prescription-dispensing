@@ -1,21 +1,85 @@
 import React, { useEffect, useState } from "react";
-import { graphql } from "@msp/shared";
+import { useNavigate } from 'react-router-dom';
+import { graphql, useEventDispatcher } from "@msp/shared";
 import { TerminalEstado } from "@presentation/views/components";
-import { setViewNotificacion, setLoadView } from '@presentation/actions'
-import { turnoOpen } from "@application/services";
+import { addTerminal } from '@presentation/actions'
+import { useDispatch } from "react-redux";
 /**
  * Obtiene las terminales del usuario logeado y por entidad
- * @returns Terminales
+ * @returns Terminales 
  */
 export function Dashboard() {
+    const [apiTerminal, setApiTerminal] = useState<any>();
+    const dispatch = useDispatch();
     const {
         useTerminalUsuarioListLazyQuery,
-        useTurnoOpenMutation
+        useTurnoOpenMutation,
+        useTurnoCloseMutation
     } = graphql;
+    const eventDispatcher = useEventDispatcher();
+    const navigate = useNavigate();
 
 
     const [listarConsolas, { data, loading, error }] = useTerminalUsuarioListLazyQuery();
-    const [TurnoOpenMutation] = useTurnoOpenMutation();
+    /**
+     * CREAR TURNO
+     */
+    const [createTurno] = useTurnoOpenMutation({
+
+        onCompleted: (data: any) => {
+            const { turnoOpen } = data;
+
+            dispatch(
+                addTerminal(
+                    {
+                        entidad: {
+                            id: apiTerminal.entidad_id,
+                            nombre: "",
+                            unicodigo: apiTerminal.entidad_id,
+                        },
+                        bodega: {
+                            id: apiTerminal.bodega.id,
+                            codigo: apiTerminal.bodega.codigo,
+                            nombre: apiTerminal.bodega.nombre
+                        },
+                        turno: {
+                            id: turnoOpen.id,
+                            numeroturno: turnoOpen.numeroturno,
+                            numerodispensacion: turnoOpen.numerodispensacion,
+                            estado: turnoOpen.estado,
+                            fechainicio: turnoOpen.fechainicio,
+                            usuario: sessionStorage.getItem("usuarioNombre_terminal"),
+                            idUsuario: sessionStorage.getItem("usuarioId_terminal"),
+                            rolUsuario: sessionStorage.getItem("rol_seleccionado")
+                        },
+                        id: turnoOpen.terminal_id,
+                        nombre: apiTerminal.nombre,
+                        recetaElectronica: apiTerminal.recetaelectronica ? true : false,
+
+
+
+                    }
+                )
+            );
+            eventDispatcher.dispatch("infoUserClicked", {
+                type: "infoUserClicked",
+                nombre: sessionStorage.getItem("usuarioNombre_terminal") + " / ",
+                bodega: apiTerminal.bodega.nombre + " / ",
+                nombreTerminal: apiTerminal.nombre + " / ",
+                numeroturno: " No. turno: " + turnoOpen.numeroturno,
+            });
+            //Enviar a despachar en la terminal seleccionada
+            navigate('/terminal/usuario');
+        },
+        onError: (error: any) => {
+
+
+            console.log('MonError', error);
+        },
+    });
+
+
+
     const [state, setState] = useState({
         usuario: sessionStorage.getItem("usuarioNombre_terminal"),
         perfil: sessionStorage.getItem("perfilNombre_terminal"),
@@ -61,20 +125,22 @@ export function Dashboard() {
 
 
 
-    const handleIngresarClick = (idTerminal: number) => {
-        //
-        const dataSave: {} = {
-            create: TurnoOpenMutation,
-        };
+    const handleIngresarClick = (terminal: any) => {
+        //Guardamos en una variable los datos de la terminal seleccionada
+        setApiTerminal(terminal)
 
-        dispatch(setViewNotificacion(
-            {
-                open: true, title: estadoCrud,
-                onConfirm: () => turnoOpen(metodos, dataSave)
-
+        createTurno({
+            variables: {
+                dataInput: {
+                    terminal_id: terminal.id
+                }
             }
-        ))
+        });
+
+
     };
+
+
 
     return (
 
@@ -101,7 +167,7 @@ export function Dashboard() {
                             </div>
                             <div className="flex justify-center w-full">
 
-                                <button className="w-3/4 p-3 justify-center bg-blue-600 text-white rounded-md hover:bg-primary-dark focus:outline-none" onClick={() => handleIngresarClick(terminal.id)}>
+                                <button className="w-3/4 p-3 justify-center bg-blue-600 text-white rounded-md hover:bg-primary-dark focus:outline-none" onClick={() => handleIngresarClick(terminal)}>
                                     Ingresar
                                 </button>
                             </div>
@@ -118,4 +184,6 @@ export function Dashboard() {
 
     );
 }
+
+
 

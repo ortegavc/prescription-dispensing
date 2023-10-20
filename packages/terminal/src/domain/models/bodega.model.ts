@@ -1,8 +1,10 @@
-
-interface Bodega {
+export interface IBodega {
     id?: number;
     codigo: String;
     nombre: String;
 }
 
-export { Bodega };
+export const initialState: IBodega = {
+    codigo: "",
+    nombre: "",
+};

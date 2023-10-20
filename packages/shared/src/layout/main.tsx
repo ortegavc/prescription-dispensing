@@ -1,11 +1,9 @@
 import React, { FC, ReactNode, Fragment } from "react";
 import { Outlet } from "react-router-dom";
-
-
-
-import Navbar from "./navbarLight";
+import RequireAuth from "./requireAuth";
+import Navbar from "./navbar";
 import Slider from "./slider";
-import Content from "./content";
+import Content, { CenterMain } from "./content";
 import Footer from "./footer";
 import { SidebarProvider } from "./SidebarContext";
 
@@ -18,16 +16,18 @@ export const Main = () => {
 
     return (
         <Fragment>
-
             <SidebarProvider>
-                <Navbar />
-                <Slider />
-                <Content >
-                    <Outlet />
-                </Content>
-                <Footer />
+                <RequireAuth>
+                    <Navbar />
+                    <CenterMain> 
+                    <Slider />
+                    <Content>
+                        <Outlet />
+                    </Content>
+                    <Footer />
+                    </CenterMain>
+                </RequireAuth>
             </SidebarProvider>
-
         </Fragment>
     );
 };

@@ -23,3 +23,14 @@ export const TURNO_OPEN = () => {
         }
     `
 }
+
+export const TURNO_CLOSE = () => {
+    return gql`
+        ${TURNO_OPEN_FIELDS}
+        mutation TurnoClose($dataInput: TurnoCloseInput!) {
+            turnoClose(dataInput: $dataInput) {
+                ... turnoCloseCreateFields
+            }
+        }
+    `
+}

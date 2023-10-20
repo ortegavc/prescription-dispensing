@@ -1676,6 +1676,7 @@ export type IngresoFilterInput = {
     periodo?: InputMaybe<NumberWhereInput>;
     proveedor?: InputMaybe<ProveedorIngresosFilterInput>;
     tipotransaccion?: InputMaybe<TipoTransaccionIngresoFilterInput>;
+    tipotransaccion_id?: InputMaybe<NumberWhereInput>;
     usuariocreacion?: InputMaybe<UsuarioIngresoFilterInput>;
 };
 
@@ -2382,7 +2383,9 @@ export type Producto = {
     __typename?: "Producto";
     codigoproducto: Scalars["String"]["output"];
     id: Scalars["Int"]["output"];
-    nombre: Scalars["String"]["output"];
+    manejalote?: Maybe<Scalars["Int"]["output"]>;
+    nombre?: Maybe<Scalars["String"]["output"]>;
+    productostockbodega?: Maybe<ProductoStockBodega>;
     unidadmedidaproducto?: Maybe<UnidadMedida>;
 };
 
@@ -2503,9 +2506,13 @@ export type ProductoEntidadAdministracion = {
     __typename?: "ProductoEntidadAdministracion";
     entidad?: Maybe<EntidadAdministracion>;
     entidad_id?: Maybe<Scalars["Float"]["output"]>;
+    enviadoesbye?: Maybe<Scalars["Float"]["output"]>;
     estado?: Maybe<Scalars["Float"]["output"]>;
+    estadoesbye?: Maybe<Scalars["String"]["output"]>;
+    fechainicioesbye?: Maybe<Scalars["DateScalar"]["output"]>;
     producto?: Maybe<ProductoAdministracion>;
     producto_id?: Maybe<Scalars["Float"]["output"]>;
+    sincronizaesbye?: Maybe<Scalars["Float"]["output"]>;
 };
 
 export type ProductoEntidadCollectionType = {
@@ -2669,6 +2676,13 @@ export type ProductoStock = {
     unidadmedida?: Maybe<UnidadMedidaStock>;
     unidadmedida_id?: Maybe<Scalars["Float"]["output"]>;
     vacuna?: Maybe<Scalars["Int"]["output"]>;
+};
+
+export type ProductoStockBodega = {
+    __typename?: "ProductoStockBodega";
+    id?: Maybe<Scalars["Int"]["output"]>;
+    producto_id?: Maybe<Scalars["Int"]["output"]>;
+    saldo?: Maybe<Scalars["Float"]["output"]>;
 };
 
 export type ProductoStockBodegaCollectionType = {
@@ -3054,6 +3068,7 @@ export type Query = {
     producto: ProductoAdministracion;
     productoBodegaCollection?: Maybe<ProductoBodegaCollectionType>;
     productoBodegaList?: Maybe<Array<ProductoBodegaList>>;
+    productoByCodigo?: Maybe<ProductoAdministracion>;
     productoCollection?: Maybe<ProductoCollectionType>;
     productoEntidadCollection?: Maybe<ProductoEntidadCollectionType>;
     productoForEntidadList?: Maybe<Array<ProductoForEntidadAdministracion>>;
@@ -3330,6 +3345,10 @@ export type QueryProductoBodegaListArgs = {
     producto_id: Scalars["Int"]["input"];
 };
 
+export type QueryProductoByCodigoArgs = {
+    codigoproducto: Scalars["String"]["input"];
+};
+
 export type QueryProductoCollectionArgs = {
     order?: InputMaybe<StringOrderInput>;
     pagination?: InputMaybe<PaginationInput>;
@@ -3579,6 +3598,7 @@ export type RecetaDetalle = {
     id: Scalars["Int"]["output"];
     medicamento_sku: Scalars["String"]["output"];
     oid: Scalars["String"]["output"];
+    producto?: Maybe<Producto>;
 };
 
 export type RegistroSanitarioCreateInput = {
@@ -4191,9 +4211,6 @@ export type TurnoOpenInput = {
 export type UnidadMedida = {
     __typename?: "UnidadMedida";
     abreviatura?: Maybe<Scalars["String"]["output"]>;
-    cttipounidad_id?: Maybe<Scalars["Int"]["output"]>;
-    descripcion?: Maybe<Scalars["String"]["output"]>;
-    estado?: Maybe<Scalars["Int"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     nombre?: Maybe<Scalars["String"]["output"]>;
 };
@@ -4539,6 +4556,24 @@ export type TerminalUsuarioListFieldsFragment = {
     };
 };
 
+export type TurnoOpenCreateFieldsFragment = {
+    __typename?: "Turno";
+    terminal_id?: number | null;
+    estado?: number | null;
+    fechacierre?: any | null;
+    fechainicio?: any | null;
+    id?: number | null;
+    numerodispensacion?: number | null;
+    numeroturno?: string | null;
+    observacioncierre?: string | null;
+};
+
+export type TurnoCloseCreateFieldsFragment = {
+    __typename?: "Turno";
+    terminal_id?: number | null;
+    observacioncierre?: string | null;
+};
+
 export type DespachoCreateMutationVariables = Exact<{
     dataInput: DespachoCreateInput;
 }>;
@@ -4551,6 +4586,34 @@ export type DespachoCreateMutation = {
         message?: string | null;
         status?: boolean | null;
     } | null;
+};
+
+export type TurnoOpenMutationVariables = Exact<{
+    dataInput: TurnoOpenInput;
+}>;
+
+export type TurnoOpenMutation = {
+    __typename?: "Mutation";
+    turnoOpen?: {
+        __typename?: "Turno";
+        terminal_id?: number | null;
+        estado?: number | null;
+        fechacierre?: any | null;
+        fechainicio?: any | null;
+        id?: number | null;
+        numerodispensacion?: number | null;
+        numeroturno?: string | null;
+        observacioncierre?: string | null;
+    } | null;
+};
+
+export type TurnoCloseMutationVariables = Exact<{
+    dataInput: TurnoCloseInput;
+}>;
+
+export type TurnoCloseMutation = {
+    __typename?: "Mutation";
+    turnoClose?: { __typename?: "Turno"; terminal_id?: number | null; observacioncierre?: string | null } | null;
 };
 
 export type ProductoBodegaCollectionQueryVariables = Exact<{
@@ -4694,17 +4757,6 @@ export type TerminalUsuarioListQuery = {
     }> | null;
 };
 
-export type TurnoOpenCreateFieldsFragment = { __typename?: "Turno"; terminal_id?: number | null };
-
-export type TurnoOpenMutationVariables = Exact<{
-    dataInput: TurnoOpenInput;
-}>;
-
-export type TurnoOpenMutation = {
-    __typename?: "Mutation";
-    turnoOpen?: { __typename?: "Turno"; terminal_id?: number | null } | null;
-};
-
 export const DespachoCreateFieldsFragmentDoc = gql`
     fragment despachoCreateFields on DespachoResult {
         code
@@ -4815,6 +4867,19 @@ export const TerminalUsuarioListFieldsFragmentDoc = gql`
 export const TurnoOpenCreateFieldsFragmentDoc = gql`
     fragment turnoOpenCreateFields on Turno {
         terminal_id
+        estado
+        fechacierre
+        fechainicio
+        id
+        numerodispensacion
+        numeroturno
+        observacioncierre
+    }
+`;
+export const TurnoCloseCreateFieldsFragmentDoc = gql`
+    fragment turnoCloseCreateFields on Turno {
+        terminal_id
+        observacioncierre
     }
 `;
 export const DespachoCreateDocument = gql`
@@ -4853,6 +4918,76 @@ export function useDespachoCreateMutation(
 export type DespachoCreateMutationHookResult = ReturnType<typeof useDespachoCreateMutation>;
 export type DespachoCreateMutationResult = Apollo.MutationResult<DespachoCreateMutation>;
 export type DespachoCreateMutationOptions = Apollo.BaseMutationOptions<DespachoCreateMutation, DespachoCreateMutationVariables>;
+export const TurnoOpenDocument = gql`
+    mutation TurnoOpen($dataInput: TurnoOpenInput!) {
+        turnoOpen(dataInput: $dataInput) {
+            ...turnoOpenCreateFields
+        }
+    }
+    ${TurnoOpenCreateFieldsFragmentDoc}
+`;
+export type TurnoOpenMutationFn = Apollo.MutationFunction<TurnoOpenMutation, TurnoOpenMutationVariables>;
+
+/**
+ * __useTurnoOpenMutation__
+ *
+ * To run a mutation, you first call `useTurnoOpenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTurnoOpenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [turnoOpenMutation, { data, loading, error }] = useTurnoOpenMutation({
+ *   variables: {
+ *      dataInput: // value for 'dataInput'
+ *   },
+ * });
+ */
+export function useTurnoOpenMutation(baseOptions?: Apollo.MutationHookOptions<TurnoOpenMutation, TurnoOpenMutationVariables>) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useMutation<TurnoOpenMutation, TurnoOpenMutationVariables>(TurnoOpenDocument, options);
+}
+export type TurnoOpenMutationHookResult = ReturnType<typeof useTurnoOpenMutation>;
+export type TurnoOpenMutationResult = Apollo.MutationResult<TurnoOpenMutation>;
+export type TurnoOpenMutationOptions = Apollo.BaseMutationOptions<TurnoOpenMutation, TurnoOpenMutationVariables>;
+export const TurnoCloseDocument = gql`
+    mutation TurnoClose($dataInput: TurnoCloseInput!) {
+        turnoClose(dataInput: $dataInput) {
+            ...turnoCloseCreateFields
+        }
+    }
+    ${TurnoCloseCreateFieldsFragmentDoc}
+`;
+export type TurnoCloseMutationFn = Apollo.MutationFunction<TurnoCloseMutation, TurnoCloseMutationVariables>;
+
+/**
+ * __useTurnoCloseMutation__
+ *
+ * To run a mutation, you first call `useTurnoCloseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTurnoCloseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [turnoCloseMutation, { data, loading, error }] = useTurnoCloseMutation({
+ *   variables: {
+ *      dataInput: // value for 'dataInput'
+ *   },
+ * });
+ */
+export function useTurnoCloseMutation(
+    baseOptions?: Apollo.MutationHookOptions<TurnoCloseMutation, TurnoCloseMutationVariables>
+) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useMutation<TurnoCloseMutation, TurnoCloseMutationVariables>(TurnoCloseDocument, options);
+}
+export type TurnoCloseMutationHookResult = ReturnType<typeof useTurnoCloseMutation>;
+export type TurnoCloseMutationResult = Apollo.MutationResult<TurnoCloseMutation>;
+export type TurnoCloseMutationOptions = Apollo.BaseMutationOptions<TurnoCloseMutation, TurnoCloseMutationVariables>;
 export const ProductoBodegaCollectionDocument = gql`
     query ProductoBodegaCollection(
         $inputWhere: ProductoBodegaFilterInput
@@ -5096,40 +5231,6 @@ export function useTerminalUsuarioListLazyQuery(
 export type TerminalUsuarioListQueryHookResult = ReturnType<typeof useTerminalUsuarioListQuery>;
 export type TerminalUsuarioListLazyQueryHookResult = ReturnType<typeof useTerminalUsuarioListLazyQuery>;
 export type TerminalUsuarioListQueryResult = Apollo.QueryResult<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>;
-export const TurnoOpenDocument = gql`
-    mutation TurnoOpen($dataInput: TurnoOpenInput!) {
-        turnoOpen(dataInput: $dataInput) {
-            ...turnoOpenCreateFields
-        }
-    }
-    ${TurnoOpenCreateFieldsFragmentDoc}
-`;
-export type TurnoOpenMutationFn = Apollo.MutationFunction<TurnoOpenMutation, TurnoOpenMutationVariables>;
-
-/**
- * __useTurnoOpenMutation__
- *
- * To run a mutation, you first call `useTurnoOpenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTurnoOpenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [turnoOpenMutation, { data, loading, error }] = useTurnoOpenMutation({
- *   variables: {
- *      dataInput: // value for 'dataInput'
- *   },
- * });
- */
-export function useTurnoOpenMutation(baseOptions?: Apollo.MutationHookOptions<TurnoOpenMutation, TurnoOpenMutationVariables>) {
-    const options = { ...defaultOptions, ...baseOptions };
-    return Apollo.useMutation<TurnoOpenMutation, TurnoOpenMutationVariables>(TurnoOpenDocument, options);
-}
-export type TurnoOpenMutationHookResult = ReturnType<typeof useTurnoOpenMutation>;
-export type TurnoOpenMutationResult = Apollo.MutationResult<TurnoOpenMutation>;
-export type TurnoOpenMutationOptions = Apollo.BaseMutationOptions<TurnoOpenMutation, TurnoOpenMutationVariables>;
 export const namedOperations = {
     Query: {
         ProductoBodegaCollection: "ProductoBodegaCollection",
@@ -5141,6 +5242,7 @@ export const namedOperations = {
     Mutation: {
         DespachoCreate: "DespachoCreate",
         TurnoOpen: "TurnoOpen",
+        TurnoClose: "TurnoClose",
     },
     Fragment: {
         despachoCreateFields: "despachoCreateFields",
@@ -5150,5 +5252,6 @@ export const namedOperations = {
         recetaElectronicaFields: "recetaElectronicaFields",
         terminalUsuarioListFields: "terminalUsuarioListFields",
         turnoOpenCreateFields: "turnoOpenCreateFields",
+        turnoCloseCreateFields: "turnoCloseCreateFields",
     },
 };

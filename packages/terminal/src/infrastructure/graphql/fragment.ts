@@ -117,5 +117,19 @@ export const TERMINAL_USUARIO_FIELDS = gql`
 export const TURNO_OPEN_FIELDS = gql`
     fragment turnoOpenCreateFields on Turno {
         terminal_id
+        estado
+        fechacierre
+        fechainicio
+        id
+        numerodispensacion
+        numeroturno
+        observacioncierre
+    }
+`
+
+export const TURNO_CLOSE = gql`
+    fragment turnoCloseCreateFields on Turno {
+        terminal_id,
+        observacioncierre
     }
 `
