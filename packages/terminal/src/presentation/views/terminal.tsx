@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { AdjustmentsHorizontalIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { IDespacho } from "@domain/models";
+import { IDespacho, IDespachoDetalle } from "@domain/models";
 import { graphql } from "@msp/shared";
 import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
@@ -60,11 +60,18 @@ export default function Terminal() {
 
     const finalizarDistribucionLote = () => {
         console.log("Terminal: finalizarDistribucionLote");
-
-        if (recetaProductos.some((item: IProducto) => item.id === productoModal.id)) {
-            console.log("Terminal: productoModal ya está en lista", productoModal);
+        const index = recetaProductos.findIndex((item: IProducto) => item.id === productoModal.id);
+        if (index >= 0) {
+            // Actualizar receta, usada en form visual
+            const tmpReceta = [...recetaProductos];
+            tmpReceta[index] = productoModal;
+            setRecetaProductos(tmpReceta);
+            // Actualizar state en redux
+            const tmpDespachoDetalle = [...datosDespacho.despachodetalle].map((lote: IDespachoDetalle, index) => {
+                return { ...lote, cantidaddespachada: productoModal.lotes[index].CANTIDADDISTRIBUIDA };
+            });
+            dispatch(updateMedicamento(tmpDespachoDetalle));
         } else {
-            console.log("Terminal: productoModal no está en lista", productoModal);
             setRecetaProductos([...recetaProductos, productoModal]);
             // Agregar lotes a despachodetalle en storage de redux
             productoModal.lotes.forEach((lote: IStockProductoBodegaItem) => {
