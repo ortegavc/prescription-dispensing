@@ -18,6 +18,7 @@ interface Producto {
     cantidadrequerida: number;
     cantidaddespachada: number;
     unidadmedida_id: number;
+    lotes: any[];
 }
 
 function classNames(...classes: string[]) {

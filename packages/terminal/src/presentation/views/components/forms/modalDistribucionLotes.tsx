@@ -1,72 +1,81 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { StockProductoBodegaListComponent } from "./stockProductoBodegaList";
-import { set } from "react-hook-form";
-
-interface StockProductoBodegaItem {
-    CANTIDAD: number;
-    CANTIDADDISTRIBUIDA: number;
-    CODIGOPRODUCTO: string;
-    COSTO: number;
-    FECHACADUCIDAD: string;
-    FECHAELABORACION: string;
-    LOTEID: string;
-    NOMBRE: string;
-    NUMEROLOTE: string;
-    PRODUCTOID: number;
-    UNIDADMEDIDAABREVIATURA: string;
-    UNIDADMEDIDAID: number;
-    UNIDADMEDIDANOMBRE: string;
-}
+import { StockProductoBodegaList } from "./stockProductoBodegaList";
+import { IProducto, IStockProductoBodegaItem } from "@domain/models";
+import { graphql } from "@msp/shared";
 
 interface ModalDistribucionLoteProps {
     isOpen: boolean;
     finalizar: (e: any) => void;
-    producto: any | null;
-    setProducto: (e: any) => void;
-    stockProductoBodegaList: StockProductoBodegaItem[];
-    setStockProductoBodegaList: (e: any) => void;
-    onChangeCantidadRequerida: () => void;
+    producto: IProducto | null;
+    setProducto: (e: IProducto) => void;
 }
 
-export function ModalDistribucionLote({
-    isOpen,
-    onChangeCantidadRequerida,
-    producto,
-    finalizar,
-    setProducto,
-    stockProductoBodegaList,
-    setStockProductoBodegaList,
-}: ModalDistribucionLoteProps) {
-    const [cantidadRequeridaAux, setCantidadRequeridaAux] = useState<number>(producto?.cantidadrequerida);
-    const [tmpStockProductoBodegaList, setTmpStockProductoBodegaList] = useState<any[]>([]);
+export function ModalDistribucionLote({ isOpen, finalizar, producto, setProducto }: ModalDistribucionLoteProps) {
+    const { useStockProductoBodegaListLazyQuery } = graphql;
+    const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
+    const [productoModal, setProductoModal] = useState<IProducto | any>(null);
+    const [productUpdReq, setProductUpdReq] = useState<boolean>(false);
+
     const handleAcceptClick = () => {
-        console.log("handleAcceptClick");
-        console.log("producto", producto);
-        console.log("tmpStockProductoBodegaList", tmpStockProductoBodegaList);
-        setStockProductoBodegaList(tmpStockProductoBodegaList);
-        finalizar(false);
+        console.log("ModalDistribucionLote: handleAcceptClick");
+        setProducto(productoModal);
+        setProductUpdReq(true);
     };
-    const handleChangeCantidadRequerida = (e: any) => {
-        console.log("handleChangeCantidadRequerida", e.target.value);
-        const cantidad = parseInt(e.target.value);
-        const tmpProducto = { ...producto };
-        tmpProducto.cantidadrequerida = cantidad;
-        setCantidadRequeridaAux(cantidad);
-        setProducto(tmpProducto);
+
+    const handleBlurCantidadRequerida = () => {
+        console.log("ModalDistribucionLote: handleBlurCantidadRequerida");
+        if (productoModal && !productoModal.lotes.length) {
+            console.log("ModalDistribucionLote: getStockProductoBodegaListLazyQuery");
+            getStockProductoBodegaListLazyQuery({
+                variables: {
+                    bodega_id: 2,
+                    cantidad: productoModal.cantidadrequerida,
+                    entidad_id: 1781,
+                    producto_id: productoModal.id,
+                    caducado: false,
+                },
+                fetchPolicy: "cache-and-network",
+                onCompleted: (c: any) => {
+                    console.log("getStockProductoBodegaListLazyQuery completed...");
+                    setProductoModal({ ...productoModal, ...{ lotes: c.stockProductoBodegaList } });
+                },
+            });
+        }
+    };
+
+    const handleChangeCantidadRequerida = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setProductoModal({ ...productoModal, cantidadrequerida: parseInt(e.target.value) });
     };
 
     useEffect(() => {
-        const cantidaddespachada = stockProductoBodegaList.reduce(
-            (accumulator, currentObject) => accumulator + currentObject.CANTIDADDISTRIBUIDA,
-            0
-        );
-        console.log("cantidad distribuidad total", cantidaddespachada);
-        const tmpProducto = { ...producto };
-        tmpProducto.cantidaddespachada = cantidaddespachada;
-        setProducto(tmpProducto);
-        setTmpStockProductoBodegaList(stockProductoBodegaList);
-    }, [stockProductoBodegaList]);
+        if (!productoModal) {
+            console.log("ModalDistribucionLote: definir productoModal");
+            setProductoModal(producto);
+        }
+
+        if (productUpdReq) {
+            console.log("ModalDistribucionLote: producto actualizado en componente padre");
+            setProductUpdReq(false);
+            setProductoModal(null);
+            finalizar(false);
+        }
+    }, [producto]);
+
+    useEffect(() => {
+        console.log("ModalDistribucionLote: useEffect [productoModal]", productoModal);
+        if (productoModal && productoModal.lotes.length) {
+            const cantdisttotal = productoModal.lotes.reduce(
+                (accumulator: number, currentObject: IStockProductoBodegaItem) =>
+                    accumulator + currentObject.CANTIDADDISTRIBUIDA,
+                0
+            );
+            console.log("ModalDistribucionLote: cantidad distribuida total", cantdisttotal);
+            if (productoModal.cantidaddespachada !== cantdisttotal) {
+                setProductoModal({ ...productoModal, cantidaddespachada: cantdisttotal });
+            }
+        }
+    }, [productoModal]);
 
     return (
         <Transition appear show={isOpen} as={Fragment}>
@@ -112,27 +121,23 @@ export function ModalDistribucionLote({
                                         <input
                                             type="number"
                                             id="cant-req"
-                                            value={cantidadRequeridaAux}
+                                            value={productoModal?.cantidadrequerida}
                                             className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                             onChange={handleChangeCantidadRequerida}
-                                            onBlur={onChangeCantidadRequerida}
+                                            onBlur={handleBlurCantidadRequerida}
                                         />
                                     </div>
                                     <div className="flex-initial w-20">
                                         <input
                                             type="number"
                                             id="cant-des"
-                                            value={producto?.cantidaddespachada}
+                                            value={productoModal?.cantidaddespachada}
                                             readOnly
                                             className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         />
                                     </div>
                                 </div>
-                                <StockProductoBodegaListComponent
-                                    cantidadrequerida={producto?.cantidadrequerida}
-                                    stockProductoBodegaList={tmpStockProductoBodegaList}
-                                    setStockProductoBodegaList={setTmpStockProductoBodegaList}
-                                />
+                                <StockProductoBodegaList productoModal={productoModal} setProductoModal={setProductoModal} />
                                 <div className="mt-4 sm:flex sm:flex-row-reverse sm:px-6">
                                     <button
                                         type="button"

@@ -1,48 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
-import { Switch } from "@headlessui/react";
-import { AdjustmentsHorizontalIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { AdjustmentsHorizontalIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { IDespacho } from "@domain/models";
 import { graphql } from "@msp/shared";
 import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
 import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
-import RecetaElectronica from "./components/recetaElectronica";
 import { createDespachoService } from "@application/services/despachoCreateService";
 import { IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
 import { casoUsoRecetaElectronica } from "@application/useCases";
+import { IProducto, IStockProductoBodegaItem } from "@domain/models";
 
-const fake_bodega_id = 7589;
+const fake_bodega_id = 2;
 const fake_entidad_id = 1781;
-
-interface Producto {
-    codigoproducto: string;
-    estado: boolean;
-    id: number;
-    manejaLote: boolean;
-    nombre: string;
-    stock: number;
-    cantidadrequerida: number;
-    cantidaddespachada: number;
-    unidadmedida_id: number;
-}
-
-interface StockProductoBodegaItem {
-    CANTIDAD: number;
-    CANTIDADDISTRIBUIDA: number;
-    CODIGOPRODUCTO: string;
-    COSTO: number;
-    FECHACADUCIDAD: string;
-    FECHAELABORACION: string;
-    LOTEID: string;
-    NOMBRE: string;
-    NUMEROLOTE: string;
-    PRODUCTOID: number;
-    UNIDADMEDIDAABREVIATURA: string;
-    UNIDADMEDIDAID: number;
-    UNIDADMEDIDANOMBRE: string;
-}
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -51,7 +22,7 @@ function classNames(...classes: string[]) {
 export default function Terminal() {
     const dispatch = useDispatch();
     const datosDespacho = useSelector((state: RootState) => state.despacho);
-    const [defaultValues, setDefaultValues] = useState<IDespacho>(datosDespacho);
+    const [defaultValues] = useState<IDespacho>(datosDespacho);
 
     const {
         control,
@@ -67,37 +38,49 @@ export default function Terminal() {
         useProductoBodegaCollectionLazyQuery,
         useProductoStockBodegaLazyQuery,
         useRecetaLazyQuery,
-        useStockProductoBodegaListLazyQuery,
     } = graphql;
 
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
     const [getRecetaLazyQuery] = useRecetaLazyQuery();
-    const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
     const [setDespachoCreate] = useDespachoCreateMutation();
     const [esRecetaElectronica, setEsRecetaElectronica] = useState<boolean>(false);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
-    const [stockProductoBodegaList, setStockProductoBodegaList] = useState<StockProductoBodegaItem[]>([]);
-    const [productosRadioGroup, setProductosRadioGroup] = useState<Producto[]>([]);
+    const [productosRadioGroup, setProductosRadioGroup] = useState<IProducto[]>([]);
     const [query, setQuery] = useState<string>("");
-    const [recetaProductos, setRecetaProductos] = useState<Producto[]>([]);
-    const [productoModal, setProductoModal] = useState<Producto | null>(null);
-    const [productoGridSelected, setProductoGridSelected] = useState<Producto | null>(null);
+    const [recetaProductos, setRecetaProductos] = useState<IProducto[]>([]);
+    const [productoModal, setProductoModal] = useState<IProducto | any>(null);
+    const [productoGridSelected, setProductoGridSelected] = useState<IProducto | null>(null);
+
+    const editarDistribucionLotes = (producto: IProducto) => {
+        console.log("editarDistribucionLotes invoked for", producto);
+        setProductoModal(producto);
+        openCloseModalDistLote();
+    };
 
     const finalizarDistribucionLote = () => {
-        // Agregar producto modal a la lista si es que aun no lo tiene
-        if (productoModal && !recetaProductos.some((item: Producto) => item.id === productoModal.id)) {
-            console.log("productoModal no está en lista", productoModal);
+        console.log("Terminal: finalizarDistribucionLote");
+
+        if (recetaProductos.some((item: IProducto) => item.id === productoModal.id)) {
+            console.log("Terminal: productoModal ya está en lista", productoModal);
+        } else {
+            console.log("Terminal: productoModal no está en lista", productoModal);
             setRecetaProductos([...recetaProductos, productoModal]);
+            // Agregar lotes a despachodetalle en storage de redux
+            productoModal.lotes.forEach((lote: IStockProductoBodegaItem) => {
+                dispatch(
+                    addMedicamento({
+                        cantidaddespachada: lote.CANTIDADDISTRIBUIDA ?? 0,
+                        cantidaddispensada: 0, // en receta manual es cero, sino en debe colocar valor que retorna receta electronica
+                        cantidadrequerida: productoModal.cantidadrequerida,
+                        lote_id: parseInt(lote.LOTEID),
+                        producto_id: lote.PRODUCTOID,
+                    })
+                );
+            });
         }
         setModalDistLoteIsOpen(false);
         setProductoModal(null);
-    };
-
-    const handleChangeCantidadFromModal = () => {
-        if (productoModal && productoModal.cantidadrequerida > 0) {
-            fetchProductosLote(productoModal.id);
-        }
     };
 
     /**
@@ -170,7 +153,7 @@ export default function Terminal() {
     useEffect(() => {
         if (productoGridSelected !== null) {
             // Check if an object with the same id does not already exist in the array
-            const isNotInArray = !recetaProductos.some((item: Producto) => item.id === productoGridSelected.id);
+            const isNotInArray = !recetaProductos.some((item: IProducto) => item.id === productoGridSelected.id);
 
             if (isNotInArray) {
                 // If it's not in the array, push it
@@ -190,6 +173,7 @@ export default function Terminal() {
                                     ...{
                                         cantidaddespachada: 0,
                                         cantidadrequerida: 0,
+                                        lotes: [],
                                     },
                                 });
 
@@ -264,52 +248,7 @@ export default function Terminal() {
 
     function eliminarProductoReceta(productId: number) {
         dispatch(deleteMedicamento({ producto_id: productId }));
-        setRecetaProductos(recetaProductos.filter((item: Producto) => item.id !== productId));
-    }
-
-    function fetchProductosLote(productId: number) {
-        // const prodInState = datosDespacho.despachodetalle.find((item: IDespachoDetalle) => item.producto_id === productId);
-        // const prodInReceta = recetaProductos.find((item: Producto) => item.id === productId);
-        // setProductoModal(null);
-
-        // if (prodInReceta && prodInState) {
-        //     setProductoModal({
-        //         ...prodInReceta,
-        //         ...{
-        //             cantidaddespachada: prodInState.cantidaddespachada,
-        //             cantidadrequerida: prodInState.cantidadrequerida,
-        //         },
-        //     });
-        // }
-
-        // setStockProductoBodegaList([]);
-        getStockProductoBodegaListLazyQuery({
-            variables: {
-                bodega_id: fake_bodega_id,
-                cantidad: productoModal?.cantidadrequerida,
-                entidad_id: fake_entidad_id,
-                producto_id: productId,
-                caducado: false,
-            },
-            fetchPolicy: "cache-and-network",
-            onCompleted: (c: any) => {
-                console.log("getStockProductoBodegaListLazyQuery completed...");
-                setStockProductoBodegaList(c.stockProductoBodegaList);
-                c.stockProductoBodegaList.forEach((item: StockProductoBodegaItem) => {
-                    dispatch(
-                        addMedicamento({
-                            cantidaddespachada: item.CANTIDADDISTRIBUIDA ?? 0,
-                            cantidaddispensada: 0, // en receta manual es cero, sino en debe colocar valor que retorna receta electronica
-                            cantidadrequerida: productoModal?.cantidadrequerida,
-                            lote_id: parseInt(item.LOTEID),
-                            producto_id: item.PRODUCTOID,
-                        })
-                    );
-                });
-
-                // openCloseModalDistLote();
-            },
-        });
+        setRecetaProductos(recetaProductos.filter((item: IProducto) => item.id !== productId));
     }
 
     function openCloseModalDistLote() {
@@ -486,7 +425,7 @@ export default function Terminal() {
                                                         type="button"
                                                         className="px-2 py-2 rounded bg-gray-600 font-medium text-center hover:bg-gray-500 disabled:opacity-75"
                                                         disabled={!product.manejaLote}
-                                                        onClick={() => fetchProductosLote(product.id)}
+                                                        onClick={() => editarDistribucionLotes(product)}
                                                     >
                                                         <AdjustmentsHorizontalIcon
                                                             className="text-white h-5"
@@ -576,9 +515,6 @@ export default function Terminal() {
             </div>
             <ModalDistribucionLote
                 isOpen={modalDistLoteIsOpen}
-                stockProductoBodegaList={stockProductoBodegaList}
-                setStockProductoBodegaList={setStockProductoBodegaList}
-                onChangeCantidadRequerida={handleChangeCantidadFromModal}
                 producto={productoModal}
                 setProducto={setProductoModal}
                 finalizar={finalizarDistribucionLote}
