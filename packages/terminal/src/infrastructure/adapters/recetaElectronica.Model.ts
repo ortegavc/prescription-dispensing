@@ -1,5 +1,5 @@
 export interface IRecetaElectronica {
-    id:Number;
+    id: number;
     oid: string;
     acompaniante: string | null;
     acompaniante_cedula: string | null;
@@ -19,13 +19,21 @@ export interface IRecetaPaciente {
 }
 
 export interface IRecetaDetalle {
-    
+
     id: number;
     oid: string;
     cantidad_prescrita: number;
     duracion_tratamiento: number;
     cantidad_dispensada: number;
     medicamento_sku: string;
+    producto: IRecetaDetalleProducto;
+}
+
+export interface IRecetaDetalleProducto {
+    codigoproducto: string;
+    id: number;
+    manejalote: number;
+    nombre: string;
 }
 
 export class RecetaElectronica implements IRecetaElectronica {
@@ -40,7 +48,7 @@ export class RecetaElectronica implements IRecetaElectronica {
     recetaDetalle: IRecetaDetalle[];
 
     constructor(
-        id:number,
+        id: number,
         oid: string,
         fecha_receta: string,
         fecha_caducidad: string,
@@ -50,7 +58,7 @@ export class RecetaElectronica implements IRecetaElectronica {
         paciente: IRecetaPaciente,
         recetaDetalle: IRecetaDetalle[]
     ) {
-        this.id=id;
+        this.id = id;
         this.oid = oid;
         this.fecha_receta = fecha_receta;
         this.fecha_caducidad = fecha_caducidad;

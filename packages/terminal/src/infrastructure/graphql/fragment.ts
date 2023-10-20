@@ -91,6 +91,12 @@ export const RECETA_ELECTRONICA_FIELDS = gql`
                     id
                     medicamento_sku
                     oid
+                    producto {
+                        codigoproducto
+                        id
+                        manejalote
+                        nombre
+                    }
                 }
             }
        `

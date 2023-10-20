@@ -86,7 +86,7 @@ export class RecetaElectronicaAdapter implements Adapter<IDespacho> {
             cantidaddispensada: recetaDetalle.cantidad_dispensada,
             cantidadrequerida: recetaDetalle.cantidad_prescrita,
             lote_id: 0,
-            producto_id: 0,
+            producto_id: recetaDetalle.producto.id,
             receta_oid: recetaDetalle.oid,
         };
     };
