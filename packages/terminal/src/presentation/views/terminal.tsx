@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { AdjustmentsHorizontalIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { IDespacho, IDespachoDetalle } from "@domain/models";
+import { createDespachoService } from "@application/services/despachoCreateService";
+import { casoUsoRecetaElectronica } from "@application/useCases";
 import { graphql } from "@msp/shared";
+import { IDespacho, IDespachoDetalle, IProducto, IStockProductoBodegaItem } from "@domain/models";
+import { IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
 import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
-import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
-import { createDespachoService } from "@application/services/despachoCreateService";
-import { IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
-import { casoUsoRecetaElectronica } from "@application/useCases";
-import { IProducto, IStockProductoBodegaItem } from "@domain/models";
 import { TurnoCloseButton } from "./components";
-
-const fake_bodega_id = 2;
-const fake_entidad_id = 1781;
+import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -24,7 +21,9 @@ export function Terminal() {
     const dispatch = useDispatch();
 
     const datosDespacho = useSelector((state: RootState) => state.despacho);
+    const terminal: any = useSelector<RootState>((state) => state.terminal);
     const [defaultValues] = useState<IDespacho>(datosDespacho);
+    const navigate = useNavigate();
 
     const {
         control,
@@ -128,6 +127,13 @@ export function Terminal() {
     // console.log("Validation errors", errors);
 
     useEffect(() => {
+        console.log("state.terminal", terminal);
+        if (!terminal.id) {
+            navigate("/terminal");
+        }
+    }, [terminal]);
+
+    useEffect(() => {
         if (esRecetaElectronica) {
             console.log("Modo receta electronica activado");
         } else {
@@ -168,7 +174,7 @@ export function Terminal() {
                 // If it's not in the array, push it
                 getProductoStockBodegaLazyQuery({
                     variables: {
-                        bodegaId: fake_bodega_id,
+                        bodegaId: terminal.bodega.id,
                         productoId: productoGridSelected.id,
                     },
                     fetchPolicy: "cache-and-network",
@@ -215,7 +221,7 @@ export function Terminal() {
         if (query.length >= 3) {
             getProductoBodegaCollectionLazyQuery({
                 variables: {
-                    inputWhere: { bodega_id: { is: fake_bodega_id }, producto: { nombre: { contains: query } } },
+                    inputWhere: { bodega_id: { is: terminal.bodega.id }, producto: { nombre: { contains: query } } },
                     inputOrder: { asc: "producto.nombre" },
                 },
                 onCompleted: (c: any) => {

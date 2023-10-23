@@ -3,6 +3,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { StockProductoBodegaList } from "./stockProductoBodegaList";
 import { IProducto, IStockProductoBodegaItem } from "@domain/models";
 import { graphql } from "@msp/shared";
+import { useSelector } from "react-redux";
+import { RootState } from "@presentation/stores";
 
 interface ModalDistribucionLoteProps {
     isOpen: boolean;
@@ -16,6 +18,7 @@ export function ModalDistribucionLote({ isOpen, finalizar, producto, setProducto
     const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
     const [productoModal, setProductoModal] = useState<IProducto | any>(null);
     const [productUpdReq, setProductUpdReq] = useState<boolean>(false);
+    const terminal: any = useSelector<RootState>((state) => state.terminal);
 
     const handleAcceptClick = () => {
         console.log("ModalDistribucionLote: handleAcceptClick");
@@ -29,9 +32,9 @@ export function ModalDistribucionLote({ isOpen, finalizar, producto, setProducto
             console.log("ModalDistribucionLote: getStockProductoBodegaListLazyQuery");
             getStockProductoBodegaListLazyQuery({
                 variables: {
-                    bodega_id: 2,
+                    bodega_id: terminal.bodega.id,
                     cantidad: productoModal.cantidadrequerida,
-                    entidad_id: 1781,
+                    entidad_id: terminal.entidad.id,
                     producto_id: productoModal.id,
                     caducado: false,
                 },
