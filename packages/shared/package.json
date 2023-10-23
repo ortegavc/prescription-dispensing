@@ -67,6 +67,7 @@
   "dependencies": {
     "@apollo/client": "^3.8.4",
     "@graphql-codegen/named-operations-object": "^2.3.1",
+    "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@react-keycloak/web": "^3.4.0",
     "@reduxjs/toolkit": "^1.9.5",
@@ -77,6 +78,7 @@
     "@types/react-dom": "^18.2.7",
     "@types/systemjs": "^6.13.2",
     "@types/webpack-env": "^1.18.1",
+    "date-fns-tz": "^2.0.0",
     "graphql": "^16.8.1",
     "postcss-cli": "^10.1.0",
     "react": "^18.2.0",

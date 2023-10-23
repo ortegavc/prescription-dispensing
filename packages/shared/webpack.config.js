@@ -18,12 +18,7 @@ module.exports = mergeWithRules({
     },
   },
 })(defaultConfig, {
-  // entry: {
-  //   'common-dependencies': [
-  //     'react',
-  //     'react-dom',
-  //   ],
-  // },
+  
   resolve: {
     extensions: [".ts", ".d.ts", ".tsx", ".js", ".jsx"],
     preferRelative: true,
@@ -49,7 +44,7 @@ module.exports = mergeWithRules({
     },
   },
   plugins: [
-    //new CleanWebpackPlugin(), // Limpia la carpeta 'dist' antes de compilar
+    
   ],
   devtool: 'source-map',
  
@@ -67,11 +62,6 @@ module.exports = mergeWithRules({
           "postcss-loader",
         ],
       },
-      // {
-      //   test: /\.js?$/,
-      //   exclude: [path.resolve(__dirname, 'node_modules')],
-      //   loader: 'babel-loader',
-      // },
       {
         test: /\.tsx?$/,
         loader: 'ts-loader',

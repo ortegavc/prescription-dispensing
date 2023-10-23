@@ -11,6 +11,7 @@ import { createDespachoService } from "@application/services/despachoCreateServi
 import { IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
 import { casoUsoRecetaElectronica } from "@application/useCases";
 import { IProducto, IStockProductoBodegaItem } from "@domain/models";
+import { TurnoCloseButton } from "./components";
 
 const fake_bodega_id = 2;
 const fake_entidad_id = 1781;
@@ -19,8 +20,9 @@ function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
-export default function Terminal() {
+export function Terminal() {
     const dispatch = useDispatch();
+
     const datosDespacho = useSelector((state: RootState) => state.despacho);
     const [defaultValues] = useState<IDespacho>(datosDespacho);
 
@@ -264,6 +266,7 @@ export default function Terminal() {
 
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
+            <TurnoCloseButton />
             <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
             </div>

@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { PRODUCTO_BODEGA_COLLECTION_FIELDS, PRODUCTO_STOCK_BODEGA_FIELDS, STOCK_PRODUCTO_BODEGA_FIELDS , RECETA_ELECTRONICA_FIELDS} from './fragment';
+import { PRODUCTO_BODEGA_COLLECTION_FIELDS, PRODUCTO_STOCK_BODEGA_FIELDS, STOCK_PRODUCTO_BODEGA_FIELDS , RECETA_ELECTRONICA_FIELDS,TERMINAL_USUARIO_FIELDS} from './fragment';
 
 export const GET_PRODUCTO_BODEGA_COLLECTION = () => {
     return gql`
@@ -74,3 +74,21 @@ export const GET_STOCK_PRODUCTO_ENTIDAD = () => {
             }
         `
 }
+
+export const GET_TERMINAL_USUARIOS = ()=>{
+    return gql`
+        ${TERMINAL_USUARIO_FIELDS}
+           query TerminalUsuarioList( 
+            $usuario_id: String!
+            ){
+                terminalUsuarioList(
+                    usuario_id: $usuario_id
+                ){
+                    ...terminalUsuarioListFields
+                }
+            }            
+        `
+}
+
+
+

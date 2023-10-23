@@ -20,6 +20,127 @@ export type Scalars = {
     Decimal: { input: any; output: any };
 };
 
+export type Agenda = {
+    __typename?: "Agenda";
+    agendadetalle: Array<AgendaDetalle>;
+    bodega_id?: Maybe<Scalars["Float"]["output"]>;
+    colaborador_id?: Maybe<Scalars["Float"]["output"]>;
+    ctestado_id?: Maybe<Scalars["Float"]["output"]>;
+    ctmotivocancela_id?: Maybe<Scalars["Float"]["output"]>;
+    cttipocarga_id?: Maybe<Scalars["Float"]["output"]>;
+    cttipovehiculo_id?: Maybe<Scalars["Float"]["output"]>;
+    entidad_id?: Maybe<Scalars["Float"]["output"]>;
+    fechadesde?: Maybe<Scalars["DateScalar"]["output"]>;
+    fechahasta?: Maybe<Scalars["DateScalar"]["output"]>;
+    id?: Maybe<Scalars["Int"]["output"]>;
+    identconductor?: Maybe<Scalars["String"]["output"]>;
+    nombreconductor?: Maybe<Scalars["String"]["output"]>;
+    observacion?: Maybe<Scalars["String"]["output"]>;
+    placavehiculo?: Maybe<Scalars["String"]["output"]>;
+    proveedorinter?: Maybe<Scalars["Float"]["output"]>;
+};
+
+export type AgendaCollectionType = {
+    __typename?: "AgendaCollectionType";
+    data?: Maybe<Array<AgendaForCollection>>;
+    pageInfo?: Maybe<PageInfo>;
+};
+
+export type AgendaCreateInput = {
+    agendadetalle: Array<AgendaDetalleCreateInput>;
+    bodega_id: Scalars["Int"]["input"];
+    colaborador_id: Scalars["Int"]["input"];
+    ctestado_id: Scalars["Int"]["input"];
+    ctmotivocancela_id: Scalars["Int"]["input"];
+    cttipocarga_id: Scalars["Int"]["input"];
+    cttipovehiculo_id: Scalars["Int"]["input"];
+    entidad_id: Scalars["Int"]["input"];
+    fechadesde: Scalars["DateTime"]["input"];
+    fechahasta: Scalars["DateTime"]["input"];
+    identconductor?: InputMaybe<Scalars["String"]["input"]>;
+    nombreconductor?: InputMaybe<Scalars["String"]["input"]>;
+    observacion?: InputMaybe<Scalars["String"]["input"]>;
+    placavehiculo?: InputMaybe<Scalars["String"]["input"]>;
+    proveedorinter: Scalars["Int"]["input"];
+};
+
+export type AgendaDetalle = {
+    __typename?: "AgendaDetalle";
+    agenda_id: Scalars["Int"]["output"];
+    id: Scalars["Int"]["output"];
+    numeroitem: Scalars["Int"]["output"];
+    numeroorden: Scalars["Int"]["output"];
+};
+
+export type AgendaDetalleCreateInput = {
+    numeroitem: Scalars["Int"]["input"];
+    numeroorden: Scalars["Int"]["input"];
+};
+
+export type AgendaDetalleUpdateInput = {
+    agenda_id: Scalars["Int"]["input"];
+    id?: InputMaybe<Scalars["Int"]["input"]>;
+    numeroitem?: InputMaybe<Scalars["Int"]["input"]>;
+    numeroorden?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type AgendaFilterInput = {
+    bodega_id?: InputMaybe<RelationsWhereInput>;
+    colaborador_id?: InputMaybe<RelationsWhereInput>;
+    ctestado_id?: InputMaybe<RelationsWhereInput>;
+    cttipocarga_id?: InputMaybe<RelationsWhereInput>;
+    cttipovehiculo_id?: InputMaybe<RelationsWhereInput>;
+    entidad_id?: InputMaybe<RelationsWhereInput>;
+    fechadesde?: InputMaybe<DateWhereInput>;
+    fechahasta?: InputMaybe<DateWhereInput>;
+    id?: InputMaybe<NumberWhereInput>;
+    placavehiculo?: InputMaybe<StringWhereInput>;
+};
+
+export type AgendaForCollection = {
+    __typename?: "AgendaForCollection";
+    bodega_id: Scalars["Float"]["output"];
+    colaborador_id: Scalars["Float"]["output"];
+    ctestado_id?: Maybe<Scalars["Float"]["output"]>;
+    ctmotivocancela_id?: Maybe<Scalars["Float"]["output"]>;
+    cttipocarga_id: Scalars["Float"]["output"];
+    cttipovehiculo_id: Scalars["Float"]["output"];
+    entidad_id: Scalars["Float"]["output"];
+    fechadesde: Scalars["DateScalar"]["output"];
+    fechahasta: Scalars["DateScalar"]["output"];
+    id: Scalars["Int"]["output"];
+    identconductor?: Maybe<Scalars["String"]["output"]>;
+    nombreconductor?: Maybe<Scalars["String"]["output"]>;
+    observacion?: Maybe<Scalars["String"]["output"]>;
+    placavehiculo?: Maybe<Scalars["String"]["output"]>;
+    proveedorinter?: Maybe<Scalars["Float"]["output"]>;
+};
+
+export type AgendaResult = {
+    __typename?: "AgendaResult";
+    message?: Maybe<Scalars["String"]["output"]>;
+    status?: Maybe<Scalars["Boolean"]["output"]>;
+};
+
+export type AgendaUpdateInput = {
+    agendadetalle: Array<AgendaDetalleUpdateInput>;
+    bodega_id?: InputMaybe<Scalars["Int"]["input"]>;
+    colaborador_id?: InputMaybe<Scalars["Int"]["input"]>;
+    ctestado_id?: InputMaybe<Scalars["Int"]["input"]>;
+    ctmotivocancela_id?: InputMaybe<Scalars["Int"]["input"]>;
+    cttipocarga_id?: InputMaybe<Scalars["Int"]["input"]>;
+    cttipovehiculo_id?: InputMaybe<Scalars["Int"]["input"]>;
+    entidad_id?: InputMaybe<Scalars["Int"]["input"]>;
+    fechadesde?: InputMaybe<Scalars["DateTime"]["input"]>;
+    fechahasta?: InputMaybe<Scalars["DateTime"]["input"]>;
+    id: Scalars["Float"]["input"];
+    identconductor?: InputMaybe<Scalars["String"]["input"]>;
+    nombreconductor?: InputMaybe<Scalars["String"]["input"]>;
+    observacion?: InputMaybe<Scalars["String"]["input"]>;
+    placavehiculo?: InputMaybe<Scalars["String"]["input"]>;
+    proveedorinter?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
 export type AtcAdministracion = {
     __typename?: "AtcAdministracion";
     descripcion?: Maybe<Scalars["String"]["output"]>;
@@ -87,7 +208,6 @@ export type BodegaDelete = {
 
 export type BodegaEgreso = {
     __typename?: "BodegaEgreso";
-    descripcion: Scalars["String"]["output"];
     id: Scalars["Int"]["output"];
     nombre: Scalars["String"]["output"];
 };
@@ -332,12 +452,8 @@ export type CatalogoDetalleCompra = {
 
 export type CatalogoDetalleEgreso = {
     __typename?: "CatalogoDetalleEgreso";
-    activo?: Maybe<Scalars["Int"]["output"]>;
-    catalogocabecera_id?: Maybe<Scalars["Int"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     nombre?: Maybe<Scalars["String"]["output"]>;
-    valorcaracter?: Maybe<Scalars["String"]["output"]>;
-    valornumerico?: Maybe<Scalars["Int"]["output"]>;
 };
 
 export type CatalogoDetalleIngreso = {
@@ -376,6 +492,7 @@ export type CatalogoDetalleStock = {
 
 export type CatalogoDetallleFilterInput = {
     catalogocabecera_id: Scalars["Float"]["input"];
+    valornumerico?: InputMaybe<Scalars["Float"]["input"]>;
 };
 
 export type Categoria = {
@@ -593,11 +710,9 @@ export type DespachoDetalleCreateInput = {
     cantidaddespachada: Scalars["Int"]["input"];
     cantidaddispensada?: InputMaybe<Scalars["Int"]["input"]>;
     cantidadrequerida: Scalars["Int"]["input"];
-    costo: Scalars["Float"]["input"];
     lote_id?: InputMaybe<Scalars["Int"]["input"]>;
     producto_id: Scalars["Int"]["input"];
     receta_oid?: InputMaybe<Scalars["String"]["input"]>;
-    unidadmedida_id: Scalars["Float"]["input"];
 };
 
 export type DespachoFilterInput = {
@@ -669,6 +784,7 @@ export type Egreso = {
     entidaddestino_id?: Maybe<Scalars["Float"]["output"]>;
     entidadorigen?: Maybe<EntidadEgreso>;
     entidadorigen_id?: Maybe<Scalars["Float"]["output"]>;
+    fechacreacion?: Maybe<Scalars["DateScalar"]["output"]>;
     fechadocumento?: Maybe<Scalars["DateScalar"]["output"]>;
     fechaegreso?: Maybe<Scalars["DateScalar"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
@@ -793,6 +909,7 @@ export type EgresoFilterInput = {
     entidaddestino?: InputMaybe<EntidadEgresoFilterInput>;
     entidaddestino_id?: InputMaybe<RelationsWhereInput>;
     entidadorigen_id?: InputMaybe<RelationsWhereInput>;
+    fechacreacion?: InputMaybe<DateWhereInput>;
     fechaegreso?: InputMaybe<DateWhereInput>;
     numerotransaccion?: InputMaybe<StringWhereInput>;
     periodo?: InputMaybe<NumberWhereInput>;
@@ -822,6 +939,7 @@ export type EgresoForCollection = {
     entidaddestino_id?: Maybe<Scalars["Float"]["output"]>;
     entidadorigen: EntidadEgreso;
     entidadorigen_id: Scalars["Float"]["output"];
+    fechacreacion: Scalars["DateScalar"]["output"];
     fechadocumento?: Maybe<Scalars["DateScalar"]["output"]>;
     fechaegreso: Scalars["DateScalar"]["output"];
     id: Scalars["Int"]["output"];
@@ -1426,6 +1544,8 @@ export type Ingreso = {
     ejercicio?: Maybe<Scalars["Float"]["output"]>;
     entidaddestino?: Maybe<EntidadIngreso>;
     entidaddestino_id?: Maybe<Scalars["Float"]["output"]>;
+    entidadorigen?: Maybe<EntidadIngreso>;
+    fechacreacion?: Maybe<Scalars["DateScalar"]["output"]>;
     fechadocumento?: Maybe<Scalars["DateScalar"]["output"]>;
     fechaingreso?: Maybe<Scalars["DateScalar"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
@@ -1549,12 +1669,14 @@ export type IngresoFilterInput = {
     ejercicio?: InputMaybe<NumberWhereInput>;
     entidaddestino_id?: InputMaybe<RelationsWhereInput>;
     entidadorigen_id?: InputMaybe<RelationsWhereInput>;
+    fechacreacion?: InputMaybe<DateWhereInput>;
     id?: InputMaybe<NumberWhereInput>;
     numerodocumento?: InputMaybe<StringWhereInput>;
     numerotransaccion?: InputMaybe<StringWhereInput>;
     periodo?: InputMaybe<NumberWhereInput>;
     proveedor?: InputMaybe<ProveedorIngresosFilterInput>;
     tipotransaccion?: InputMaybe<TipoTransaccionIngresoFilterInput>;
+    tipotransaccion_id?: InputMaybe<NumberWhereInput>;
     usuariocreacion?: InputMaybe<UsuarioIngresoFilterInput>;
 };
 
@@ -1576,10 +1698,11 @@ export type IngresoForCollection = {
     ejercicio?: Maybe<Scalars["Float"]["output"]>;
     entidaddestino?: Maybe<EntidadIngreso>;
     entidaddestino_id?: Maybe<Scalars["Float"]["output"]>;
+    entidadorigen?: Maybe<EntidadIngreso>;
+    fechacreacion?: Maybe<Scalars["DateScalar"]["output"]>;
     fechadocumento?: Maybe<Scalars["DateScalar"]["output"]>;
     fechaingreso?: Maybe<Scalars["DateScalar"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
-    ingresodetalle?: Maybe<Array<IngresoDetalle>>;
     numerodocumento?: Maybe<Scalars["String"]["output"]>;
     numerotransaccion?: Maybe<Scalars["String"]["output"]>;
     observacion?: Maybe<Scalars["String"]["output"]>;
@@ -1640,6 +1763,7 @@ export type LaboratorioFabricante = {
     __typename?: "LaboratorioFabricante";
     estado?: Maybe<Scalars["Int"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
+    modificable?: Maybe<Scalars["Int"]["output"]>;
     nombre?: Maybe<Scalars["String"]["output"]>;
 };
 
@@ -1725,7 +1849,6 @@ export type LoteDelete = {
 
 export type LoteEgreso = {
     __typename?: "LoteEgreso";
-    cantidad?: Maybe<Scalars["Float"]["output"]>;
     fechacaducidad?: Maybe<Scalars["String"]["output"]>;
     fechaelaboracion: Scalars["String"]["output"];
     id: Scalars["Int"]["output"];
@@ -1802,6 +1925,9 @@ export type LoteUpdateInput = {
 
 export type Mutation = {
     __typename?: "Mutation";
+    agendaCreate?: Maybe<Agenda>;
+    agendaDelete?: Maybe<AgendaResult>;
+    agendaUpdate?: Maybe<Agenda>;
     bodegaCreate?: Maybe<BodegaAdministracion>;
     bodegaDelete: BodegaDelete;
     bodegaTipotransaccionCreate?: Maybe<BodegaTipotransaccionAdministracion>;
@@ -1872,6 +1998,18 @@ export type Mutation = {
     usuarioBodegaCreate?: Maybe<UsuarioBodegaAdministracion>;
     usuarioBodegaDelete: UsuarioBodegaDelete;
     usuarioBodegaUpdate?: Maybe<UsuarioBodegaAdministracion>;
+};
+
+export type MutationAgendaCreateArgs = {
+    dataInput: AgendaCreateInput;
+};
+
+export type MutationAgendaDeleteArgs = {
+    id?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type MutationAgendaUpdateArgs = {
+    dataInput: AgendaUpdateInput;
 };
 
 export type MutationBodegaCreateArgs = {
@@ -2245,7 +2383,9 @@ export type Producto = {
     __typename?: "Producto";
     codigoproducto: Scalars["String"]["output"];
     id: Scalars["Int"]["output"];
-    nombre: Scalars["String"]["output"];
+    manejalote?: Maybe<Scalars["Int"]["output"]>;
+    nombre?: Maybe<Scalars["String"]["output"]>;
+    productostockbodega?: Maybe<ProductoStockBodega>;
     unidadmedidaproducto?: Maybe<UnidadMedida>;
 };
 
@@ -2366,9 +2506,13 @@ export type ProductoEntidadAdministracion = {
     __typename?: "ProductoEntidadAdministracion";
     entidad?: Maybe<EntidadAdministracion>;
     entidad_id?: Maybe<Scalars["Float"]["output"]>;
+    enviadoesbye?: Maybe<Scalars["Float"]["output"]>;
     estado?: Maybe<Scalars["Float"]["output"]>;
+    estadoesbye?: Maybe<Scalars["String"]["output"]>;
+    fechainicioesbye?: Maybe<Scalars["DateScalar"]["output"]>;
     producto?: Maybe<ProductoAdministracion>;
     producto_id?: Maybe<Scalars["Float"]["output"]>;
+    sincronizaesbye?: Maybe<Scalars["Float"]["output"]>;
 };
 
 export type ProductoEntidadCollectionType = {
@@ -2534,6 +2678,13 @@ export type ProductoStock = {
     vacuna?: Maybe<Scalars["Int"]["output"]>;
 };
 
+export type ProductoStockBodega = {
+    __typename?: "ProductoStockBodega";
+    id?: Maybe<Scalars["Int"]["output"]>;
+    producto_id?: Maybe<Scalars["Int"]["output"]>;
+    saldo?: Maybe<Scalars["Float"]["output"]>;
+};
+
 export type ProductoStockBodegaCollectionType = {
     __typename?: "ProductoStockBodegaCollectionType";
     data?: Maybe<Array<ProductoStockBodegaRpt>>;
@@ -2545,6 +2696,34 @@ export type ProductoStockBodegaFilterInput = {
     bodega_id?: InputMaybe<RelationsWhereInput>;
     producto_id?: InputMaybe<RelationsWhereInput>;
     saldo?: InputMaybe<NumberWhereInput>;
+};
+
+export type ProductoStockBodegaOrgCollectionType = {
+    __typename?: "ProductoStockBodegaOrgCollectionType";
+    data?: Maybe<Array<ProductoStockBodegaOrgRpt>>;
+    pageInfo?: Maybe<PageInfo>;
+};
+
+export type ProductoStockBodegaOrgFilterInput = {
+    bodega_id?: InputMaybe<NumberWhereInput>;
+    producto_id?: InputMaybe<NumberWhereInput>;
+    productostockent_id?: InputMaybe<NumberWhereInput>;
+    productostockentidad?: InputMaybe<ProductoStockEntidadOrgFilterInput>;
+};
+
+export type ProductoStockBodegaOrgRpt = {
+    __typename?: "ProductoStockBodegaOrgRpt";
+    bodega?: Maybe<BodegaReporte>;
+    bodega_id: Scalars["Int"]["output"];
+    costoinicial?: Maybe<Scalars["Float"]["output"]>;
+    id: Scalars["Int"]["output"];
+    producto?: Maybe<ProductoReporte>;
+    producto_id?: Maybe<Scalars["Int"]["output"]>;
+    productostockent_id: Scalars["Int"]["output"];
+    productostockentidad?: Maybe<ProductoStockEntidadOrgRpt>;
+    saldo?: Maybe<Scalars["Float"]["output"]>;
+    stockinicial?: Maybe<Scalars["Float"]["output"]>;
+    valorpromedio?: Maybe<Scalars["Float"]["output"]>;
 };
 
 export type ProductoStockBodegaRpt = {
@@ -2626,6 +2805,32 @@ export type ProductoStockEntidadFilterInput = {
     producto?: InputMaybe<ProductoSbFilterInput>;
     producto_id?: InputMaybe<RelationsWhereInput>;
     saldo?: InputMaybe<NumberWhereInput>;
+};
+
+export type ProductoStockEntidadOrgFilterInput = {
+    entidad_id?: InputMaybe<RelationsWhereInput>;
+    producto?: InputMaybe<ProductoSbFilterInput>;
+    producto_id?: InputMaybe<RelationsWhereInput>;
+};
+
+export type ProductoStockEntidadOrgRpt = {
+    __typename?: "ProductoStockEntidadOrgRpt";
+    costoinicial?: Maybe<Scalars["Float"]["output"]>;
+    entidad?: Maybe<EntidadReporte>;
+    entidad_id?: Maybe<Scalars["Int"]["output"]>;
+    id?: Maybe<Scalars["Int"]["output"]>;
+    producto?: Maybe<ProductoReporte>;
+    producto_id?: Maybe<Scalars["Int"]["output"]>;
+    productostockbodega?: Maybe<Array<ProductoStockBodegaOrgRpt>>;
+    saldo?: Maybe<Scalars["Float"]["output"]>;
+    stockinicial?: Maybe<Scalars["Float"]["output"]>;
+    valorpromedio?: Maybe<Scalars["Float"]["output"]>;
+};
+
+export type ProductoStockEntidadOrgRptCollection = {
+    __typename?: "ProductoStockEntidadOrgRptCollection";
+    data?: Maybe<Array<ProductoStockEntidadOrgRpt>>;
+    pageInfo?: Maybe<PageInfo>;
 };
 
 export type ProductoStockLoteAdmin = {
@@ -2819,6 +3024,8 @@ export type ProveedorUpdateInput = {
 export type Query = {
     __typename?: "Query";
     Receta?: Maybe<Receta>;
+    agenda?: Maybe<Agenda>;
+    agendaCollection?: Maybe<AgendaCollectionType>;
     bodega?: Maybe<BodegaAdministracion>;
     bodegaCollection?: Maybe<BodegaCollectionType>;
     bodegaRpt: BodegaReporte;
@@ -2861,6 +3068,7 @@ export type Query = {
     producto: ProductoAdministracion;
     productoBodegaCollection?: Maybe<ProductoBodegaCollectionType>;
     productoBodegaList?: Maybe<Array<ProductoBodegaList>>;
+    productoByCodigo?: Maybe<ProductoAdministracion>;
     productoCollection?: Maybe<ProductoCollectionType>;
     productoEntidadCollection?: Maybe<ProductoEntidadCollectionType>;
     productoForEntidadList?: Maybe<Array<ProductoForEntidadAdministracion>>;
@@ -2871,7 +3079,9 @@ export type Query = {
     productostockRptentidad: ProductoStockEntidadAdmin;
     productostockRptlote: ProductoStockLoteAdmin;
     productostockbodegaRptCollection?: Maybe<ProductoStockBodegaCollectionType>;
+    productostockbodegaorgRptCollection?: Maybe<ProductoStockBodegaOrgCollectionType>;
     productostockentidadRptCollection?: Maybe<ProductoStockEntidadCollectionType>;
+    productostockentidadorgRptCollection?: Maybe<ProductoStockEntidadOrgRptCollection>;
     productostockloteRptCollection?: Maybe<ProductoStockLoteCollectionType>;
     proveedor?: Maybe<ProveedorAdministracion>;
     proveedorCollection?: Maybe<CollectionProveedorType>;
@@ -2907,6 +3117,16 @@ export type Query = {
 
 export type QueryRecetaArgs = {
     oid: Scalars["String"]["input"];
+};
+
+export type QueryAgendaArgs = {
+    id: Scalars["Int"]["input"];
+};
+
+export type QueryAgendaCollectionArgs = {
+    order?: InputMaybe<StringOrderInput>;
+    pagination?: InputMaybe<PaginationInput>;
+    where?: InputMaybe<AgendaFilterInput>;
 };
 
 export type QueryBodegaArgs = {
@@ -2957,7 +3177,7 @@ export type QueryCatalogoCollectionArgs = {
 };
 
 export type QueryCatalogoDetalleListArgs = {
-    where: CatalogoDetallleFilterInput;
+    where?: InputMaybe<CatalogoDetallleFilterInput>;
 };
 
 export type QueryCategoriaArgs = {
@@ -3125,6 +3345,10 @@ export type QueryProductoBodegaListArgs = {
     producto_id: Scalars["Int"]["input"];
 };
 
+export type QueryProductoByCodigoArgs = {
+    codigoproducto: Scalars["String"]["input"];
+};
+
 export type QueryProductoCollectionArgs = {
     order?: InputMaybe<StringOrderInput>;
     pagination?: InputMaybe<PaginationInput>;
@@ -3179,10 +3403,22 @@ export type QueryProductostockbodegaRptCollectionArgs = {
     where?: InputMaybe<ProductoStockBodegaFilterInput>;
 };
 
+export type QueryProductostockbodegaorgRptCollectionArgs = {
+    order?: InputMaybe<StringOrderInput>;
+    pagination?: InputMaybe<PaginationInput>;
+    where?: InputMaybe<ProductoStockBodegaOrgFilterInput>;
+};
+
 export type QueryProductostockentidadRptCollectionArgs = {
     order?: InputMaybe<StringOrderInput>;
     pagination?: InputMaybe<PaginationInput>;
     where?: InputMaybe<ProductoStockEntidadFilterInput>;
+};
+
+export type QueryProductostockentidadorgRptCollectionArgs = {
+    order?: InputMaybe<StringOrderInput>;
+    pagination?: InputMaybe<PaginationInput>;
+    where?: InputMaybe<ProductoStockEntidadOrgFilterInput>;
 };
 
 export type QueryProductostockloteRptCollectionArgs = {
@@ -3268,7 +3504,7 @@ export type QueryTerminalCollectionArgs = {
 };
 
 export type QueryTerminalUsuarioListArgs = {
-    entidad_id?: InputMaybe<Scalars["String"]["input"]>;
+    entidad_id?: InputMaybe<Scalars["Int"]["input"]>;
     usuario_id?: InputMaybe<Scalars["String"]["input"]>;
 };
 
@@ -3362,6 +3598,7 @@ export type RecetaDetalle = {
     id: Scalars["Int"]["output"];
     medicamento_sku: Scalars["String"]["output"];
     oid: Scalars["String"]["output"];
+    producto?: Maybe<Producto>;
 };
 
 export type RegistroSanitarioCreateInput = {
@@ -3636,6 +3873,7 @@ export type Terminal = {
     nombre?: Maybe<Scalars["String"]["output"]>;
     observacion?: Maybe<Scalars["String"]["output"]>;
     recetaelectronica?: Maybe<Scalars["Int"]["output"]>;
+    terminalUsuario?: Maybe<TerminalUsuarioList>;
     tipotransaccion?: Maybe<TipoTransaccion>;
     tipotransaccion_id?: Maybe<Scalars["Int"]["output"]>;
 };
@@ -3711,6 +3949,7 @@ export type TerminalUsuarioList = {
     __typename?: "TerminalUsuarioList";
     terminal: TerminalBasic;
     terminal_id: Scalars["Float"]["output"];
+    usuario?: Maybe<Usuario>;
     usuario_id: Scalars["String"]["output"];
 };
 
@@ -3972,9 +4211,6 @@ export type TurnoOpenInput = {
 export type UnidadMedida = {
     __typename?: "UnidadMedida";
     abreviatura?: Maybe<Scalars["String"]["output"]>;
-    cttipounidad_id?: Maybe<Scalars["Int"]["output"]>;
-    descripcion?: Maybe<Scalars["String"]["output"]>;
-    estado?: Maybe<Scalars["Int"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     nombre?: Maybe<Scalars["String"]["output"]>;
 };
@@ -4005,9 +4241,6 @@ export type UnidadMedidaDelete = {
 export type UnidadMedidaEgreso = {
     __typename?: "UnidadMedidaEgreso";
     abreviatura?: Maybe<Scalars["String"]["output"]>;
-    cttipounidad_id?: Maybe<Scalars["Int"]["output"]>;
-    descripcion?: Maybe<Scalars["String"]["output"]>;
-    estado?: Maybe<Scalars["Int"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     nombre?: Maybe<Scalars["String"]["output"]>;
 };
@@ -4217,21 +4450,11 @@ export type DateWhereInput = {
     lte_date?: InputMaybe<Scalars["String"]["input"]>;
 };
 
-export type TerminalUsuarioListFieldsFragment = {
-    __typename?: "TerminalUsuarioList";
-    terminal: { __typename?: "TerminalBasic"; id?: number | null; nombre?: string | null };
-};
-
-export type TerminalUsuarioListQueryVariables = Exact<{
-    usuario_id: Scalars["String"]["input"];
-}>;
-
-export type TerminalUsuarioListQuery = {
-    __typename?: "Query";
-    terminalUsuarioList?: Array<{
-        __typename?: "TerminalUsuarioList";
-        terminal: { __typename?: "TerminalBasic"; id?: number | null; nombre?: string | null };
-    }> | null;
+export type DespachoCreateFieldsFragment = {
+    __typename?: "DespachoResult";
+    code?: number | null;
+    message?: string | null;
+    status?: boolean | null;
 };
 
 export type ProductoBodegaCollectionFieldsFragment = {
@@ -4249,6 +4472,7 @@ export type ProductoBodegaCollectionFieldsFragment = {
             nombrecomercial?: string | null;
             manejacaducidad?: number | null;
             manejalote?: number | null;
+            unidadmedida_id?: number | null;
         } | null;
     }> | null;
     pageInfo?: {
@@ -4316,6 +4540,82 @@ export type RecetaElectronicaFieldsFragment = {
     }> | null;
 };
 
+export type TerminalUsuarioListFieldsFragment = {
+    __typename?: "TerminalUsuarioList";
+    terminal_id: number;
+    usuario_id: string;
+    terminal: {
+        __typename?: "TerminalBasic";
+        nombre?: string | null;
+        estado?: number | null;
+        id?: number | null;
+        enuso?: number | null;
+        recetaelectronica?: number | null;
+        entidad_id?: number | null;
+        bodega?: { __typename?: "Bodega"; codigo?: string | null; id: number; nombre: string } | null;
+    };
+};
+
+export type TurnoOpenCreateFieldsFragment = {
+    __typename?: "Turno";
+    terminal_id?: number | null;
+    estado?: number | null;
+    fechacierre?: any | null;
+    fechainicio?: any | null;
+    id?: number | null;
+    numerodispensacion?: number | null;
+    numeroturno?: string | null;
+    observacioncierre?: string | null;
+};
+
+export type TurnoCloseCreateFieldsFragment = {
+    __typename?: "Turno";
+    terminal_id?: number | null;
+    observacioncierre?: string | null;
+};
+
+export type DespachoCreateMutationVariables = Exact<{
+    dataInput: DespachoCreateInput;
+}>;
+
+export type DespachoCreateMutation = {
+    __typename?: "Mutation";
+    despachoCreate?: {
+        __typename?: "DespachoResult";
+        code?: number | null;
+        message?: string | null;
+        status?: boolean | null;
+    } | null;
+};
+
+export type TurnoOpenMutationVariables = Exact<{
+    dataInput: TurnoOpenInput;
+}>;
+
+export type TurnoOpenMutation = {
+    __typename?: "Mutation";
+    turnoOpen?: {
+        __typename?: "Turno";
+        terminal_id?: number | null;
+        estado?: number | null;
+        fechacierre?: any | null;
+        fechainicio?: any | null;
+        id?: number | null;
+        numerodispensacion?: number | null;
+        numeroturno?: string | null;
+        observacioncierre?: string | null;
+    } | null;
+};
+
+export type TurnoCloseMutationVariables = Exact<{
+    dataInput: TurnoCloseInput;
+}>;
+
+export type TurnoCloseMutation = {
+    __typename?: "Mutation";
+    turnoClose?: { __typename?: "Turno"; terminal_id?: number | null; observacioncierre?: string | null } | null;
+};
+
 export type ProductoBodegaCollectionQueryVariables = Exact<{
     inputWhere?: InputMaybe<ProductoBodegaFilterInput>;
     inputOrder?: InputMaybe<StringOrderInput>;
@@ -4339,6 +4639,7 @@ export type ProductoBodegaCollectionQuery = {
                 nombrecomercial?: string | null;
                 manejacaducidad?: number | null;
                 manejalote?: number | null;
+                unidadmedida_id?: number | null;
             } | null;
         }> | null;
         pageInfo?: {
@@ -4433,12 +4734,34 @@ export type StockProductoBodegaListQuery = {
     }> | null;
 };
 
-export const TerminalUsuarioListFieldsFragmentDoc = gql`
-    fragment terminalUsuarioListFields on TerminalUsuarioList {
-        terminal {
-            id
-            nombre
-        }
+export type TerminalUsuarioListQueryVariables = Exact<{
+    usuario_id: Scalars["String"]["input"];
+}>;
+
+export type TerminalUsuarioListQuery = {
+    __typename?: "Query";
+    terminalUsuarioList?: Array<{
+        __typename?: "TerminalUsuarioList";
+        terminal_id: number;
+        usuario_id: string;
+        terminal: {
+            __typename?: "TerminalBasic";
+            nombre?: string | null;
+            estado?: number | null;
+            id?: number | null;
+            enuso?: number | null;
+            recetaelectronica?: number | null;
+            entidad_id?: number | null;
+            bodega?: { __typename?: "Bodega"; codigo?: string | null; id: number; nombre: string } | null;
+        };
+    }> | null;
+};
+
+export const DespachoCreateFieldsFragmentDoc = gql`
+    fragment despachoCreateFields on DespachoResult {
+        code
+        message
+        status
     }
 `;
 export const ProductoBodegaCollectionFieldsFragmentDoc = gql`
@@ -4457,6 +4780,7 @@ export const ProductoBodegaCollectionFieldsFragmentDoc = gql`
                 nombrecomercial
                 manejacaducidad
                 manejalote
+                unidadmedida_id
             }
         }
         pageInfo {
@@ -4521,49 +4845,149 @@ export const RecetaElectronicaFieldsFragmentDoc = gql`
         }
     }
 `;
-export const TerminalUsuarioListDocument = gql`
-    query TerminalUsuarioList($usuario_id: String!) {
-        terminalUsuarioList(usuario_id: $usuario_id) {
-            ...terminalUsuarioListFields
+export const TerminalUsuarioListFieldsFragmentDoc = gql`
+    fragment terminalUsuarioListFields on TerminalUsuarioList {
+        terminal_id
+        usuario_id
+        terminal {
+            nombre
+            estado
+            id
+            enuso
+            recetaelectronica
+            entidad_id
+            bodega {
+                codigo
+                id
+                nombre
+            }
         }
     }
-    ${TerminalUsuarioListFieldsFragmentDoc}
 `;
+export const TurnoOpenCreateFieldsFragmentDoc = gql`
+    fragment turnoOpenCreateFields on Turno {
+        terminal_id
+        estado
+        fechacierre
+        fechainicio
+        id
+        numerodispensacion
+        numeroturno
+        observacioncierre
+    }
+`;
+export const TurnoCloseCreateFieldsFragmentDoc = gql`
+    fragment turnoCloseCreateFields on Turno {
+        terminal_id
+        observacioncierre
+    }
+`;
+export const DespachoCreateDocument = gql`
+    mutation DespachoCreate($dataInput: DespachoCreateInput!) {
+        despachoCreate(dataInput: $dataInput) {
+            ...despachoCreateFields
+        }
+    }
+    ${DespachoCreateFieldsFragmentDoc}
+`;
+export type DespachoCreateMutationFn = Apollo.MutationFunction<DespachoCreateMutation, DespachoCreateMutationVariables>;
 
 /**
- * __useTerminalUsuarioListQuery__
+ * __useDespachoCreateMutation__
  *
- * To run a query within a React component, call `useTerminalUsuarioListQuery` and pass it any options that fit your needs.
- * When your component renders, `useTerminalUsuarioListQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useDespachoCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDespachoCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useTerminalUsuarioListQuery({
+ * const [despachoCreateMutation, { data, loading, error }] = useDespachoCreateMutation({
  *   variables: {
- *      usuario_id: // value for 'usuario_id'
+ *      dataInput: // value for 'dataInput'
  *   },
  * });
  */
-export function useTerminalUsuarioListQuery(
-    baseOptions: Apollo.QueryHookOptions<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>
+export function useDespachoCreateMutation(
+    baseOptions?: Apollo.MutationHookOptions<DespachoCreateMutation, DespachoCreateMutationVariables>
 ) {
     const options = { ...defaultOptions, ...baseOptions };
-    return Apollo.useQuery<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>(TerminalUsuarioListDocument, options);
+    return Apollo.useMutation<DespachoCreateMutation, DespachoCreateMutationVariables>(DespachoCreateDocument, options);
 }
-export function useTerminalUsuarioListLazyQuery(
-    baseOptions?: Apollo.LazyQueryHookOptions<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>
+export type DespachoCreateMutationHookResult = ReturnType<typeof useDespachoCreateMutation>;
+export type DespachoCreateMutationResult = Apollo.MutationResult<DespachoCreateMutation>;
+export type DespachoCreateMutationOptions = Apollo.BaseMutationOptions<DespachoCreateMutation, DespachoCreateMutationVariables>;
+export const TurnoOpenDocument = gql`
+    mutation TurnoOpen($dataInput: TurnoOpenInput!) {
+        turnoOpen(dataInput: $dataInput) {
+            ...turnoOpenCreateFields
+        }
+    }
+    ${TurnoOpenCreateFieldsFragmentDoc}
+`;
+export type TurnoOpenMutationFn = Apollo.MutationFunction<TurnoOpenMutation, TurnoOpenMutationVariables>;
+
+/**
+ * __useTurnoOpenMutation__
+ *
+ * To run a mutation, you first call `useTurnoOpenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTurnoOpenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [turnoOpenMutation, { data, loading, error }] = useTurnoOpenMutation({
+ *   variables: {
+ *      dataInput: // value for 'dataInput'
+ *   },
+ * });
+ */
+export function useTurnoOpenMutation(baseOptions?: Apollo.MutationHookOptions<TurnoOpenMutation, TurnoOpenMutationVariables>) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useMutation<TurnoOpenMutation, TurnoOpenMutationVariables>(TurnoOpenDocument, options);
+}
+export type TurnoOpenMutationHookResult = ReturnType<typeof useTurnoOpenMutation>;
+export type TurnoOpenMutationResult = Apollo.MutationResult<TurnoOpenMutation>;
+export type TurnoOpenMutationOptions = Apollo.BaseMutationOptions<TurnoOpenMutation, TurnoOpenMutationVariables>;
+export const TurnoCloseDocument = gql`
+    mutation TurnoClose($dataInput: TurnoCloseInput!) {
+        turnoClose(dataInput: $dataInput) {
+            ...turnoCloseCreateFields
+        }
+    }
+    ${TurnoCloseCreateFieldsFragmentDoc}
+`;
+export type TurnoCloseMutationFn = Apollo.MutationFunction<TurnoCloseMutation, TurnoCloseMutationVariables>;
+
+/**
+ * __useTurnoCloseMutation__
+ *
+ * To run a mutation, you first call `useTurnoCloseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTurnoCloseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [turnoCloseMutation, { data, loading, error }] = useTurnoCloseMutation({
+ *   variables: {
+ *      dataInput: // value for 'dataInput'
+ *   },
+ * });
+ */
+export function useTurnoCloseMutation(
+    baseOptions?: Apollo.MutationHookOptions<TurnoCloseMutation, TurnoCloseMutationVariables>
 ) {
     const options = { ...defaultOptions, ...baseOptions };
-    return Apollo.useLazyQuery<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>(
-        TerminalUsuarioListDocument,
-        options
-    );
+    return Apollo.useMutation<TurnoCloseMutation, TurnoCloseMutationVariables>(TurnoCloseDocument, options);
 }
-export type TerminalUsuarioListQueryHookResult = ReturnType<typeof useTerminalUsuarioListQuery>;
-export type TerminalUsuarioListLazyQueryHookResult = ReturnType<typeof useTerminalUsuarioListLazyQuery>;
-export type TerminalUsuarioListQueryResult = Apollo.QueryResult<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>;
+export type TurnoCloseMutationHookResult = ReturnType<typeof useTurnoCloseMutation>;
+export type TurnoCloseMutationResult = Apollo.MutationResult<TurnoCloseMutation>;
+export type TurnoCloseMutationOptions = Apollo.BaseMutationOptions<TurnoCloseMutation, TurnoCloseMutationVariables>;
 export const ProductoBodegaCollectionDocument = gql`
     query ProductoBodegaCollection(
         $inputWhere: ProductoBodegaFilterInput
@@ -4764,19 +5188,70 @@ export type StockProductoBodegaListQueryResult = Apollo.QueryResult<
     StockProductoBodegaListQuery,
     StockProductoBodegaListQueryVariables
 >;
+export const TerminalUsuarioListDocument = gql`
+    query TerminalUsuarioList($usuario_id: String!) {
+        terminalUsuarioList(usuario_id: $usuario_id) {
+            ...terminalUsuarioListFields
+        }
+    }
+    ${TerminalUsuarioListFieldsFragmentDoc}
+`;
+
+/**
+ * __useTerminalUsuarioListQuery__
+ *
+ * To run a query within a React component, call `useTerminalUsuarioListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTerminalUsuarioListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTerminalUsuarioListQuery({
+ *   variables: {
+ *      usuario_id: // value for 'usuario_id'
+ *   },
+ * });
+ */
+export function useTerminalUsuarioListQuery(
+    baseOptions: Apollo.QueryHookOptions<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>
+) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useQuery<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>(TerminalUsuarioListDocument, options);
+}
+export function useTerminalUsuarioListLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>
+) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useLazyQuery<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>(
+        TerminalUsuarioListDocument,
+        options
+    );
+}
+export type TerminalUsuarioListQueryHookResult = ReturnType<typeof useTerminalUsuarioListQuery>;
+export type TerminalUsuarioListLazyQueryHookResult = ReturnType<typeof useTerminalUsuarioListLazyQuery>;
+export type TerminalUsuarioListQueryResult = Apollo.QueryResult<TerminalUsuarioListQuery, TerminalUsuarioListQueryVariables>;
 export const namedOperations = {
     Query: {
-        TerminalUsuarioList: "TerminalUsuarioList",
         ProductoBodegaCollection: "ProductoBodegaCollection",
         ProductoStockBodega: "ProductoStockBodega",
         Receta: "Receta",
         StockProductoBodegaList: "StockProductoBodegaList",
+        TerminalUsuarioList: "TerminalUsuarioList",
+    },
+    Mutation: {
+        DespachoCreate: "DespachoCreate",
+        TurnoOpen: "TurnoOpen",
+        TurnoClose: "TurnoClose",
     },
     Fragment: {
-        terminalUsuarioListFields: "terminalUsuarioListFields",
+        despachoCreateFields: "despachoCreateFields",
         productoBodegaCollectionFields: "productoBodegaCollectionFields",
         productoStockBodegaFields: "productoStockBodegaFields",
         stockProductoBodegaFields: "stockProductoBodegaFields",
         recetaElectronicaFields: "recetaElectronicaFields",
+        terminalUsuarioListFields: "terminalUsuarioListFields",
+        turnoOpenCreateFields: "turnoOpenCreateFields",
+        turnoCloseCreateFields: "turnoCloseCreateFields",
     },
 };

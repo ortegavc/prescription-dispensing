@@ -16,6 +16,6 @@
     }
   },
   "files": ["src/msp-terminal.tsx"],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../shared/src/services/sharedServices.ts"],
   "exclude": ["src/**/*.test*"]
 }
