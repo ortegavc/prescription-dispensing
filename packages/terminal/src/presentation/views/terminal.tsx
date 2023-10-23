@@ -7,7 +7,7 @@ import { createDespachoService } from "@application/services/despachoCreateServi
 import { casoUsoRecetaElectronica } from "@application/useCases";
 import { graphql } from "@msp/shared";
 import { IDespacho, IDespachoDetalle, IProducto, IStockProductoBodegaItem } from "@domain/models";
-import { IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
+import { IRecetaDetalle, IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
 import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
 import { TurnoCloseButton } from "./components";
@@ -253,9 +253,26 @@ export function Terminal() {
                     oid: datosDespacho.numeroreceta.trim(),
                 },
                 onCompleted: async (data: any) => {
-                    const receta: IRecetaElectronica = data?.Receta;
-                    const objetoDespacho: IDespacho = await casoUsoRecetaElectronica(receta);
+                    const recetaElectronica: IRecetaElectronica = data?.Receta;
+                    const objetoDespacho: IDespacho = await casoUsoRecetaElectronica(recetaElectronica);
                     dispatch(updateDespacho(objetoDespacho));
+                    // Agregar items de receta electronica al componente de lista de receta
+                    const productos = recetaElectronica.recetaDetalle.map((item: IRecetaDetalle): IProducto => {
+                        return {
+                            cantidaddespachada: 0,
+                            cantidadrequerida: item.cantidad_prescrita,
+                            codigoproducto: item.producto.codigoproducto,
+                            estado: true,
+                            id: item.producto.id,
+                            lotes: [],
+                            manejaLote: !!item.producto.manejalote,
+                            nombre: item.producto.nombre,
+                            stock: 0,
+                            unidadmedida_id: item.producto.unidadmedidaproducto.id,
+                        };
+                    });
+                    console.log("productos parseados de la receta elect", productos);
+                    setRecetaProductos(productos);
                 },
             });
         }

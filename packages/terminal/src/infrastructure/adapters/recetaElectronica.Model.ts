@@ -34,6 +34,13 @@ export interface IRecetaDetalleProducto {
     id: number;
     manejalote: number;
     nombre: string;
+    unidadmedidaproducto: IRecetaDetalleUnidadMedida
+}
+
+export interface IRecetaDetalleUnidadMedida {
+    abreviatura: string
+    id: number
+    nombre: string
 }
 
 export class RecetaElectronica implements IRecetaElectronica {
