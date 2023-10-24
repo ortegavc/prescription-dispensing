@@ -35,21 +35,13 @@ export function Terminal() {
         watch,
     } = useForm<IDespacho>({ defaultValues });
 
-    const {
-        useDespachoCreateMutation,
-        useProductoBodegaCollectionLazyQuery,
-        useProductoStockBodegaLazyQuery,
-        useRecetaLazyQuery,
-    } = graphql;
-
-    const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
+    const { useDespachoCreateMutation, useProductoStockBodegaLazyQuery, useRecetaLazyQuery } = graphql;
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
     const [getRecetaLazyQuery] = useRecetaLazyQuery();
     const [setDespachoCreate] = useDespachoCreateMutation();
     const [esRecetaElectronica, setEsRecetaElectronica] = useState<boolean>(false);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
     const [productosRadioGroup, setProductosRadioGroup] = useState<IProducto[]>([]);
-    const [query, setQuery] = useState<string>("");
     const [recetaProductos, setRecetaProductos] = useState<IProducto[]>([]);
     const [productoModal, setProductoModal] = useState<IProducto | any>(null);
     const [productoGridSelected, setProductoGridSelected] = useState<IProducto | null>(null);
@@ -218,41 +210,7 @@ export function Terminal() {
                 });
             }
         }
-
-        if (query.length >= 3) {
-            getProductoBodegaCollectionLazyQuery({
-                variables: {
-                    inputWhere: { bodega_id: { is: terminal.bodega.id }, producto: { nombre: { contains: query } } },
-                    inputOrder: { asc: "producto.nombre" },
-                },
-                onCompleted: (c: any) => {
-                    if (c.productoBodegaCollection.data.length) {
-                        setProductosRadioGroup(
-                            c.productoBodegaCollection.data.map((item: any) => {
-                                return {
-                                    codigoproducto: item.producto.codigoproducto,
-                                    estado: !!item.producto.estado,
-                                    id: item.producto.id,
-                                    manejaLote: !!item.producto.manejalote,
-                                    nombre: item.producto.nombre,
-                                    unidadmedida_id: item.producto.unidadmedida_id,
-                                };
-                            })
-                        );
-                    } else {
-                        setProductosRadioGroup([]);
-                        setMensajeGridProductos(`No se encontraron productos con el criterio: ${query}`);
-                    }
-                },
-            });
-        } else {
-            setMensajeGridProductos("");
-        }
-    }, [query, productoGridSelected]);
-
-    function handleChangeSearchBar(e: React.ChangeEvent<HTMLInputElement>) {
-        setQuery(e.target.value);
-    }
+    }, [productoGridSelected]);
 
     function handleClickSearchReceta() {
         if (datosDespacho.numeroreceta.trim()) {
@@ -305,9 +263,9 @@ export function Terminal() {
                 <div className="">
                     <div className="border rounded px-2 py-2">
                         <SearchBar
-                            query={query}
-                            onChange={handleChangeSearchBar}
                             placeholder="Digite nombre de producto o SKU para buscar"
+                            setProductosRadioGroup={setProductosRadioGroup}
+                            setMensajeGridProductos={setMensajeGridProductos}
                         />
                         {productosRadioGroup.length ? (
                             <GridProductos

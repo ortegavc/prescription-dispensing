@@ -86,7 +86,7 @@ function RecetaElectronica() {
                 Buscar receta electrónica Ej: 1.000912.00007543
             </label>
             <div className="flex items-center mt-2">
-                <SearchBar query={query} onChange={handleChange} placeholder="Digite el número de receta electrónica" />
+                {/* <SearchBar query={query} onChange={handleChange} placeholder="Digite el número de receta electrónica" /> */}
                 <div className="ml-2">
                     <button type="submit" className="px-2 py-1 text-white bg-blue-600 rounded" onClick={handleSearch}>
                         Buscar
