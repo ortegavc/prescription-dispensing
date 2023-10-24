@@ -53,18 +53,23 @@ export function Terminal() {
     };
 
     const finalizarDistribucionLote = () => {
-        console.log("Terminal: finalizarDistribucionLote");
         const index = recetaProductos.findIndex((item: IProducto) => item.id === productoModal.id);
         if (index >= 0) {
-            // Actualizar receta, usada en form visual
-            const tmpReceta = [...recetaProductos];
-            tmpReceta[index] = productoModal;
-            setRecetaProductos(tmpReceta);
-            // Actualizar state en redux
-            const tmpDespachoDetalle = [...datosDespacho.despachodetalle].map((lote: IDespachoDetalle, index) => {
-                return { ...lote, cantidaddespachada: productoModal.lotes[index].CANTIDADDISTRIBUIDA };
-            });
-            dispatch(updateMedicamento(tmpDespachoDetalle));
+            const producto = { ...recetaProductos[index] };
+            if (JSON.stringify(producto) !== JSON.stringify(productoModal)) {
+                // Actualizar receta, usada en form visual
+                const tmpReceta = [...recetaProductos];
+                tmpReceta[index] = productoModal;
+                setRecetaProductos(tmpReceta);
+                // Actualizar state en redux
+                const tmpDespachoDetalle = [...datosDespacho.despachodetalle].map((lote: IDespachoDetalle, index) => {
+                    if (lote.producto_id === productoModal.id) {
+                        return { ...lote, cantidaddespachada: productoModal.lotes[index].CANTIDADDISTRIBUIDA };
+                    }
+                    return { ...lote };
+                });
+                dispatch(updateMedicamento(tmpDespachoDetalle));
+            }
         } else {
             setRecetaProductos([...recetaProductos, productoModal]);
             // Agregar lotes a despachodetalle en storage de redux
