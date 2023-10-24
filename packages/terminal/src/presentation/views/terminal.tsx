@@ -24,6 +24,7 @@ export function Terminal() {
     const terminal: any = useSelector<RootState>((state) => state.terminal);
     const [defaultValues] = useState<IDespacho>(datosDespacho);
     const navigate = useNavigate();
+    const [mensajeGridProductos, setMensajeGridProductos] = useState<string>("");
 
     const {
         control,
@@ -225,20 +226,27 @@ export function Terminal() {
                     inputOrder: { asc: "producto.nombre" },
                 },
                 onCompleted: (c: any) => {
-                    setProductosRadioGroup(
-                        c.productoBodegaCollection.data.map((item: any) => {
-                            return {
-                                codigoproducto: item.producto.codigoproducto,
-                                estado: !!item.producto.estado,
-                                id: item.producto.id,
-                                manejaLote: !!item.producto.manejalote,
-                                nombre: item.producto.nombre,
-                                unidadmedida_id: item.producto.unidadmedida_id,
-                            };
-                        })
-                    );
+                    if (c.productoBodegaCollection.data.length) {
+                        setProductosRadioGroup(
+                            c.productoBodegaCollection.data.map((item: any) => {
+                                return {
+                                    codigoproducto: item.producto.codigoproducto,
+                                    estado: !!item.producto.estado,
+                                    id: item.producto.id,
+                                    manejaLote: !!item.producto.manejalote,
+                                    nombre: item.producto.nombre,
+                                    unidadmedida_id: item.producto.unidadmedida_id,
+                                };
+                            })
+                        );
+                    } else {
+                        setProductosRadioGroup([]);
+                        setMensajeGridProductos(`No se encontraron productos con el criterio: ${query}`);
+                    }
                 },
             });
+        } else {
+            setMensajeGridProductos("");
         }
     }, [query, productoGridSelected]);
 
@@ -301,12 +309,16 @@ export function Terminal() {
                             onChange={handleChangeSearchBar}
                             placeholder="Digite nombre de producto o SKU para buscar"
                         />
-                        <GridProductos
-                            productoGridSelected={productoGridSelected}
-                            setProductoGridSelected={setProductoGridSelected}
-                            productosRadioGroup={productosRadioGroup}
-                            setProductosRadioGroup={setProductosRadioGroup}
-                        />
+                        {productosRadioGroup.length ? (
+                            <GridProductos
+                                productoGridSelected={productoGridSelected}
+                                setProductoGridSelected={setProductoGridSelected}
+                                productosRadioGroup={productosRadioGroup}
+                                setProductosRadioGroup={setProductosRadioGroup}
+                            />
+                        ) : (
+                            <p>{mensajeGridProductos}</p>
+                        )}
                     </div>
                 </div>
 
