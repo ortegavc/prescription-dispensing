@@ -133,10 +133,7 @@ export function Terminal() {
 
     useEffect(() => {
         if (esRecetaElectronica) {
-            console.log("Modo receta electronica activado");
             setMensajeGridProductos("");
-        } else {
-            console.log("Modo receta electronica desactivado");
         }
     }, [esRecetaElectronica]);
 
@@ -292,7 +289,10 @@ export function Terminal() {
                     <form className="mx-auto max-w-full" onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
                             <div className="sm:grid-cols-1 py-8">
-                                <RadioGroupTipoReceta setTipoReceta={setEsRecetaElectronica} />
+                                <RadioGroupTipoReceta
+                                    emiteRecetaElectronica={terminal.recetaElectronica}
+                                    setTipoReceta={setEsRecetaElectronica}
+                                />
                                 {/* <label htmlFor="fecha-receta" className="block text-sm font-semibold leading-6 text-gray-900">
                                     Fecha
                                 </label>
