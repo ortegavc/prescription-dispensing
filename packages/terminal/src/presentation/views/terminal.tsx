@@ -12,6 +12,8 @@ import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } 
 import { RootState } from "@presentation/stores";
 import { TurnoCloseButton } from "./components";
 import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
+import { BotonImprimir } from "./imprimir/botonImprimir";
+//import PrintButton from "./components/prints/imprimirTicket";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -269,11 +271,18 @@ export function Terminal() {
     function openCloseModalDistLote() {
         setModalDistLoteIsOpen(!modalDistLoteIsOpen);
     }
-
+    const data = {
+        numeroReceta: '123456',
+        // Otros datos de la receta
+      };
     return (
-        <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8">
+        <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8 min-h-screen mb-7">
             <TurnoCloseButton />
+            <BotonImprimir recetaProductos={recetaProductos}/>
+           
+
             <div className="mx-auto max-w-2xl text-center">
+           
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
             </div>
             <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
@@ -290,6 +299,7 @@ export function Terminal() {
                             productosRadioGroup={productosRadioGroup}
                             setProductosRadioGroup={setProductosRadioGroup}
                         />
+                         
                     </div>
                 </div>
 
@@ -526,6 +536,7 @@ export function Terminal() {
                                 </button>
                             </div>
                         </div>
+                        
                     </form>
                 </div>
             </div>

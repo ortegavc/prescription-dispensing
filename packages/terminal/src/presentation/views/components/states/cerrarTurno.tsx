@@ -11,7 +11,7 @@ export const TurnoCloseButton = () => {
     const navigate = useNavigate();
     const eventDispatcher = useEventDispatcher();
     const dispatch = useDispatch();
-    const {
+    const { 
         useTerminalUsuarioListLazyQuery,
         useTurnoOpenMutation,
         useTurnoCloseMutation

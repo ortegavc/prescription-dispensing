@@ -67,6 +67,7 @@
     "react-hook-form": "^7.47.0",
     "react-redux": "^8.1.2",
     "react-router-dom": "^6.16.0",
+    "react-to-print": "^2.14.15",
     "single-spa": "^5.9.5",
     "single-spa-react": "^5.1.4"
   },
