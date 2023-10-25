@@ -12,7 +12,7 @@
     "build:shared": "lerna run build-dev --scope=@msp/shared",
     "build": "lerna run build --parallel",
     "prepare": "husky install",
-    "codegen": "lerna run codegen --scope=@msp/shared",
+    "codegen": "rm -rf packages/shared/src/graphql/__generated__ && lerna run codegen --scope=@msp/shared",
     "generateDirectoryStructure": "node ./scripts/generateDirectoryStructure.js",
     "deploy": "./scripts/deploy.sh",
     "deploy:dev": "./scripts/deploy-dev.sh",
