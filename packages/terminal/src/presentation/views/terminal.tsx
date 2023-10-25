@@ -6,11 +6,11 @@ import { AdjustmentsHorizontalIcon, TrashIcon } from "@heroicons/react/20/solid"
 import { createDespachoService } from "@application/services/despachoCreateService";
 import { casoUsoRecetaElectronica } from "@application/useCases";
 import { graphql } from "@msp/shared";
-import { IDespacho, IDespachoDetalle, IProducto, IStockProductoBodegaItem } from "@domain/models";
+import { IDespacho, IDespachoDetalle, IProducto, IStockProductoBodegaItem, ModalProps } from "@domain/models";
 import { IRecetaDetalle, IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
 import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
-import { TurnoCloseButton } from "./components";
+import { InfoDialog, TurnoCloseButton } from "./components";
 import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
 
 function classNames(...classes: string[]) {
@@ -19,12 +19,12 @@ function classNames(...classes: string[]) {
 
 export function Terminal() {
     const dispatch = useDispatch();
-
     const datosDespacho = useSelector((state: RootState) => state.despacho);
     const terminal: any = useSelector<RootState>((state) => state.terminal);
     const [defaultValues] = useState<IDespacho>(datosDespacho);
     const navigate = useNavigate();
     const [mensajeGridProductos, setMensajeGridProductos] = useState<string>("");
+    const [infoDialogProps, setInfoDialogProps] = useState<ModalProps | any>({ isOpen: false });
 
     const {
         control,
@@ -122,6 +122,10 @@ export function Terminal() {
         control,
     });
 
+    const closeInfoDialog = () => {
+        setInfoDialogProps({ isOpen: !infoDialogProps.isOpen, parrafo: "", titulo: "" });
+    };
+
     // console.log("Validation errors", errors);
 
     useEffect(() => {
@@ -206,7 +210,11 @@ export function Terminal() {
                                 );
                             }
                         } else {
-                            alert("El producto seleccionado no tiene stock.");
+                            setInfoDialogProps({
+                                parrafo: "El producto seleccionado no tiene stock.",
+                                titulo: "Despacho de recetas",
+                                isOpen: true,
+                            });
                         }
                     },
                     onError: () => {},
@@ -524,6 +532,7 @@ export function Terminal() {
                     </form>
                 </div>
             </div>
+            <InfoDialog {...infoDialogProps} onClose={closeInfoDialog} />
             <ModalDistribucionLote
                 isOpen={modalDistLoteIsOpen}
                 producto={productoModal}
