@@ -2627,6 +2627,7 @@ export type ProductoStock = {
 
 export type ProductoStockBodega = {
     __typename?: "ProductoStockBodega";
+    bodega_id?: Maybe<Scalars["Int"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     producto_id?: Maybe<Scalars["Int"]["output"]>;
     saldo?: Maybe<Scalars["Float"]["output"]>;
@@ -3048,6 +3049,7 @@ export type Query = {
 };
 
 export type QueryRecetaArgs = {
+    bodega_id?: InputMaybe<Scalars["Int"]["input"]>;
     oid: Scalars["String"]["input"];
 };
 
@@ -3820,7 +3822,7 @@ export type Terminal = {
     nombre?: Maybe<Scalars["String"]["output"]>;
     observacion?: Maybe<Scalars["String"]["output"]>;
     recetaelectronica?: Maybe<Scalars["Int"]["output"]>;
-    terminalUsuario?: Maybe<TerminalUsuarioList>;
+    terminalUsuario?: Maybe<Array<TerminalUsuario>>;
     tipotransaccion?: Maybe<TipoTransaccion>;
     tipotransaccion_id?: Maybe<Scalars["Int"]["output"]>;
 };
@@ -3899,12 +3901,19 @@ export type TerminalUpdateInput = {
     usuarios?: InputMaybe<Array<Scalars["String"]["input"]>>;
 };
 
+export type TerminalUsuario = {
+    __typename?: "TerminalUsuario";
+    terminal_id?: Maybe<Scalars["Float"]["output"]>;
+    usuario?: Maybe<Usuario>;
+    usuario_id?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type TerminalUsuarioList = {
     __typename?: "TerminalUsuarioList";
-    terminal: TerminalBasic;
-    terminal_id: Scalars["Float"]["output"];
+    terminal?: Maybe<TerminalBasic>;
+    terminal_id?: Maybe<Scalars["Float"]["output"]>;
     usuario?: Maybe<Usuario>;
-    usuario_id: Scalars["String"]["output"];
+    usuario_id?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type TipoDocumentoEgreso = {
@@ -4525,6 +4534,12 @@ export type RecetaElectronicaFieldsFragment = {
             id: number;
             manejalote?: number | null;
             nombre?: string | null;
+            productostockbodega?: {
+                __typename?: "ProductoStockBodega";
+                producto_id?: number | null;
+                saldo?: number | null;
+                bodega_id?: number | null;
+            } | null;
             unidadmedidaproducto?: {
                 __typename?: "UnidadMedida";
                 abreviatura?: string | null;
@@ -4537,9 +4552,9 @@ export type RecetaElectronicaFieldsFragment = {
 
 export type TerminalUsuarioListFieldsFragment = {
     __typename?: "TerminalUsuarioList";
-    terminal_id: number;
-    usuario_id: string;
-    terminal: {
+    terminal_id?: number | null;
+    usuario_id?: string | null;
+    terminal?: {
         __typename?: "TerminalBasic";
         nombre?: string | null;
         estado?: number | null;
@@ -4548,7 +4563,7 @@ export type TerminalUsuarioListFieldsFragment = {
         recetaelectronica?: number | null;
         entidad_id?: number | null;
         bodega?: { __typename?: "Bodega"; codigo?: string | null; id: number; nombre: string } | null;
-    };
+    } | null;
 };
 
 export type TurnoOpenCreateFieldsFragment = {
@@ -4669,6 +4684,7 @@ export type ProductoStockBodegaQuery = {
 
 export type RecetaQueryVariables = Exact<{
     oid: Scalars["String"]["input"];
+    bodega_id?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
 
 export type RecetaQuery = {
@@ -4704,6 +4720,12 @@ export type RecetaQuery = {
                 id: number;
                 manejalote?: number | null;
                 nombre?: string | null;
+                productostockbodega?: {
+                    __typename?: "ProductoStockBodega";
+                    producto_id?: number | null;
+                    saldo?: number | null;
+                    bodega_id?: number | null;
+                } | null;
                 unidadmedidaproducto?: {
                     __typename?: "UnidadMedida";
                     abreviatura?: string | null;
@@ -4750,9 +4772,9 @@ export type TerminalUsuarioListQuery = {
     __typename?: "Query";
     terminalUsuarioList?: Array<{
         __typename?: "TerminalUsuarioList";
-        terminal_id: number;
-        usuario_id: string;
-        terminal: {
+        terminal_id?: number | null;
+        usuario_id?: string | null;
+        terminal?: {
             __typename?: "TerminalBasic";
             nombre?: string | null;
             estado?: number | null;
@@ -4761,7 +4783,7 @@ export type TerminalUsuarioListQuery = {
             recetaelectronica?: number | null;
             entidad_id?: number | null;
             bodega?: { __typename?: "Bodega"; codigo?: string | null; id: number; nombre: string } | null;
-        };
+        } | null;
     }> | null;
 };
 
@@ -4855,6 +4877,11 @@ export const RecetaElectronicaFieldsFragmentDoc = gql`
                 id
                 manejalote
                 nombre
+                productostockbodega {
+                    producto_id
+                    saldo
+                    bodega_id
+                }
                 unidadmedidaproducto {
                     abreviatura
                     id
@@ -5107,8 +5134,8 @@ export type ProductoStockBodegaQueryHookResult = ReturnType<typeof useProductoSt
 export type ProductoStockBodegaLazyQueryHookResult = ReturnType<typeof useProductoStockBodegaLazyQuery>;
 export type ProductoStockBodegaQueryResult = Apollo.QueryResult<ProductoStockBodegaQuery, ProductoStockBodegaQueryVariables>;
 export const RecetaDocument = gql`
-    query Receta($oid: String!) {
-        Receta(oid: $oid) {
+    query Receta($oid: String!, $bodega_id: Int) {
+        Receta(oid: $oid, bodega_id: $bodega_id) {
             ...recetaElectronicaFields
         }
     }
@@ -5128,6 +5155,7 @@ export const RecetaDocument = gql`
  * const { data, loading, error } = useRecetaQuery({
  *   variables: {
  *      oid: // value for 'oid'
+ *      bodega_id: // value for 'bodega_id'
  *   },
  * });
  */

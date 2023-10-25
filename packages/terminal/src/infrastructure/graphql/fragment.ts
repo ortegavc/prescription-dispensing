@@ -96,6 +96,11 @@ export const RECETA_ELECTRONICA_FIELDS = gql`
                         id
                         manejalote
                         nombre
+                        productostockbodega {
+                            producto_id
+                            saldo
+                            bodega_id
+                        }
                         unidadmedidaproducto {
                             abreviatura
                             id

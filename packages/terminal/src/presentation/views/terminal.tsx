@@ -220,6 +220,7 @@ export function Terminal() {
             getRecetaLazyQuery({
                 variables: {
                     oid: datosDespacho.numeroreceta.trim(),
+                    bodega_id: terminal.bodega.id,
                 },
                 onCompleted: async (data: any) => {
                     const recetaElectronica: IRecetaElectronica = data?.Receta;
@@ -236,7 +237,7 @@ export function Terminal() {
                             lotes: [],
                             manejaLote: !!item.producto.manejalote,
                             nombre: item.producto.nombre,
-                            stock: 0,
+                            stock: item.producto.productostockbodega?.saldo ?? 0,
                             unidadmedida_id: item.producto.unidadmedidaproducto.id,
                         };
                     });
