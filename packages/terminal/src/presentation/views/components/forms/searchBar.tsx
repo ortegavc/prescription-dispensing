@@ -6,16 +6,24 @@ import { useSelector } from "react-redux";
 import { RootState } from "@presentation/stores";
 
 interface FilterableListProps {
+    disabled: boolean;
     placeholder: string;
     setProductosRadioGroup: (p: IProducto[]) => void;
     setMensajeGridProductos: (m: string) => void;
 }
 
-export function SearchBar({ placeholder, setProductosRadioGroup, setMensajeGridProductos }: FilterableListProps) {
+export function SearchBar({ disabled, placeholder, setProductosRadioGroup, setMensajeGridProductos }: FilterableListProps) {
     const { useProductoBodegaCollectionLazyQuery } = graphql;
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const terminal: any = useSelector<RootState>((state) => state.terminal);
     const [query, setQuery] = useState<string>("");
+
+    useEffect(() => {
+        if (disabled) {
+            setQuery("");
+            setProductosRadioGroup([]);
+        }
+    }, [disabled]);
 
     const search = () => {
         getProductoBodegaCollectionLazyQuery({
@@ -66,6 +74,7 @@ export function SearchBar({ placeholder, setProductosRadioGroup, setMensajeGridP
                 type="text"
                 autoComplete="producto-nombre"
                 className="block w-full rounded-md border-0 px-8 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                disabled={disabled}
                 placeholder={placeholder}
                 value={query}
                 onChange={handleChangeSearchBar}

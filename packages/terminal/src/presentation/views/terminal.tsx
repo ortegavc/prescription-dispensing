@@ -134,6 +134,7 @@ export function Terminal() {
     useEffect(() => {
         if (esRecetaElectronica) {
             console.log("Modo receta electronica activado");
+            setMensajeGridProductos("");
         } else {
             console.log("Modo receta electronica desactivado");
         }
@@ -268,6 +269,7 @@ export function Terminal() {
                 <div className="">
                     <div className="border rounded px-2 py-2">
                         <SearchBar
+                            disabled={esRecetaElectronica}
                             placeholder="Digite nombre de producto o SKU para buscar"
                             setProductosRadioGroup={setProductosRadioGroup}
                             setMensajeGridProductos={setMensajeGridProductos}
