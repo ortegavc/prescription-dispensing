@@ -52,38 +52,56 @@ export function Terminal() {
         openCloseModalDistLote();
     };
 
+    const addLotesDespachoDetalle = (lotes: IStockProductoBodegaItem[]) => {
+        lotes.forEach((lote: IStockProductoBodegaItem) => {
+            dispatch(
+                addMedicamento({
+                    cantidaddespachada: lote.CANTIDADDISTRIBUIDA ?? 0,
+                    cantidaddispensada: 0, // en receta manual es cero, sino en debe colocar valor que retorna receta electronica
+                    cantidadrequerida: productoModal.cantidadrequerida,
+                    lote_id: parseInt(lote.LOTEID),
+                    producto_id: lote.PRODUCTOID,
+                })
+            );
+        });
+    };
+
     const finalizarDistribucionLote = () => {
+        console.log("finalizarDistribucionLote");
         const index = recetaProductos.findIndex((item: IProducto) => item.id === productoModal.id);
         if (index >= 0) {
+            console.log("finalizarDistribucionLote: producto ya esta en recetaProductos");
             const producto = { ...recetaProductos[index] };
             if (JSON.stringify(producto) !== JSON.stringify(productoModal)) {
+                console.log("finalizarDistribucionLote: actualizar recetaProductos");
                 // Actualizar receta, usada en form visual
                 const tmpReceta = [...recetaProductos];
                 tmpReceta[index] = productoModal;
                 setRecetaProductos(tmpReceta);
                 // Actualizar state en redux
-                const tmpDespachoDetalle = [...datosDespacho.despachodetalle].map((lote: IDespachoDetalle, index) => {
-                    if (lote.producto_id === productoModal.id) {
-                        return { ...lote, cantidaddespachada: productoModal.lotes[index].CANTIDADDISTRIBUIDA };
-                    }
-                    return { ...lote };
-                });
-                dispatch(updateMedicamento(tmpDespachoDetalle));
+                if (datosDespacho.despachodetalle.length) {
+                    // Actualizar lotes a despachodetalle en storage de redux
+                    console.log("Actualizar lotes a despachodetalle en storage de redux");
+                    const tmpDespachoDetalle = [...datosDespacho.despachodetalle].map((lote: IDespachoDetalle, index) => {
+                        if (lote.producto_id === productoModal.id) {
+                            return { ...lote, cantidaddespachada: productoModal.lotes[index].CANTIDADDISTRIBUIDA };
+                        }
+                        return { ...lote };
+                    });
+                    console.log("finalizarDistribucionLote: actualizar despachoDetalle:", tmpDespachoDetalle);
+                    dispatch(updateMedicamento(tmpDespachoDetalle));
+                } else {
+                    console.log("Agregar lotes a despachodetalle en storage de redux");
+                    // Agregar lotes a despachodetalle en storage de redux
+                    addLotesDespachoDetalle(productoModal.lotes);
+                }
             }
         } else {
+            // TODO: revisar si este bloque de codigo es necesario, caso contrario suprimir
+            console.log("finalizarDistribucionLote: producto no esta en recetaProductos, REVISAR");
             setRecetaProductos([...recetaProductos, productoModal]);
             // Agregar lotes a despachodetalle en storage de redux
-            productoModal.lotes.forEach((lote: IStockProductoBodegaItem) => {
-                dispatch(
-                    addMedicamento({
-                        cantidaddespachada: lote.CANTIDADDISTRIBUIDA ?? 0,
-                        cantidaddispensada: 0, // en receta manual es cero, sino en debe colocar valor que retorna receta electronica
-                        cantidadrequerida: productoModal.cantidadrequerida,
-                        lote_id: parseInt(lote.LOTEID),
-                        producto_id: lote.PRODUCTOID,
-                    })
-                );
-            });
+            addLotesDespachoDetalle(productoModal.lotes);
         }
         setModalDistLoteIsOpen(false);
         setProductoModal(null);
@@ -233,7 +251,7 @@ export function Terminal() {
                 onCompleted: async (data: any) => {
                     const recetaElectronica: IRecetaElectronica = data?.Receta;
                     const objetoDespacho: IDespacho = await casoUsoRecetaElectronica(recetaElectronica);
-                    dispatch(updateDespacho(objetoDespacho));
+                    dispatch(updateDespacho(objetoDespacho)); // Guardar datos en state.despacho
                     // Agregar items de receta electronica al componente de lista de receta
                     const productos = recetaElectronica.recetaDetalle.map((item: IRecetaDetalle): IProducto => {
                         return {
