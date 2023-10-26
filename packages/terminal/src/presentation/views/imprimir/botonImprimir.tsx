@@ -41,7 +41,7 @@ export const BotonImprimir: React.FC<{ recetaProductos: IProducto[] }> = ({ rece
     if(config){
       console.log('configuracion',config);
       if(config.impresionAutomatica){
-        handlePrint();
+       // handlePrint();
       }
     }
     // Recupera la configuración de IndexedDB al cargar la página
