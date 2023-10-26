@@ -13,7 +13,7 @@ import { RootState } from "@presentation/stores";
 import { TurnoCloseButton } from "./components";
 import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
 import { BotonImprimir } from "./imprimir/botonImprimir";
-//import PrintButton from "./components/prints/imprimirTicket";
+
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");

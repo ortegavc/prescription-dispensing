@@ -303,6 +303,12 @@ export type BodegaRptCollectionType = {
     pageInfo?: Maybe<PageInfo>;
 };
 
+export type BodegaSolicitud = {
+    __typename?: "BodegaSolicitud";
+    id: Scalars["Int"]["output"];
+    nombre: Scalars["String"]["output"];
+};
+
 export type BodegaStock = {
     __typename?: "BodegaStock";
     codigo?: Maybe<Scalars["String"]["output"]>;
@@ -475,7 +481,6 @@ export type CatalogoDetalleReporte = {
 
 export type CatalogoDetalleSolicitud = {
     __typename?: "CatalogoDetalleSolicitud";
-    catalogocabecera_id?: Maybe<Scalars["Float"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     nombre?: Maybe<Scalars["String"]["output"]>;
 };
@@ -654,7 +659,7 @@ export type Despacho = {
     __typename?: "Despacho";
     bodegaorigen?: Maybe<Bodega>;
     bodegaorigen_id?: Maybe<Scalars["Float"]["output"]>;
-    colaborador?: Maybe<Paciente>;
+    colaborador?: Maybe<PacienteDespacho>;
     colaborador_id?: Maybe<Scalars["Float"]["output"]>;
     ctdocumentorespaldo_id?: Maybe<Scalars["Float"]["output"]>;
     documentorespaldo?: Maybe<Scalars["String"]["output"]>;
@@ -672,7 +677,7 @@ export type Despacho = {
     tipodocumento_id?: Maybe<Scalars["Float"]["output"]>;
     tipotransaccion?: Maybe<TipoTransaccion>;
     tipotransaccion_id?: Maybe<Scalars["Float"]["output"]>;
-    turno?: Maybe<Turno>;
+    turno?: Maybe<TurnoBasic>;
     turno_id?: Maybe<Scalars["Float"]["output"]>;
     usuariocreacion?: Maybe<Usuario>;
     usuariocreacion_id?: Maybe<Scalars["String"]["output"]>;
@@ -734,7 +739,7 @@ export type DespachoFilterInput = {
 export type DespachoForCollection = {
     __typename?: "DespachoForCollection";
     bodegaorigen_id?: Maybe<Scalars["Float"]["output"]>;
-    colaborador?: Maybe<Paciente>;
+    colaborador?: Maybe<PacienteDespacho>;
     colaborador_id?: Maybe<Scalars["Float"]["output"]>;
     ctdocumentorespaldo_id?: Maybe<Scalars["Float"]["output"]>;
     documentorespaldo?: Maybe<Scalars["String"]["output"]>;
@@ -751,7 +756,7 @@ export type DespachoForCollection = {
     tipodocumento_id?: Maybe<Scalars["Float"]["output"]>;
     tipotransaccion: TipoTransaccion;
     tipotransaccion_id?: Maybe<Scalars["Float"]["output"]>;
-    turno?: Maybe<Turno>;
+    turno?: Maybe<TurnoBasic>;
     turno_id?: Maybe<Scalars["Float"]["output"]>;
     usuariocreacion?: Maybe<Usuario>;
     usuariocreacion_id?: Maybe<Scalars["String"]["output"]>;
@@ -871,7 +876,7 @@ export type EgresoDetalleCabeceraUpdateInput = {
 export type EgresoDetalleCreateInput = {
     cantidaddespachada: Scalars["Float"]["input"];
     cantidadrequerida?: InputMaybe<Scalars["Float"]["input"]>;
-    costo: Scalars["Float"]["input"];
+    costo?: InputMaybe<Scalars["Float"]["input"]>;
     lote_id?: InputMaybe<Scalars["Float"]["input"]>;
     producto_id: Scalars["Float"]["input"];
     unidadmedida_id: Scalars["Float"]["input"];
@@ -891,7 +896,7 @@ export type EgresoDetalleUpdateInput = {
 export type EgresoDetallesCreateInput = {
     cantidaddespachada: Scalars["Float"]["input"];
     cantidadrequerida?: InputMaybe<Scalars["Float"]["input"]>;
-    costo: Scalars["Float"]["input"];
+    costo?: InputMaybe<Scalars["Float"]["input"]>;
     egreso_id: Scalars["Float"]["input"];
     lote_id?: InputMaybe<Scalars["Float"]["input"]>;
     producto_id: Scalars["Float"]["input"];
@@ -1180,66 +1185,9 @@ export type EntidadReporte = {
 
 export type EntidadSolicitud = {
     __typename?: "EntidadSolicitud";
-    actividad_principal?: Maybe<Scalars["String"]["output"]>;
-    are_codigo?: Maybe<Scalars["String"]["output"]>;
-    are_descripcion?: Maybe<Scalars["String"]["output"]>;
-    barrio?: Maybe<Scalars["String"]["output"]>;
-    can_codigo?: Maybe<Scalars["String"]["output"]>;
-    can_descripcion?: Maybe<Scalars["String"]["output"]>;
-    ced_indent_rep_legal?: Maybe<Scalars["String"]["output"]>;
-    cir_codigo?: Maybe<Scalars["String"]["output"]>;
-    ciudad?: Maybe<Scalars["String"]["output"]>;
-    cod_ciudad?: Maybe<Scalars["Float"]["output"]>;
-    cod_distrito_ua?: Maybe<Scalars["String"]["output"]>;
-    cod_ent_padre?: Maybe<Scalars["Float"]["output"]>;
-    cod_nivel_atencion?: Maybe<Scalars["Float"]["output"]>;
-    cod_tipo_entidad?: Maybe<Scalars["Float"]["output"]>;
-    cod_tipologia?: Maybe<Scalars["Float"]["output"]>;
-    dificilacceso?: Maybe<Scalars["String"]["output"]>;
-    direcc_referencia?: Maybe<Scalars["String"]["output"]>;
-    dis_codigo?: Maybe<Scalars["String"]["output"]>;
-    dis_descripcion?: Maybe<Scalars["String"]["output"]>;
-    distribucion_ua?: Maybe<Scalars["String"]["output"]>;
-    eod?: Maybe<Scalars["String"]["output"]>;
-    esigef?: Maybe<Scalars["Float"]["output"]>;
-    establecimiento?: Maybe<Scalars["String"]["output"]>;
-    establecimientopadre?: Maybe<Scalars["String"]["output"]>;
-    estado?: Maybe<Scalars["String"]["output"]>;
-    hau_descripcion?: Maybe<Scalars["String"]["output"]>;
-    horario?: Maybe<Scalars["String"]["output"]>;
     id: Scalars["Int"]["output"];
-    igu_descripcion?: Maybe<Scalars["String"]["output"]>;
-    mail?: Maybe<Scalars["String"]["output"]>;
-    nivel_antencion?: Maybe<Scalars["String"]["output"]>;
-    nombre_comercial?: Maybe<Scalars["String"]["output"]>;
-    nun_descripcion?: Maybe<Scalars["String"]["output"]>;
-    pag_web?: Maybe<Scalars["String"]["output"]>;
-    par_codigo?: Maybe<Scalars["String"]["output"]>;
-    par_descripcion: Scalars["String"]["output"];
-    prv_codigo?: Maybe<Scalars["String"]["output"]>;
-    prv_descripcion?: Maybe<Scalars["String"]["output"]>;
-    represen_legal?: Maybe<Scalars["String"]["output"]>;
-    ruc?: Maybe<Scalars["String"]["output"]>;
-    ruc_eod?: Maybe<Scalars["String"]["output"]>;
-    sectorestablecimiento?: Maybe<Scalars["String"]["output"]>;
-    tipo_atencion?: Maybe<Scalars["String"]["output"]>;
-    tipo_entidad?: Maybe<Scalars["String"]["output"]>;
-    tipo_establecimiento?: Maybe<Scalars["Float"]["output"]>;
-    tipo_origen?: Maybe<Scalars["String"]["output"]>;
-    tipo_parroquia?: Maybe<Scalars["String"]["output"]>;
-    tipologia?: Maybe<Scalars["String"]["output"]>;
-    tlf_movil?: Maybe<Scalars["String"]["output"]>;
-    tun_descripcion?: Maybe<Scalars["String"]["output"]>;
-    uni_codigo?: Maybe<Scalars["String"]["output"]>;
-    uni_direccion?: Maybe<Scalars["String"]["output"]>;
-    uni_jefatu_descr?: Maybe<Scalars["String"]["output"]>;
-    uni_jefatura_area?: Maybe<Scalars["Float"]["output"]>;
-    uni_nombre?: Maybe<Scalars["String"]["output"]>;
-    uni_telefono?: Maybe<Scalars["String"]["output"]>;
-    zon_codigo?: Maybe<Scalars["String"]["output"]>;
-    zon_descripcion?: Maybe<Scalars["String"]["output"]>;
-    zon_distribucion?: Maybe<Scalars["String"]["output"]>;
-    zonadefrontera?: Maybe<Scalars["String"]["output"]>;
+    nombre: Scalars["String"]["output"];
+    unicodigo: Scalars["String"]["output"];
 };
 
 export type EntidadStock = {
@@ -1283,6 +1231,14 @@ export type EntidadStock = {
     zonacodigo?: Maybe<Scalars["String"]["output"]>;
     zonadescripcion?: Maybe<Scalars["String"]["output"]>;
     zonadistribucion?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type EntidadTerminal = {
+    __typename?: "EntidadTerminal";
+    direccion?: Maybe<Scalars["String"]["output"]>;
+    id: Scalars["Int"]["output"];
+    nombre?: Maybe<Scalars["String"]["output"]>;
+    unicodigo?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type EntidadUpdateInput = {
@@ -1804,7 +1760,6 @@ export type LaboratorioFabricanteUpdateInput = {
 
 export type Lote = {
     __typename?: "Lote";
-    cantidad?: Maybe<Scalars["Float"]["output"]>;
     fechacaducidad?: Maybe<Scalars["DateScalar"]["output"]>;
     fechaelaboracion: Scalars["DateScalar"]["output"];
     id: Scalars["Int"]["output"];
@@ -1981,6 +1936,9 @@ export type Mutation = {
     reglaAbastecimientoCreate?: Maybe<Array<ReglaAbastecimiento>>;
     solicitudCreate?: Maybe<Solicitud>;
     solicitudDelete?: Maybe<SolicitudDelete>;
+    solicitudDetalleCreate?: Maybe<SolicitudDetalle>;
+    solicitudDetalleDelete?: Maybe<SolicitudDelete>;
+    solicitudDetalleUpdate?: Maybe<SolicitudDetalle>;
     solicitudUpdate?: Maybe<Solicitud>;
     stockCargaInicialCreate?: Maybe<CargaInicialResult>;
     terminalCreate?: Maybe<Terminal>;
@@ -2227,6 +2185,18 @@ export type MutationSolicitudDeleteArgs = {
     id?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
+export type MutationSolicitudDetalleCreateArgs = {
+    dataInput: SolicitudDetallesCreateInput;
+};
+
+export type MutationSolicitudDetalleDeleteArgs = {
+    id?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type MutationSolicitudDetalleUpdateArgs = {
+    dataInput: SolicitudDetallesUpdateInput;
+};
+
 export type MutationSolicitudUpdateArgs = {
     dataInput: SolicitudUpdateInput;
 };
@@ -2321,6 +2291,12 @@ export type PacienteCollectionType = {
     pageInfo?: Maybe<PageInfo>;
 };
 
+export type PacienteDespacho = {
+    __typename?: "PacienteDespacho";
+    identificacion?: Maybe<Scalars["String"]["output"]>;
+    nombre?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type PacienteEgresoInput = {
     cttipoidentificacion_id: Scalars["Int"]["input"];
     identificacion: Scalars["String"]["input"];
@@ -2383,9 +2359,7 @@ export type Producto = {
     __typename?: "Producto";
     codigoproducto: Scalars["String"]["output"];
     id: Scalars["Int"]["output"];
-    manejalote?: Maybe<Scalars["Int"]["output"]>;
     nombre?: Maybe<Scalars["String"]["output"]>;
-    productostockbodega?: Maybe<ProductoStockBodega>;
     unidadmedidaproducto?: Maybe<UnidadMedida>;
 };
 
@@ -2540,27 +2514,6 @@ export type ProductoEntidadFilterInput = {
     producto_id?: InputMaybe<RelationsWhereInput>;
 };
 
-export type ProductoEntidadSoli = {
-    __typename?: "ProductoEntidadSoli";
-    activo: Scalars["Float"]["output"];
-    clasificacionven?: Maybe<Scalars["String"]["output"]>;
-    consumopromediomensual?: Maybe<Scalars["Float"]["output"]>;
-    entidad?: Maybe<EntidadSolicitud>;
-    esdispensable?: Maybe<Scalars["Float"]["output"]>;
-    id?: Maybe<Scalars["Int"]["output"]>;
-    metodoabc?: Maybe<Scalars["String"]["output"]>;
-    producto?: Maybe<ProductoSolicitud>;
-    producto_id?: Maybe<Scalars["Float"]["output"]>;
-    saldo?: Maybe<Scalars["Float"]["output"]>;
-    stockcomprometido?: Maybe<Scalars["Float"]["output"]>;
-    stockdespacho?: Maybe<Scalars["Float"]["output"]>;
-    stockmaximo?: Maybe<Scalars["Float"]["output"]>;
-    stockminimo?: Maybe<Scalars["Float"]["output"]>;
-    stockseguridad?: Maybe<Scalars["Float"]["output"]>;
-    tiempomaximoabastacimiento?: Maybe<Scalars["Float"]["output"]>;
-    tiempomaximoconsumo?: Maybe<Scalars["Float"]["output"]>;
-};
-
 export type ProductoFilterInput = {
     codigoproducto?: InputMaybe<StringWhereInput>;
     codigoreferencia?: InputMaybe<StringWhereInput>;
@@ -2619,6 +2572,16 @@ export type ProductoPorBodegaCreateInput = {
     producto_ids: Array<Scalars["Int"]["input"]>;
 };
 
+export type ProductoReceta = {
+    __typename?: "ProductoReceta";
+    codigoproducto: Scalars["String"]["output"];
+    id: Scalars["Int"]["output"];
+    manejalote?: Maybe<Scalars["Int"]["output"]>;
+    nombre?: Maybe<Scalars["String"]["output"]>;
+    productostockbodega?: Maybe<ProductoStockBodega>;
+    unidadmedidaproducto?: Maybe<UnidadMedida>;
+};
+
 export type ProductoReporte = {
     __typename?: "ProductoReporte";
     categoria?: Maybe<CategoriaReporte>;
@@ -2641,12 +2604,10 @@ export type ProductoSbFilterInput = {
 
 export type ProductoSolicitud = {
     __typename?: "ProductoSolicitud";
-    categoria_id?: Maybe<Scalars["Float"]["output"]>;
     codigoproducto: Scalars["String"]["output"];
-    cttipoproducto: CatalogoDetalleSolicitud;
-    cttipoproducto_id: Scalars["Float"]["output"];
     id: Scalars["Int"]["output"];
     nombre: Scalars["String"]["output"];
+    unidadmedida?: Maybe<UnidadMedidaSolicitud>;
 };
 
 export type ProductoStock = {
@@ -2680,6 +2641,7 @@ export type ProductoStock = {
 
 export type ProductoStockBodega = {
     __typename?: "ProductoStockBodega";
+    bodega_id?: Maybe<Scalars["Int"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     producto_id?: Maybe<Scalars["Int"]["output"]>;
     saldo?: Maybe<Scalars["Float"]["output"]>;
@@ -2889,21 +2851,6 @@ export type ProductoUpdateInput = {
     observacion?: InputMaybe<Scalars["String"]["input"]>;
     registrosanitario?: InputMaybe<Scalars["Float"]["input"]>;
     vacuna?: InputMaybe<Scalars["Float"]["input"]>;
-};
-
-export type ProgramaEntidadSolicitud = {
-    __typename?: "ProgramaEntidadSolicitud";
-    activo?: Maybe<Scalars["Int"]["output"]>;
-    estado?: Maybe<Scalars["Int"]["output"]>;
-    id: Scalars["Int"]["output"];
-    programa?: Maybe<ProgramaSolicitud>;
-};
-
-export type ProgramaSolicitud = {
-    __typename?: "ProgramaSolicitud";
-    estado?: Maybe<Scalars["Int"]["output"]>;
-    id: Scalars["Int"]["output"];
-    nombre?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type ProveedorAdministracion = {
@@ -3116,6 +3063,7 @@ export type Query = {
 };
 
 export type QueryRecetaArgs = {
+    bodega_id?: InputMaybe<Scalars["Int"]["input"]>;
     oid: Scalars["String"]["input"];
 };
 
@@ -3598,7 +3546,7 @@ export type RecetaDetalle = {
     id: Scalars["Int"]["output"];
     medicamento_sku: Scalars["String"]["output"];
     oid: Scalars["String"]["output"];
-    producto?: Maybe<Producto>;
+    producto?: Maybe<ProductoReceta>;
 };
 
 export type RegistroSanitarioCreateInput = {
@@ -3674,66 +3622,55 @@ export type SecuencialFilterInput = {
 
 export type Solicitud = {
     __typename?: "Solicitud";
-    /**
-     * Atributo que permite registrar el estado del registro, uno como activo y dos como inactivo
-     * @deprecated Este atributo no funcionara debido al tema del cambio de tipo de dato
-     */
-    activo: Scalars["Float"]["output"];
-    bodega_id?: Maybe<Scalars["Float"]["output"]>;
-    codigodespacho?: Maybe<Scalars["String"]["output"]>;
-    codigoorden?: Maybe<Scalars["String"]["output"]>;
-    ctestadodespacho?: Maybe<CatalogoDetalleSolicitud>;
-    ctestadodespacho_id?: Maybe<Scalars["Float"]["output"]>;
-    ctestadoorden: CatalogoDetalleSolicitud;
-    ctestadoorden_id: Scalars["Float"]["output"];
-    cttipoexterna_id?: Maybe<Scalars["Float"]["output"]>;
-    cttipoorden: CatalogoDetalleSolicitud;
-    cttipoorden_id: Scalars["Float"]["output"];
+    bodegaabastece?: Maybe<BodegaSolicitud>;
+    bodegaabastece_id?: Maybe<Scalars["Float"]["output"]>;
+    bodegasolicita?: Maybe<BodegaSolicitud>;
+    bodegasolicita_id?: Maybe<Scalars["Float"]["output"]>;
+    ctestadoorden?: Maybe<CatalogoDetalleSolicitud>;
+    ctestadoorden_id?: Maybe<Scalars["Float"]["output"]>;
+    cttipoorden?: Maybe<CatalogoDetalleSolicitud>;
+    cttipoorden_id?: Maybe<Scalars["Float"]["output"]>;
     cttiporequerimiento?: Maybe<CatalogoDetalleSolicitud>;
     cttiporequerimiento_id?: Maybe<Scalars["Float"]["output"]>;
-    documentoorigen?: Maybe<Scalars["String"]["output"]>;
+    documentorespaldo?: Maybe<Scalars["String"]["output"]>;
     ejercicio?: Maybe<Scalars["Float"]["output"]>;
-    entidadexterna?: Maybe<Scalars["String"]["output"]>;
-    entidadexterna_id?: Maybe<Scalars["Float"]["output"]>;
-    entidadsolicitada?: Maybe<EntidadSolicitud>;
-    entidadsolicitada_id: Scalars["Float"]["output"];
-    entidadsolicitante?: Maybe<EntidadSolicitud>;
-    entidadsolicitante_id: Scalars["Float"]["output"];
-    fechadespacho?: Maybe<Scalars["DateTime"]["output"]>;
-    fechamodificacion?: Maybe<Scalars["DateTime"]["output"]>;
-    fecharequerimiento?: Maybe<Scalars["DateTime"]["output"]>;
-    id: Scalars["Int"]["output"];
-    observaciondespacho?: Maybe<Scalars["String"]["output"]>;
-    observacionsolicitud?: Maybe<Scalars["String"]["output"]>;
-    observaregdespacho?: Maybe<Scalars["String"]["output"]>;
+    entidadabastece?: Maybe<EntidadSolicitud>;
+    entidadabastece_id?: Maybe<Scalars["Float"]["output"]>;
+    entidadsolicita?: Maybe<EntidadSolicitud>;
+    entidadsolicita_id?: Maybe<Scalars["Float"]["output"]>;
+    fechacreacion?: Maybe<Scalars["DateScalar"]["output"]>;
+    fecharequerimiento?: Maybe<Scalars["DateScalar"]["output"]>;
+    id?: Maybe<Scalars["Int"]["output"]>;
+    numeroorden?: Maybe<Scalars["String"]["output"]>;
+    observacionabastece?: Maybe<Scalars["String"]["output"]>;
+    observacionsolicita?: Maybe<Scalars["String"]["output"]>;
     periodo?: Maybe<Scalars["Float"]["output"]>;
-    responsabledespacho?: Maybe<Scalars["String"]["output"]>;
-    solicitudDetalle?: Maybe<Array<SolicitudDetalle>>;
-    usuariocreacion_id: Scalars["String"]["output"];
-    usuariomodificacion_id?: Maybe<Scalars["String"]["output"]>;
+    solicituddetalle?: Maybe<Array<SolicitudDetalle>>;
+    usuarioautorizacion?: Maybe<UsuarioSolicitud>;
+    usuarioautorizacion_id?: Maybe<Scalars["String"]["output"]>;
+    usuariocreacion?: Maybe<UsuarioSolicitud>;
+    usuariocreacion_id?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type SolicitudCollectionType = {
     __typename?: "SolicitudCollectionType";
-    data?: Maybe<Array<Solicitud>>;
+    data?: Maybe<Array<SolicitudForCollection>>;
     pageInfo?: Maybe<PageInfo>;
 };
 
 export type SolicitudCreateInput = {
-    bodega_id: Scalars["Float"]["input"];
-    ctestadoorden_id: Scalars["Float"]["input"];
-    cttipoexterna_id?: InputMaybe<Scalars["Float"]["input"]>;
+    bodegaabastece_id?: InputMaybe<Scalars["Float"]["input"]>;
+    bodegasolicita_id?: InputMaybe<Scalars["Float"]["input"]>;
     cttipoorden_id: Scalars["Float"]["input"];
     cttiporequerimiento_id?: InputMaybe<Scalars["Float"]["input"]>;
-    documentoorigen?: InputMaybe<Scalars["String"]["input"]>;
+    documentorespaldo?: InputMaybe<Scalars["String"]["input"]>;
     ejercicio: Scalars["Float"]["input"];
-    entidadexterna?: InputMaybe<Scalars["String"]["input"]>;
-    entidadexterna_id?: InputMaybe<Scalars["Float"]["input"]>;
-    entidadsolicitada_id: Scalars["Float"]["input"];
-    entidadsolicitante_id: Scalars["Float"]["input"];
-    fecharequerimiento: Scalars["String"]["input"];
+    entidadabastece_id?: InputMaybe<Scalars["Float"]["input"]>;
+    entidadsolicita_id: Scalars["Float"]["input"];
+    fecharequerimiento: Scalars["DateTime"]["input"];
+    observacionsolicita?: InputMaybe<Scalars["String"]["input"]>;
     periodo: Scalars["Float"]["input"];
-    solicitudDetalle: Array<SolicitudDetalleCreateInput>;
+    solicituddetalle: Array<SolicitudDetalleCreateInput>;
 };
 
 export type SolicitudDelete = {
@@ -3744,74 +3681,100 @@ export type SolicitudDelete = {
 
 export type SolicitudDetalle = {
     __typename?: "SolicitudDetalle";
-    /**
-     * Atributo que permite registrar el estado del registro, uno como activo y dos como inactivo
-     * @deprecated Este atributo no funcionara debido al tema del cambio de tipo de dato
-     */
-    activo: Scalars["Float"]["output"];
-    cantidadaprodes?: Maybe<Scalars["Float"]["output"]>;
-    cantidadaprosoli?: Maybe<Scalars["Float"]["output"]>;
-    cantidadrequerida: Scalars["Float"]["output"];
+    cantidadaprobada?: Maybe<Scalars["Float"]["output"]>;
+    cantidaddespachada?: Maybe<Scalars["Float"]["output"]>;
+    cantidadsolicitada: Scalars["Float"]["output"];
     id?: Maybe<Scalars["Int"]["output"]>;
-    nombreproducto?: Maybe<Scalars["String"]["output"]>;
     ordenpedido_id: Scalars["Float"]["output"];
-    productoentidad: ProductoEntidadSoli;
-    productoentidad_id: Scalars["Float"]["output"];
-    programaentidad: ProgramaEntidadSolicitud;
-    programaentidad_id: Scalars["Float"]["output"];
-    usuariocreacion_id: Scalars["String"]["output"];
-    usuariomodificacion_id?: Maybe<Scalars["String"]["output"]>;
+    producto: ProductoSolicitud;
+    producto_id: Scalars["Float"]["output"];
 };
 
 export type SolicitudDetalleCreateInput = {
-    activo?: InputMaybe<Scalars["Float"]["input"]>;
-    cantidadrequerida: Scalars["Float"]["input"];
-    productoentidad_id: Scalars["Float"]["input"];
-    programaentidad_id: Scalars["Float"]["input"];
+    cantidadsolicitada: Scalars["Float"]["input"];
+    producto_id: Scalars["Float"]["input"];
 };
 
 export type SolicitudDetalleUpdateInput = {
-    activo?: InputMaybe<Scalars["Float"]["input"]>;
-    cantidadaprodes?: InputMaybe<Scalars["Float"]["input"]>;
-    cantidadaprosoli?: InputMaybe<Scalars["Float"]["input"]>;
-    cantidadrequerida?: InputMaybe<Scalars["Float"]["input"]>;
-    id: Scalars["Int"]["input"];
-    productoentidad_id?: InputMaybe<Scalars["Float"]["input"]>;
-    programaentidad_id?: InputMaybe<Scalars["Float"]["input"]>;
+    cantidadaprobada?: InputMaybe<Scalars["Float"]["input"]>;
+    cantidaddespachada?: InputMaybe<Scalars["Float"]["input"]>;
+    cantidadsolicitada?: InputMaybe<Scalars["Float"]["input"]>;
+    id?: InputMaybe<Scalars["Float"]["input"]>;
+    ordenpedido_id: Scalars["Float"]["input"];
+    producto_id?: InputMaybe<Scalars["Float"]["input"]>;
+};
+
+export type SolicitudDetallesCreateInput = {
+    cantidadsolicitada: Scalars["Float"]["input"];
+    ordenpedido_id: Scalars["Float"]["input"];
+    producto_id: Scalars["Float"]["input"];
+};
+
+export type SolicitudDetallesUpdateInput = {
+    cantidadaprobada?: InputMaybe<Scalars["Float"]["input"]>;
+    cantidaddespachada?: InputMaybe<Scalars["Float"]["input"]>;
+    cantidadsolicitada?: InputMaybe<Scalars["Float"]["input"]>;
+    id: Scalars["Float"]["input"];
+    ordenpedido_id?: InputMaybe<Scalars["Float"]["input"]>;
+    producto_id?: InputMaybe<Scalars["Float"]["input"]>;
 };
 
 export type SolicitudFilterInput = {
-    activo?: InputMaybe<StateWhereInput>;
-    codigodespacho?: InputMaybe<StringWhereInput>;
-    ctestadodespacho_id?: InputMaybe<RelationsWhereInput>;
+    bodegaabastece_id?: InputMaybe<RelationsWhereInput>;
+    bodegasolicita_id?: InputMaybe<RelationsWhereInput>;
     ctestadoorden_id?: InputMaybe<RelationsWhereInput>;
     cttipoorden_id?: InputMaybe<RelationsWhereInput>;
     cttiporequerimiento_id?: InputMaybe<RelationsWhereInput>;
     ejercicio: NumberWhereInput;
-    entidadsolicitada_id?: InputMaybe<RelationsWhereInput>;
-    entidadsolicitante_id?: InputMaybe<RelationsWhereInput>;
+    entidadabastece_id?: InputMaybe<RelationsWhereInput>;
+    entidadsolicita_id?: InputMaybe<RelationsWhereInput>;
     id?: InputMaybe<StateWhereInput>;
+    numeroorden?: InputMaybe<StringWhereInput>;
     periodo?: InputMaybe<NumberWhereInput>;
+    usuarioautorizacion_id?: InputMaybe<RelationsWhereInput>;
+};
+
+export type SolicitudForCollection = {
+    __typename?: "SolicitudForCollection";
+    bodegaabastece?: Maybe<BodegaSolicitud>;
+    bodegaabastece_id?: Maybe<Scalars["Float"]["output"]>;
+    bodegasolicita?: Maybe<BodegaSolicitud>;
+    bodegasolicita_id?: Maybe<Scalars["Float"]["output"]>;
+    ctestadoorden: CatalogoDetalleSolicitud;
+    ctestadoorden_id: Scalars["Float"]["output"];
+    cttipoorden: CatalogoDetalleSolicitud;
+    cttipoorden_id: Scalars["Float"]["output"];
+    cttiporequerimiento?: Maybe<CatalogoDetalleSolicitud>;
+    cttiporequerimiento_id?: Maybe<Scalars["Float"]["output"]>;
+    ejercicio: Scalars["Float"]["output"];
+    entidadabastece?: Maybe<EntidadSolicitud>;
+    entidadabastece_id?: Maybe<Scalars["Float"]["output"]>;
+    entidadsolicita: EntidadSolicitud;
+    entidadsolicita_id: Scalars["Float"]["output"];
+    fechacreacion: Scalars["DateScalar"]["output"];
+    fecharequerimiento: Scalars["DateScalar"]["output"];
+    id: Scalars["Int"]["output"];
+    numeroorden: Scalars["String"]["output"];
+    periodo: Scalars["Float"]["output"];
 };
 
 export type SolicitudUpdateInput = {
-    activo?: InputMaybe<Scalars["Float"]["input"]>;
-    bodega_id?: InputMaybe<Scalars["Float"]["input"]>;
-    ctestadodespacho_id?: InputMaybe<Scalars["Float"]["input"]>;
+    bodegaabastece_id?: InputMaybe<Scalars["Float"]["input"]>;
+    bodegasolicita_id?: InputMaybe<Scalars["Float"]["input"]>;
     ctestadoorden_id?: InputMaybe<Scalars["Float"]["input"]>;
-    cttipoexterna_id?: InputMaybe<Scalars["Float"]["input"]>;
+    cttipoorden_id?: InputMaybe<Scalars["Float"]["input"]>;
     cttiporequerimiento_id?: InputMaybe<Scalars["Float"]["input"]>;
-    documentoorigen?: InputMaybe<Scalars["String"]["input"]>;
-    entidadexterna?: InputMaybe<Scalars["String"]["input"]>;
-    entidadexterna_id?: InputMaybe<Scalars["Float"]["input"]>;
-    entidadsolicitada_id?: InputMaybe<Scalars["Float"]["input"]>;
-    fechadespacho?: InputMaybe<Scalars["String"]["input"]>;
+    documentorespaldo?: InputMaybe<Scalars["String"]["input"]>;
+    ejercicio?: InputMaybe<Scalars["Float"]["input"]>;
+    entidadabastece_id?: InputMaybe<Scalars["Float"]["input"]>;
+    entidadsolicita_id?: InputMaybe<Scalars["Float"]["input"]>;
+    fecharequerimiento?: InputMaybe<Scalars["DateTime"]["input"]>;
     id: Scalars["Int"]["input"];
-    observaciondespacho?: InputMaybe<Scalars["String"]["input"]>;
-    observacionsolicitud?: InputMaybe<Scalars["String"]["input"]>;
-    observaregdespacho?: InputMaybe<Scalars["String"]["input"]>;
-    responsabledespacho?: InputMaybe<Scalars["String"]["input"]>;
-    solicitudDetalle?: InputMaybe<Array<SolicitudDetalleUpdateInput>>;
+    observacionabastece?: InputMaybe<Scalars["String"]["input"]>;
+    observacionsolicita?: InputMaybe<Scalars["String"]["input"]>;
+    periodo?: InputMaybe<Scalars["Float"]["input"]>;
+    solicituddetalle?: InputMaybe<Array<SolicitudDetalleUpdateInput>>;
+    usuarioautorizacion_id?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 /** Filtros para tipo estado */
@@ -3873,7 +3836,7 @@ export type Terminal = {
     nombre?: Maybe<Scalars["String"]["output"]>;
     observacion?: Maybe<Scalars["String"]["output"]>;
     recetaelectronica?: Maybe<Scalars["Int"]["output"]>;
-    terminalUsuario?: Maybe<TerminalUsuarioList>;
+    terminalUsuario?: Maybe<Array<TerminalUsuario>>;
     tipotransaccion?: Maybe<TipoTransaccion>;
     tipotransaccion_id?: Maybe<Scalars["Int"]["output"]>;
 };
@@ -3881,6 +3844,7 @@ export type Terminal = {
 export type TerminalBasic = {
     __typename?: "TerminalBasic";
     bodega?: Maybe<Bodega>;
+    entidad?: Maybe<EntidadTerminal>;
     entidad_id?: Maybe<Scalars["Int"]["output"]>;
     enuso?: Maybe<Scalars["Int"]["output"]>;
     estado?: Maybe<Scalars["Int"]["output"]>;
@@ -3911,6 +3875,13 @@ export type TerminalDelete = {
     __typename?: "TerminalDelete";
     message?: Maybe<Scalars["String"]["output"]>;
     status?: Maybe<Scalars["Boolean"]["output"]>;
+};
+
+export type TerminalDespacho = {
+    __typename?: "TerminalDespacho";
+    codigo: Scalars["String"]["output"];
+    id: Scalars["Int"]["output"];
+    nombre: Scalars["String"]["output"];
 };
 
 export type TerminalEgreso = {
@@ -3945,12 +3916,19 @@ export type TerminalUpdateInput = {
     usuarios?: InputMaybe<Array<Scalars["String"]["input"]>>;
 };
 
+export type TerminalUsuario = {
+    __typename?: "TerminalUsuario";
+    terminal_id?: Maybe<Scalars["Float"]["output"]>;
+    usuario?: Maybe<Usuario>;
+    usuario_id?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type TerminalUsuarioList = {
     __typename?: "TerminalUsuarioList";
-    terminal: TerminalBasic;
-    terminal_id: Scalars["Float"]["output"];
+    terminal?: Maybe<TerminalBasic>;
+    terminal_id?: Maybe<Scalars["Float"]["output"]>;
     usuario?: Maybe<Usuario>;
-    usuario_id: Scalars["String"]["output"];
+    usuario_id?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type TipoDocumentoEgreso = {
@@ -4171,6 +4149,17 @@ export type Turno = {
     usuario_id?: Maybe<Scalars["String"]["output"]>;
 };
 
+export type TurnoBasic = {
+    __typename?: "TurnoBasic";
+    fechacierre?: Maybe<Scalars["DateScalar"]["output"]>;
+    fechainicio: Scalars["DateScalar"]["output"];
+    id: Scalars["Int"]["output"];
+    numerodispensacion: Scalars["Float"]["output"];
+    numeroturno: Scalars["String"]["output"];
+    terminal?: Maybe<TerminalDespacho>;
+    terminal_id: Scalars["Float"]["output"];
+};
+
 export type TurnoCloseInput = {
     id: Scalars["Int"]["input"];
     observacioncierre?: InputMaybe<Scalars["String"]["input"]>;
@@ -4273,6 +4262,13 @@ export type UnidadMedidaInput = {
 
 export type UnidadMedidaReporte = {
     __typename?: "UnidadMedidaReporte";
+    abreviatura?: Maybe<Scalars["String"]["output"]>;
+    id?: Maybe<Scalars["Int"]["output"]>;
+    nombre?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type UnidadMedidaSolicitud = {
+    __typename?: "UnidadMedidaSolicitud";
     abreviatura?: Maybe<Scalars["String"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     nombre?: Maybe<Scalars["String"]["output"]>;
@@ -4435,6 +4431,16 @@ export type UsuarioIngresoFilterInput = {
     nombreusuario?: InputMaybe<StringWhereInput>;
 };
 
+export type UsuarioSolicitud = {
+    __typename?: "UsuarioSolicitud";
+    apellidos: Scalars["String"]["output"];
+    estado: Scalars["Float"]["output"];
+    id: Scalars["String"]["output"];
+    nombre: Scalars["String"]["output"];
+    nombres: Scalars["String"]["output"];
+    nombreusuario: Scalars["String"]["output"];
+};
+
 export type UsuariosBodegaAdminInput = {
     bodega_id: Scalars["Int"]["input"];
     usuarios?: InputMaybe<Array<Scalars["String"]["input"]>>;
@@ -4537,23 +4543,30 @@ export type RecetaElectronicaFieldsFragment = {
         id: number;
         medicamento_sku: string;
         oid: string;
+        producto?: {
+            __typename?: "ProductoReceta";
+            codigoproducto: string;
+            id: number;
+            manejalote?: number | null;
+            nombre?: string | null;
+        } | null;
     }> | null;
 };
 
 export type TerminalUsuarioListFieldsFragment = {
     __typename?: "TerminalUsuarioList";
-    terminal_id: number;
-    usuario_id: string;
-    terminal: {
+    terminal_id?: number | null;
+    usuario_id?: string | null;
+    terminal?: {
         __typename?: "TerminalBasic";
         nombre?: string | null;
         estado?: number | null;
         id?: number | null;
         enuso?: number | null;
         recetaelectronica?: number | null;
-        entidad_id?: number | null;
+        entidad?: { __typename?: "EntidadTerminal"; id: number; nombre?: string | null; direccion?: string | null } | null;
         bodega?: { __typename?: "Bodega"; codigo?: string | null; id: number; nombre: string } | null;
-    };
+    } | null;
 };
 
 export type TurnoOpenCreateFieldsFragment = {
@@ -4703,6 +4716,13 @@ export type RecetaQuery = {
             id: number;
             medicamento_sku: string;
             oid: string;
+            producto?: {
+                __typename?: "ProductoReceta";
+                codigoproducto: string;
+                id: number;
+                manejalote?: number | null;
+                nombre?: string | null;
+            } | null;
         }> | null;
     } | null;
 };
@@ -4742,18 +4762,18 @@ export type TerminalUsuarioListQuery = {
     __typename?: "Query";
     terminalUsuarioList?: Array<{
         __typename?: "TerminalUsuarioList";
-        terminal_id: number;
-        usuario_id: string;
-        terminal: {
+        terminal_id?: number | null;
+        usuario_id?: string | null;
+        terminal?: {
             __typename?: "TerminalBasic";
             nombre?: string | null;
             estado?: number | null;
             id?: number | null;
             enuso?: number | null;
             recetaelectronica?: number | null;
-            entidad_id?: number | null;
+            entidad?: { __typename?: "EntidadTerminal"; id: number; nombre?: string | null; direccion?: string | null } | null;
             bodega?: { __typename?: "Bodega"; codigo?: string | null; id: number; nombre: string } | null;
-        };
+        } | null;
     }> | null;
 };
 
@@ -4842,6 +4862,12 @@ export const RecetaElectronicaFieldsFragmentDoc = gql`
             id
             medicamento_sku
             oid
+            producto {
+                codigoproducto
+                id
+                manejalote
+                nombre
+            }
         }
     }
 `;
@@ -4855,7 +4881,11 @@ export const TerminalUsuarioListFieldsFragmentDoc = gql`
             id
             enuso
             recetaelectronica
-            entidad_id
+            entidad {
+                id
+                nombre
+                direccion
+            }
             bodega {
                 codigo
                 id

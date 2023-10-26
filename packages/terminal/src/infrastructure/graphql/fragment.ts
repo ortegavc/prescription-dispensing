@@ -106,12 +106,16 @@ export const TERMINAL_USUARIO_FIELDS = gql`
            terminal_id
            usuario_id
            terminal {
-               nombre
-               estado
-               id
-               enuso
-               recetaelectronica
-               entidad_id
+                  nombre
+                  estado
+                  id
+                  enuso
+                  recetaelectronica
+                entidad {
+                    id
+                    nombre
+                    direccion
+                      }
                bodega {
                    codigo
                    id

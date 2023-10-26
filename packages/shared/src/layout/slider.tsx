@@ -15,7 +15,7 @@ function Sidebar() {
   const sidebayOpacity = expanded ? 100 : 0;
 
   const handleLogout = () => {
-    keycloak.logout({ redirectUri: config.Constantes.URLHOME });
+    keycloak.logout({ redirectUri: config.Constantes.URLHOME });  
   };
 
 

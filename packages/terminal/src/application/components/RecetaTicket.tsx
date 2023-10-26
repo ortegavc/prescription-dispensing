@@ -1,14 +1,16 @@
+import React, { PureComponent } from "react";
 import { IDespacho, IProducto } from "@domain/models";
 import { ITerminal } from "@domain/models/terminal.model";
-import React, { PureComponent } from "react";
+import { frontendDb } from '@infrastructure/db/configuracion';
 
-const PAGE_SIZE = '80mm';
+
 
 interface RecetaTicketProps {
   text: string;
   receta: IDespacho;
   terminal: ITerminal;
   recetaProductos: IProducto[];
+  PAGE_SIZE: number;
 }
 
 interface RecetaTicketState {
@@ -42,6 +44,12 @@ export class RecetaTicket extends PureComponent<RecetaTicketProps, RecetaTicketS
       ctx.save();
     }
 
+    const getStoredConfig = async () => {
+      const configData = await frontendDb.confImprimir.get(1);
+      if (configData) {
+        
+      }
+    };
   }
 
   handleCheckboxOnChange = () => {
@@ -53,14 +61,14 @@ export class RecetaTicket extends PureComponent<RecetaTicketProps, RecetaTicketS
   };
 
   render() {
-    const { text, terminal, receta, recetaProductos } = this.props;
-
+    const { text, terminal, receta, recetaProductos, PAGE_SIZE } = this.props;
+console
 
     return (
       <div className="relativeCSS">
         <style type="text/css" media="print">
           {`
-            @page { size: ${PAGE_SIZE} auto; margin: 0;}
+            @page { size: ${PAGE_SIZE}mm auto; margin: 0;}
             body {width: 100%; padding: 0; margin: 0;
             .ticket {width: 100%;text-align: center;padding: 5px;}
             .item {text-align: left;font-size: 10px; }
@@ -70,7 +78,8 @@ export class RecetaTicket extends PureComponent<RecetaTicketProps, RecetaTicketS
 
         <div className="bg-white p-4 rounded shadow-md">
           <h2 className="text-center  font-semibold">MINISTERIO DE SALUD PUBLICA</h2>
-          <p className="text-sm"><strong>Farmacia:</strong> {terminal.entidad.nombre}</p>
+          <div className="h-8"></div>
+          <p className="text-sm"><strong>Entidad:</strong> {terminal.entidad.nombre}</p>
           <p className="text-sm"><strong>Dirección:</strong>{terminal.entidad.direccion}</p>
           <hr className="my-2" />
           <p className="text-sm"><strong>Receta No.</strong> {receta.numeroreceta}</p>
@@ -127,5 +136,5 @@ export class RecetaTicket extends PureComponent<RecetaTicketProps, RecetaTicketS
 }
 
 export const FunctionalComponentToPrint = React.forwardRef<RecetaTicket, RecetaTicketProps>((props, ref) => {
-  return <RecetaTicket ref={ref} text={props.text} receta={props.receta} terminal={props.terminal} recetaProductos={props.recetaProductos} />;
+  return <RecetaTicket ref={ref} text={props.text} receta={props.receta} terminal={props.terminal} recetaProductos={props.recetaProductos} PAGE_SIZE={props.PAGE_SIZE} />;
 });

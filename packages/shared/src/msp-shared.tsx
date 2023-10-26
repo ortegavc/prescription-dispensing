@@ -68,3 +68,4 @@ export default Layout;
 export { graphql }
 export * as sharedService from '@services/sharedServices';
 export { useEventDispatcher } from "@eventDispatcher/EventDispatcherContext";
+export * from './widgets';

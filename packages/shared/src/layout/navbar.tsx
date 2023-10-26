@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 import { useSidebar } from './SidebarContext';
 import { useEventDispatcher } from 'eventDispatcher';
 
@@ -16,17 +16,16 @@ export default function Navbar() {
     const eventDispatcher = useEventDispatcher();
 
     useEffect(function () {
-    
+
         eventDispatcher.subscribe("infoUserClicked", function (data) {
             setInfoUser(data)
-          console.log('000000--p',data)
         });
         //Quitamos el mensaje de error
-        
+
         setTimeout(function () {
-         
+
         }, 2000);
-      });
+    });
 
     return (
 
@@ -53,13 +52,13 @@ export default function Navbar() {
                         <div className='w-7'></div>
                         <div className="px-7 sm:ml-6 sm:block text-white">
                             <div className="flex space-x-3">
-                            {infoUser?.nombre}  {infoUser?.bodega}  {infoUser?.nombreTerminal}  {infoUser?.numeroturno} 
+                                {infoUser?.nombre}  {infoUser?.bodega}  {infoUser?.nombreTerminal}  {infoUser?.numeroturno}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                   
+
 
                     {/* Profile dropdown */}
                     <Menu as="div" className="relative ml-3">
@@ -96,12 +95,12 @@ export default function Navbar() {
                                 </Menu.Item>
                                 <Menu.Item>
                                     {({ active }) => (
-                                        <a
-                                            href="#"
-                                            className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                                        >
-                                            Configurar
-                                        </a>
+
+                                        <Link to="/terminal/configuracion">
+                                            <i className="fa-solid fa-gear"></i>
+                                            <span className={`font-normal text-sm px-3 transition-all duration-200`}>Configurar</span>
+                                        </Link>
+
                                     )}
                                 </Menu.Item>
                                 <Menu.Item>

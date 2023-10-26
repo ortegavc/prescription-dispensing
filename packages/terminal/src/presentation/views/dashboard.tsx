@@ -33,9 +33,10 @@ export function Dashboard() {
                 addTerminal(
                     {
                         entidad: {
-                            id: apiTerminal.entidad_id,
-                            nombre: "",
-                            unicodigo: apiTerminal.entidad_id,
+                            id: apiTerminal.entidad.id,
+                            nombre: apiTerminal.entidad.nombre,
+                            unicodigo: apiTerminal.entidad.id,
+                            direccion:apiTerminal.entidad.direccion
                         },
                         bodega: {
                             id: apiTerminal.bodega.id,
@@ -113,6 +114,7 @@ export function Dashboard() {
                 variables: {
                     usuario_id: sessionStorage.getItem("usuarioId_terminal") + ''
                 }, onCompleted: (data: any) => {
+                    
                     setState(prevState => ({
                         ...prevState,
                         consolas: data.terminalUsuarioList
@@ -153,6 +155,7 @@ export function Dashboard() {
                     return (
                         <div className="bg-light-blue-200 p-4 rounded-lg border border-light-blue-300 shadow-md">
                             <div className="bg-gray-100 px-3">
+                            <h2 className="text-2xl font-semibold text-uppercase mb-4">{terminal.entidad.nombre}</h2>
                                 <h2 className="text-2xl font-semibold text-uppercase mb-4">{terminal.nombre}</h2>
                             </div>
                             <hr></hr>
