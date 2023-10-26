@@ -1,4 +1,4 @@
-import React, { useEffect, useState , useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
@@ -14,7 +14,6 @@ import { InfoDialog, TurnoCloseButton } from "./components";
 import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
 import { BotonImprimir } from "./imprimir/botonImprimir";
 
-
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
@@ -27,7 +26,6 @@ export function Terminal() {
     const navigate = useNavigate();
     const [mensajeGridProductos, setMensajeGridProductos] = useState<string>("");
     const [infoDialogProps, setInfoDialogProps] = useState<ModalProps | any>({ isOpen: false });
-   
 
     const {
         control,
@@ -48,7 +46,6 @@ export function Terminal() {
     const [recetaProductos, setRecetaProductos] = useState<IProducto[]>([]);
     const [productoModal, setProductoModal] = useState<IProducto | any>(null);
     const [productoGridSelected, setProductoGridSelected] = useState<IProducto | null>(null);
-
 
     const botonImprimirRef = React.useRef<any>(null);
 
@@ -141,17 +138,21 @@ export function Terminal() {
         data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0);
 
         createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator)
-            .then((response:any) => {
-                setImprimir(true);
+            .then((response: any) => {
                 // You can access the response here
                 console.log("Mutation response:", response);
-                if(response?.despachoCreate.status && botonImprimirRef.current){
+                if (response?.despachoCreate.status && botonImprimirRef.current) {
                     botonImprimirRef.current.handlePrint();
                 }
             })
             .catch((error) => {
                 // Handle errors here
                 console.error("Mutation error:", error);
+                setInfoDialogProps({
+                    parrafo: "Se ha presentado un error, por favor reintentar.",
+                    titulo: "Despacho de recetas",
+                    isOpen: true,
+                });
             });
         console.log("Submit End");
     };
@@ -305,18 +306,16 @@ export function Terminal() {
         setModalDistLoteIsOpen(!modalDistLoteIsOpen);
     }
     const data = {
-        numeroReceta: '123456',
+        numeroReceta: "123456",
         // Otros datos de la receta
-      };
+    };
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8 min-h-screen mb-7">
             <TurnoCloseButton />
-            
-            <BotonImprimir recetaProductos={recetaProductos} ref={botonImprimirRef}/>
-           
+
+            <BotonImprimir recetaProductos={recetaProductos} ref={botonImprimirRef} />
 
             <div className="mx-auto max-w-2xl text-center">
-           
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Despacho de Recetas</h2>
             </div>
             <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
@@ -577,7 +576,6 @@ export function Terminal() {
                                 </button>
                             </div>
                         </div>
-                        
                     </form>
                 </div>
             </div>
