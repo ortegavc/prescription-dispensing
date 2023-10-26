@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useRef} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
@@ -27,6 +27,7 @@ export function Terminal() {
     const navigate = useNavigate();
     const [mensajeGridProductos, setMensajeGridProductos] = useState<string>("");
     const [infoDialogProps, setInfoDialogProps] = useState<ModalProps | any>({ isOpen: false });
+   
 
     const {
         control,
@@ -47,6 +48,10 @@ export function Terminal() {
     const [recetaProductos, setRecetaProductos] = useState<IProducto[]>([]);
     const [productoModal, setProductoModal] = useState<IProducto | any>(null);
     const [productoGridSelected, setProductoGridSelected] = useState<IProducto | null>(null);
+
+
+
+    const botonImprimirRef = React.useRef<any>(null);
 
     const editarDistribucionLotes = (producto: IProducto) => {
         console.log("editarDistribucionLotes invoked for", producto);
@@ -137,9 +142,12 @@ export function Terminal() {
         data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0);
 
         createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator)
-            .then((response) => {
+            .then((response:any) => {
                 // You can access the response here
                 console.log("Mutation response:", response);
+                if(response?.despachoCreate.status && botonImprimirRef.current){
+                    botonImprimirRef.current.handlePrint();
+                }
             })
             .catch((error) => {
                 // Handle errors here
@@ -303,7 +311,7 @@ export function Terminal() {
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8 min-h-screen mb-7">
             <TurnoCloseButton />
-            <BotonImprimir recetaProductos={recetaProductos}/>
+            <BotonImprimir recetaProductos={recetaProductos} ref={botonImprimirRef}/>
            
 
             <div className="mx-auto max-w-2xl text-center">

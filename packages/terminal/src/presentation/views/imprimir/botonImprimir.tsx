@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { frontendDb } from '@infrastructure/db/configuracion';
 import { useSelector } from "react-redux";
@@ -6,7 +6,8 @@ import { RecetaTicket } from "@application/useCases/";
 import { RootState } from "@presentation/stores";
 import { IProducto } from "@domain/models";
 import { Loader } from "@msp/shared";
-import { useEffect, useState } from "react";
+
+
 
 interface TerminalDespachoMSP {
   id?: number;
@@ -15,7 +16,9 @@ interface TerminalDespachoMSP {
   anchoPapelPersonalizado: number;
 }
 
-export const BotonImprimir: React.FC<{ recetaProductos: IProducto[] }> = ({ recetaProductos }) => {
+//export const BotonImprimir: React.FC<{ recetaProductos: IProducto[] }> = ({ recetaProductos }) => {
+  export const BotonImprimir = forwardRef((props: { recetaProductos: IProducto[] }, ref) => {
+    const { recetaProductos } = props;
 
   const [config, setConfig] = useState<TerminalDespachoMSP>({
     impresionAutomatica: false,
@@ -23,27 +26,22 @@ export const BotonImprimir: React.FC<{ recetaProductos: IProducto[] }> = ({ rece
     anchoPapelPersonalizado: 80
   });
 
-  const componentRef = React.useRef<any>(null);
+  const componentRef = useRef<any>(null);
 
-  const onBeforeGetContentResolve = React.useRef<((value: boolean | PromiseLike<boolean>) => void) | null>(null);
+  const onBeforeGetContentResolve = useRef<((value: boolean | PromiseLike<boolean>) => void) | null>(null);
 
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const datosDespacho = useSelector((state: RootState) => state.despacho);
 
   const terminal = useSelector((state: RootState) => state.terminal);
 
 
-  const [text, setText] = React.useState<string>("old boring text");
+  const [text, setText] = useState<string>("old boring text");
 
 
   useEffect(() => {
-    if(config){
-      console.log('configuracion',config);
-      if(config.impresionAutomatica){
-       // handlePrint();
-      }
-    }
+   
     // Recupera la configuración de IndexedDB al cargar la página
     const getStoredConfig = async () => {
       
@@ -68,15 +66,15 @@ export const BotonImprimir: React.FC<{ recetaProductos: IProducto[] }> = ({ rece
 
   //PAGE_SIZE
 
-  const handleAfterPrint = React.useCallback(() => {
+  const handleAfterPrint = useCallback(() => {
     console.log("`onAfterPrint` called"); // tslint:disable-line no-console
   }, []);
 
-  const handleBeforePrint = React.useCallback(() => {
+  const handleBeforePrint = useCallback(() => {
     console.log("`onBeforePrint` called"); // tslint:disable-line no-console
   }, []);
 
-  const handleOnBeforeGetContent = React.useCallback(() => {
+  const handleOnBeforeGetContent = useCallback(() => {
     console.log("`onBeforeGetContent` called"); // tslint:disable-line no-console
 
     setLoading(true);
@@ -94,10 +92,12 @@ export const BotonImprimir: React.FC<{ recetaProductos: IProducto[] }> = ({ rece
     });
   }, [setLoading, setText]);
 
-  const reactToPrintContent = React.useCallback(() => {
+  const reactToPrintContent = useCallback(() => {
     return componentRef.current;
   }, [componentRef]);
 
+  //const componentRefBoton = useRef<any>(null);
+  
   const handlePrint = useReactToPrint({
     content: reactToPrintContent,
     documentTitle: "Receta",
@@ -105,9 +105,14 @@ export const BotonImprimir: React.FC<{ recetaProductos: IProducto[] }> = ({ rece
     onBeforePrint: handleBeforePrint,
     onAfterPrint: handleAfterPrint,
     removeAfterPrint: true
+
   });
 
-  React.useEffect(() => {
+  useImperativeHandle(ref, () => ({
+    handlePrint
+  }));
+
+  useEffect(() => {
     if (
       text === "New, Updated Text!" &&
       onBeforeGetContentResolve.current
@@ -128,4 +133,4 @@ export const BotonImprimir: React.FC<{ recetaProductos: IProducto[] }> = ({ rece
 
     </div>
   );
-};
+});
