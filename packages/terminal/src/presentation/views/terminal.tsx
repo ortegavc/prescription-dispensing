@@ -131,8 +131,18 @@ export function Terminal() {
         const mutator: {} = { create: setDespachoCreate };
         // Format the date as "YYYY-MM-DD"
         const formattedDate = new Date().toISOString().slice(0, 10);
-        data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0); // Descartar lotes no utilizados
-        createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator);
+        // Descartar lotes no utilizados
+        data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0);
+
+        createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator)
+            .then((response) => {
+                // You can access the response here
+                console.log("Mutation response:", response);
+            })
+            .catch((error) => {
+                // Handle errors here
+                console.error("Mutation error:", error);
+            });
         console.log("Submit End");
     };
 
