@@ -49,7 +49,6 @@ export function Terminal() {
     const [productoModal, setProductoModal] = useState<IProducto | any>(null);
     const [productoGridSelected, setProductoGridSelected] = useState<IProducto | null>(null);
 
-    const [imprimir, setImprimir] = useState<boolean>(false);
 
     const botonImprimirRef = React.useRef<any>(null);
 
