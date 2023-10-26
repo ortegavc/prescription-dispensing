@@ -129,8 +129,10 @@ export function Terminal() {
     const onSubmit: SubmitHandler<IDespacho> = (data) => {
         console.log("SubmitHandler started");
         const mutator: {} = { create: setDespachoCreate };
+        // Format the date as "YYYY-MM-DD"
+        const formattedDate = new Date().toISOString().slice(0, 10);
         data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0); // Descartar lotes no utilizados
-        createDespachoService(data, mutator);
+        createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator);
         console.log("Submit End");
     };
 
