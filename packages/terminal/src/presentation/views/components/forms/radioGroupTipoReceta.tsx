@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 
 interface RadioGroupProps {
+    emiteRecetaElectronica: boolean;
     setTipoReceta: (e: any) => void;
 }
 
@@ -14,7 +15,7 @@ const plans = [
     },
 ];
 
-export function RadioGroupTipoReceta({ setTipoReceta }: RadioGroupProps) {
+export function RadioGroupTipoReceta({ emiteRecetaElectronica, setTipoReceta }: RadioGroupProps) {
     const [selected, setSelected] = useState(plans[1]);
 
     useEffect(() => {
@@ -29,6 +30,7 @@ export function RadioGroupTipoReceta({ setTipoReceta }: RadioGroupProps) {
                     <div className="space-x-2 flex">
                         {plans.map((plan) => (
                             <RadioGroup.Option
+                                disabled={!emiteRecetaElectronica}
                                 key={plan.name}
                                 value={plan}
                                 className={({ active, checked }) =>

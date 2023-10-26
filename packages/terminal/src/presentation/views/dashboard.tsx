@@ -163,7 +163,7 @@ export function Dashboard() {
 
                             <div className="terminal-info">
                                 <div className="chart-container position-relative" style={{ height: '200px', width: '200px' }}>
-                                    <TerminalEstado name="Estado:" status={terminal.estado} />
+                                    
                                     <TerminalEstado name="En Uso:" status={terminal.enuso} />
                                     <TerminalEstado name="Receta Electrónica:" status={terminal.recetaelectronica} />
                                 </div>

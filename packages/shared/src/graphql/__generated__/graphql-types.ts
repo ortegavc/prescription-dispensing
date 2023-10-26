@@ -667,6 +667,7 @@ export type Despacho = {
     ejercicio?: Maybe<Scalars["Float"]["output"]>;
     entidadorigen?: Maybe<Entidad>;
     entidadorigen_id?: Maybe<Scalars["Float"]["output"]>;
+    fechadocumento?: Maybe<Scalars["DateScalar"]["output"]>;
     fechaegreso?: Maybe<Scalars["DateScalar"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     identificareceptor?: Maybe<Scalars["String"]["output"]>;
@@ -691,6 +692,7 @@ export type DespachoCollectionType = {
 
 export type DespachoCreateInput = {
     despachodetalle: Array<DespachoDetalleCreateInput>;
+    fechareceta: Scalars["DateTime"]["input"];
     identificareceptor?: InputMaybe<Scalars["String"]["input"]>;
     nombrereceptor?: InputMaybe<Scalars["String"]["input"]>;
     numeroreceta: Scalars["String"]["input"];
@@ -746,6 +748,7 @@ export type DespachoForCollection = {
     ejercicio?: Maybe<Scalars["Float"]["output"]>;
     entidadorigen?: Maybe<Entidad>;
     entidadorigen_id: Scalars["Float"]["output"];
+    fechadocumento?: Maybe<Scalars["DateScalar"]["output"]>;
     fechaegreso?: Maybe<Scalars["DateScalar"]["output"]>;
     id?: Maybe<Scalars["Int"]["output"]>;
     identificareceptor?: Maybe<Scalars["String"]["output"]>;
@@ -4549,6 +4552,18 @@ export type RecetaElectronicaFieldsFragment = {
             id: number;
             manejalote?: number | null;
             nombre?: string | null;
+            productostockbodega?: {
+                __typename?: "ProductoStockBodega";
+                producto_id?: number | null;
+                saldo?: number | null;
+                bodega_id?: number | null;
+            } | null;
+            unidadmedidaproducto?: {
+                __typename?: "UnidadMedida";
+                abreviatura?: string | null;
+                id?: number | null;
+                nombre?: string | null;
+            } | null;
         } | null;
     }> | null;
 };
@@ -4687,6 +4702,7 @@ export type ProductoStockBodegaQuery = {
 
 export type RecetaQueryVariables = Exact<{
     oid: Scalars["String"]["input"];
+    bodega_id?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
 
 export type RecetaQuery = {
@@ -4722,6 +4738,18 @@ export type RecetaQuery = {
                 id: number;
                 manejalote?: number | null;
                 nombre?: string | null;
+                productostockbodega?: {
+                    __typename?: "ProductoStockBodega";
+                    producto_id?: number | null;
+                    saldo?: number | null;
+                    bodega_id?: number | null;
+                } | null;
+                unidadmedidaproducto?: {
+                    __typename?: "UnidadMedida";
+                    abreviatura?: string | null;
+                    id?: number | null;
+                    nombre?: string | null;
+                } | null;
             } | null;
         }> | null;
     } | null;
@@ -4867,6 +4895,16 @@ export const RecetaElectronicaFieldsFragmentDoc = gql`
                 id
                 manejalote
                 nombre
+                productostockbodega {
+                    producto_id
+                    saldo
+                    bodega_id
+                }
+                unidadmedidaproducto {
+                    abreviatura
+                    id
+                    nombre
+                }
             }
         }
     }
@@ -5118,8 +5156,8 @@ export type ProductoStockBodegaQueryHookResult = ReturnType<typeof useProductoSt
 export type ProductoStockBodegaLazyQueryHookResult = ReturnType<typeof useProductoStockBodegaLazyQuery>;
 export type ProductoStockBodegaQueryResult = Apollo.QueryResult<ProductoStockBodegaQuery, ProductoStockBodegaQueryVariables>;
 export const RecetaDocument = gql`
-    query Receta($oid: String!) {
-        Receta(oid: $oid) {
+    query Receta($oid: String!, $bodega_id: Int) {
+        Receta(oid: $oid, bodega_id: $bodega_id) {
             ...recetaElectronicaFields
         }
     }
@@ -5139,6 +5177,7 @@ export const RecetaDocument = gql`
  * const { data, loading, error } = useRecetaQuery({
  *   variables: {
  *      oid: // value for 'oid'
+ *      bodega_id: // value for 'bodega_id'
  *   },
  * });
  */

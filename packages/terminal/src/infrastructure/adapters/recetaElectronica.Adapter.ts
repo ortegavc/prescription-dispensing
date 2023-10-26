@@ -27,7 +27,9 @@ export class RecetaElectronicaAdapter implements Adapter<IDespacho> {
             throw new Error("Datos de receta electrónica incompletos o incorrectos- numero_receta.");
         }
 
-        const recetaDetalle = receta.recetaDetalle.map((item: IRecetaDetalle) => this.adaptDetalle(item));
+        // Parsear nicamente productos que no manejan distribución por lotes,
+        // los que manejen distribución por lote deberán ser agregados manualmente desde el modal de distribución.
+        const recetaDetalle = receta.recetaDetalle.filter((item: IRecetaDetalle) => !item.producto.manejalote).map((item: IRecetaDetalle) => this.adaptDetalle(item));
 
         // Manejo de sesión y conversión segura
         const turnoId = parseInt(sessionStorage.getItem("turno_id") || "0", 10);

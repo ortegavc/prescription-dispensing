@@ -34,6 +34,20 @@ export interface IRecetaDetalleProducto {
     id: number;
     manejalote: number;
     nombre: string;
+    productostockbodega: IRecetaDetalleStock;
+    unidadmedidaproducto: IRecetaDetalleUnidadMedida
+}
+
+export interface IRecetaDetalleStock {
+    producto_id: number;
+    saldo: number;
+    bodega_id: number;
+}
+
+export interface IRecetaDetalleUnidadMedida {
+    abreviatura: string
+    id: number
+    nombre: string
 }
 
 export class RecetaElectronica implements IRecetaElectronica {

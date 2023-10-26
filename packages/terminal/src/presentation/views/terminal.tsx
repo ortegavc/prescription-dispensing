@@ -6,11 +6,11 @@ import { AdjustmentsHorizontalIcon, TrashIcon } from "@heroicons/react/20/solid"
 import { createDespachoService } from "@application/services/despachoCreateService";
 import { casoUsoRecetaElectronica } from "@application/useCases";
 import { graphql } from "@msp/shared";
-import { IDespacho, IDespachoDetalle, IProducto, IStockProductoBodegaItem } from "@domain/models";
-import { IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
+import { IDespacho, IDespachoDetalle, IProducto, IStockProductoBodegaItem, ModalProps } from "@domain/models";
+import { IRecetaDetalle, IRecetaElectronica } from "@infrastructure/adapters/recetaElectronica.Model";
 import { addMedicamento, deleteMedicamento, updateDespacho, updateMedicamento } from "@presentation/actions";
 import { RootState } from "@presentation/stores";
-import { TurnoCloseButton } from "./components";
+import { InfoDialog, TurnoCloseButton } from "./components";
 import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
 import { BotonImprimir } from "./imprimir/botonImprimir";
 
@@ -21,11 +21,12 @@ function classNames(...classes: string[]) {
 
 export function Terminal() {
     const dispatch = useDispatch();
-
     const datosDespacho = useSelector((state: RootState) => state.despacho);
     const terminal: any = useSelector<RootState>((state) => state.terminal);
     const [defaultValues] = useState<IDespacho>(datosDespacho);
     const navigate = useNavigate();
+    const [mensajeGridProductos, setMensajeGridProductos] = useState<string>("");
+    const [infoDialogProps, setInfoDialogProps] = useState<ModalProps | any>({ isOpen: false });
 
     const {
         control,
@@ -36,21 +37,13 @@ export function Terminal() {
         watch,
     } = useForm<IDespacho>({ defaultValues });
 
-    const {
-        useDespachoCreateMutation,
-        useProductoBodegaCollectionLazyQuery,
-        useProductoStockBodegaLazyQuery,
-        useRecetaLazyQuery,
-    } = graphql;
-
-    const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
+    const { useDespachoCreateMutation, useProductoStockBodegaLazyQuery, useRecetaLazyQuery } = graphql;
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
     const [getRecetaLazyQuery] = useRecetaLazyQuery();
     const [setDespachoCreate] = useDespachoCreateMutation();
     const [esRecetaElectronica, setEsRecetaElectronica] = useState<boolean>(false);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
     const [productosRadioGroup, setProductosRadioGroup] = useState<IProducto[]>([]);
-    const [query, setQuery] = useState<string>("");
     const [recetaProductos, setRecetaProductos] = useState<IProducto[]>([]);
     const [productoModal, setProductoModal] = useState<IProducto | any>(null);
     const [productoGridSelected, setProductoGridSelected] = useState<IProducto | null>(null);
@@ -61,33 +54,56 @@ export function Terminal() {
         openCloseModalDistLote();
     };
 
+    const addLotesDespachoDetalle = (lotes: IStockProductoBodegaItem[]) => {
+        lotes.forEach((lote: IStockProductoBodegaItem) => {
+            dispatch(
+                addMedicamento({
+                    cantidaddespachada: lote.CANTIDADDISTRIBUIDA ?? 0,
+                    cantidaddispensada: 0, // en receta manual es cero, sino en debe colocar valor que retorna receta electronica
+                    cantidadrequerida: productoModal.cantidadrequerida,
+                    lote_id: parseInt(lote.LOTEID),
+                    producto_id: lote.PRODUCTOID,
+                })
+            );
+        });
+    };
+
     const finalizarDistribucionLote = () => {
-        console.log("Terminal: finalizarDistribucionLote");
+        console.log("finalizarDistribucionLote");
         const index = recetaProductos.findIndex((item: IProducto) => item.id === productoModal.id);
         if (index >= 0) {
-            // Actualizar receta, usada en form visual
-            const tmpReceta = [...recetaProductos];
-            tmpReceta[index] = productoModal;
-            setRecetaProductos(tmpReceta);
-            // Actualizar state en redux
-            const tmpDespachoDetalle = [...datosDespacho.despachodetalle].map((lote: IDespachoDetalle, index) => {
-                return { ...lote, cantidaddespachada: productoModal.lotes[index].CANTIDADDISTRIBUIDA };
-            });
-            dispatch(updateMedicamento(tmpDespachoDetalle));
+            console.log("finalizarDistribucionLote: producto ya esta en recetaProductos");
+            const producto = { ...recetaProductos[index] };
+            if (JSON.stringify(producto) !== JSON.stringify(productoModal)) {
+                console.log("finalizarDistribucionLote: actualizar recetaProductos");
+                // Actualizar receta, usada en form visual
+                const tmpReceta = [...recetaProductos];
+                tmpReceta[index] = productoModal;
+                setRecetaProductos(tmpReceta);
+                // Actualizar state en redux
+                if (datosDespacho.despachodetalle.length) {
+                    // Actualizar lotes a despachodetalle en storage de redux
+                    console.log("Actualizar lotes a despachodetalle en storage de redux");
+                    const tmpDespachoDetalle = [...datosDespacho.despachodetalle].map((lote: IDespachoDetalle, index) => {
+                        if (lote.producto_id === productoModal.id) {
+                            return { ...lote, cantidaddespachada: productoModal.lotes[index].CANTIDADDISTRIBUIDA };
+                        }
+                        return { ...lote };
+                    });
+                    console.log("finalizarDistribucionLote: actualizar despachoDetalle:", tmpDespachoDetalle);
+                    dispatch(updateMedicamento(tmpDespachoDetalle));
+                } else {
+                    console.log("Agregar lotes a despachodetalle en storage de redux");
+                    // Agregar lotes a despachodetalle en storage de redux
+                    addLotesDespachoDetalle(productoModal.lotes);
+                }
+            }
         } else {
+            // TODO: revisar si este bloque de codigo es necesario, caso contrario suprimir
+            console.log("finalizarDistribucionLote: producto no esta en recetaProductos, REVISAR");
             setRecetaProductos([...recetaProductos, productoModal]);
             // Agregar lotes a despachodetalle en storage de redux
-            productoModal.lotes.forEach((lote: IStockProductoBodegaItem) => {
-                dispatch(
-                    addMedicamento({
-                        cantidaddespachada: lote.CANTIDADDISTRIBUIDA ?? 0,
-                        cantidaddispensada: 0, // en receta manual es cero, sino en debe colocar valor que retorna receta electronica
-                        cantidadrequerida: productoModal.cantidadrequerida,
-                        lote_id: parseInt(lote.LOTEID),
-                        producto_id: lote.PRODUCTOID,
-                    })
-                );
-            });
+            addLotesDespachoDetalle(productoModal.lotes);
         }
         setModalDistLoteIsOpen(false);
         setProductoModal(null);
@@ -115,8 +131,20 @@ export function Terminal() {
     const onSubmit: SubmitHandler<IDespacho> = (data) => {
         console.log("SubmitHandler started");
         const mutator: {} = { create: setDespachoCreate };
-        data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0); // Descartar lotes no utilizados
-        createDespachoService(data, mutator);
+        // Format the date as "YYYY-MM-DD"
+        const formattedDate = new Date().toISOString().slice(0, 10);
+        // Descartar lotes no utilizados
+        data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0);
+
+        createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator)
+            .then((response) => {
+                // You can access the response here
+                console.log("Mutation response:", response);
+            })
+            .catch((error) => {
+                // Handle errors here
+                console.error("Mutation error:", error);
+            });
         console.log("Submit End");
     };
 
@@ -125,6 +153,10 @@ export function Terminal() {
         name: "despachodetalle",
         control,
     });
+
+    const closeInfoDialog = () => {
+        setInfoDialogProps({ isOpen: !infoDialogProps.isOpen, parrafo: "", titulo: "" });
+    };
 
     // console.log("Validation errors", errors);
 
@@ -137,9 +169,7 @@ export function Terminal() {
 
     useEffect(() => {
         if (esRecetaElectronica) {
-            console.log("Modo receta electronica activado");
-        } else {
-            console.log("Modo receta electronica desactivado");
+            setMensajeGridProductos("");
         }
     }, [esRecetaElectronica]);
 
@@ -212,52 +242,47 @@ export function Terminal() {
                                 );
                             }
                         } else {
-                            alert("El producto seleccionado no tiene stock.");
+                            setInfoDialogProps({
+                                parrafo: "El producto seleccionado no tiene stock.",
+                                titulo: "Despacho de recetas",
+                                isOpen: true,
+                            });
                         }
                     },
                     onError: () => {},
                 });
             }
         }
-
-        if (query.length >= 3) {
-            getProductoBodegaCollectionLazyQuery({
-                variables: {
-                    inputWhere: { bodega_id: { is: terminal.bodega.id }, producto: { nombre: { contains: query } } },
-                    inputOrder: { asc: "producto.nombre" },
-                },
-                onCompleted: (c: any) => {
-                    setProductosRadioGroup(
-                        c.productoBodegaCollection.data.map((item: any) => {
-                            return {
-                                codigoproducto: item.producto.codigoproducto,
-                                estado: !!item.producto.estado,
-                                id: item.producto.id,
-                                manejaLote: !!item.producto.manejalote,
-                                nombre: item.producto.nombre,
-                                unidadmedida_id: item.producto.unidadmedida_id,
-                            };
-                        })
-                    );
-                },
-            });
-        }
-    }, [query, productoGridSelected]);
-
-    function handleChangeSearchBar(e: React.ChangeEvent<HTMLInputElement>) {
-        setQuery(e.target.value);
-    }
+    }, [productoGridSelected]);
 
     function handleClickSearchReceta() {
         if (datosDespacho.numeroreceta.trim()) {
             getRecetaLazyQuery({
                 variables: {
                     oid: datosDespacho.numeroreceta.trim(),
+                    bodega_id: terminal.bodega.id,
                 },
                 onCompleted: async (data: any) => {
-                    const receta: IRecetaElectronica = data?.Receta;
-                    const objetoDespacho: IDespacho = await casoUsoRecetaElectronica(receta);
-                    dispatch(updateDespacho(objetoDespacho));
+                    const recetaElectronica: IRecetaElectronica = data?.Receta;
+                    const objetoDespacho: IDespacho = await casoUsoRecetaElectronica(recetaElectronica);
+                    dispatch(updateDespacho(objetoDespacho)); // Guardar datos en state.despacho
+                    // Agregar items de receta electronica al componente de lista de receta
+                    const productos = recetaElectronica.recetaDetalle.map((item: IRecetaDetalle): IProducto => {
+                        return {
+                            cantidaddespachada: 0,
+                            cantidadrequerida: item.cantidad_prescrita,
+                            codigoproducto: item.producto.codigoproducto,
+                            estado: true,
+                            id: item.producto.id,
+                            lotes: [],
+                            manejaLote: !!item.producto.manejalote,
+                            nombre: item.producto.nombre,
+                            stock: item.producto.productostockbodega?.saldo ?? 0,
+                            unidadmedida_id: item.producto.unidadmedidaproducto.id,
+                        };
+                    });
+                    console.log("productos parseados de la receta elect", productos);
+                    setRecetaProductos(productos);
                 },
             });
         }
@@ -289,17 +314,21 @@ export function Terminal() {
                 <div className="">
                     <div className="border rounded px-2 py-2">
                         <SearchBar
-                            query={query}
-                            onChange={handleChangeSearchBar}
+                            disabled={esRecetaElectronica}
                             placeholder="Digite nombre de producto o SKU para buscar"
-                        />
-                        <GridProductos
-                            productoGridSelected={productoGridSelected}
-                            setProductoGridSelected={setProductoGridSelected}
-                            productosRadioGroup={productosRadioGroup}
                             setProductosRadioGroup={setProductosRadioGroup}
+                            setMensajeGridProductos={setMensajeGridProductos}
                         />
-                         
+                        {productosRadioGroup.length ? (
+                            <GridProductos
+                                productoGridSelected={productoGridSelected}
+                                setProductoGridSelected={setProductoGridSelected}
+                                productosRadioGroup={productosRadioGroup}
+                                setProductosRadioGroup={setProductosRadioGroup}
+                            />
+                        ) : (
+                            <p>{mensajeGridProductos}</p>
+                        )}
                     </div>
                 </div>
 
@@ -308,7 +337,10 @@ export function Terminal() {
                     <form className="mx-auto max-w-full" onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-1 gap-x-2 sm:grid-cols-2">
                             <div className="sm:grid-cols-1 py-8">
-                                <RadioGroupTipoReceta setTipoReceta={setEsRecetaElectronica} />
+                                <RadioGroupTipoReceta
+                                    emiteRecetaElectronica={terminal.recetaElectronica}
+                                    setTipoReceta={setEsRecetaElectronica}
+                                />
                                 {/* <label htmlFor="fecha-receta" className="block text-sm font-semibold leading-6 text-gray-900">
                                     Fecha
                                 </label>
@@ -540,6 +572,7 @@ export function Terminal() {
                     </form>
                 </div>
             </div>
+            <InfoDialog {...infoDialogProps} onClose={closeInfoDialog} />
             <ModalDistribucionLote
                 isOpen={modalDistLoteIsOpen}
                 producto={productoModal}

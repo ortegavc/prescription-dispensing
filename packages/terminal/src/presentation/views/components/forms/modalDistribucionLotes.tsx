@@ -21,9 +21,13 @@ export function ModalDistribucionLote({ isOpen, finalizar, producto, setProducto
     const terminal: any = useSelector<RootState>((state) => state.terminal);
 
     const handleAcceptClick = () => {
-        console.log("ModalDistribucionLote: handleAcceptClick");
-        setProducto(productoModal);
-        setProductUpdReq(true);
+        if (JSON.stringify(producto) === JSON.stringify(productoModal)) {
+            setProductoModal(null);
+            finalizar(false);
+        } else {
+            setProducto(productoModal);
+            setProductUpdReq(true);
+        }
     };
 
     const handleBlurCantidadRequerida = () => {
