@@ -35,9 +35,9 @@ interface TerminalDespachoMSP {
   const datosDespacho = useSelector((state: RootState) => state.despacho);
 
   const terminal = useSelector((state: RootState) => state.terminal);
+  const [cssBoton, setCssBoton] = useState<string>("hidden");
 
-
-  const [text, setText] = useState<string>("old boring text");
+  const [text, setText] = useState<string>("Imprimir");
 
 
   useEffect(() => {
@@ -47,7 +47,7 @@ interface TerminalDespachoMSP {
       
       const configData = await frontendDb.confImprimir.get(1);
       if (configData) {
-        console.log('getStoredConfig',configData);
+       
         if (configData.tamanioPapel === 'A4') {
           setConfig({
             impresionAutomatica: configData.impresionAutomatica, 
@@ -67,6 +67,7 @@ interface TerminalDespachoMSP {
   //PAGE_SIZE
 
   const handleAfterPrint = useCallback(() => {
+    setCssBoton("bg-blue-500 text-white rounded-md p-2 hover:bg-red-600 focus:outline-none");
     console.log("`onAfterPrint` called"); // tslint:disable-line no-console
   }, []);
 
@@ -124,7 +125,7 @@ interface TerminalDespachoMSP {
   return (
     <div>
       {loading && <Loader />}
-      <button onClick={handlePrint} className="bg-blue-500 text-white rounded-md p-2 hover:bg-red-600 focus:outline-none">
+      <button onClick={handlePrint} className={cssBoton}>
         Imprimir
       </button>
       <div className="hidden">

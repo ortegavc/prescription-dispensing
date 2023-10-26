@@ -49,7 +49,7 @@ export function Terminal() {
     const [productoModal, setProductoModal] = useState<IProducto | any>(null);
     const [productoGridSelected, setProductoGridSelected] = useState<IProducto | null>(null);
 
-
+    const [imprimir, setImprimir] = useState<boolean>(false);
 
     const botonImprimirRef = React.useRef<any>(null);
 
@@ -143,6 +143,7 @@ export function Terminal() {
 
         createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator)
             .then((response:any) => {
+                setImprimir(true);
                 // You can access the response here
                 console.log("Mutation response:", response);
                 if(response?.despachoCreate.status && botonImprimirRef.current){
@@ -311,6 +312,7 @@ export function Terminal() {
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8 min-h-screen mb-7">
             <TurnoCloseButton />
+            
             <BotonImprimir recetaProductos={recetaProductos} ref={botonImprimirRef}/>
            
 
