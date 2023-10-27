@@ -40,7 +40,7 @@ export function Terminal() {
     const [getProductoStockBodegaLazyQuery] = useProductoStockBodegaLazyQuery();
     const [getRecetaLazyQuery] = useRecetaLazyQuery();
     const [setDespachoCreate] = useDespachoCreateMutation();
-    const [esRecetaElectronica, setEsRecetaElectronica] = useState<boolean>(false);
+    const [isRecetaElectronica, setEsRecetaElectronica] = useState<boolean>(false);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
     const [productosRadioGroup, setProductosRadioGroup] = useState<IProducto[]>([]);
     const [recetaProductos, setRecetaProductos] = useState<IProducto[]>([]);
@@ -177,10 +177,10 @@ export function Terminal() {
     }, [terminal]);
 
     useEffect(() => {
-        if (esRecetaElectronica) {
+        if (isRecetaElectronica) {
             setMensajeGridProductos("");
         }
-    }, [esRecetaElectronica]);
+    }, [isRecetaElectronica]);
 
     useEffect(() => {
         console.log("useEffect reset(datosDespacho)", datosDespacho);
@@ -322,7 +322,7 @@ export function Terminal() {
                 <div className="">
                     <div className="border rounded px-2 py-2">
                         <SearchBar
-                            disabled={esRecetaElectronica}
+                            disabled={isRecetaElectronica}
                             placeholder="Digite nombre de producto o SKU para buscar"
                             setProductosRadioGroup={setProductosRadioGroup}
                             setMensajeGridProductos={setMensajeGridProductos}
@@ -366,7 +366,7 @@ export function Terminal() {
                                     No. Receta
                                 </label>
                                 <div className="mt-1 relative">
-                                    {esRecetaElectronica && (
+                                    {isRecetaElectronica && (
                                         <>
                                             <button
                                                 type="button"
@@ -582,6 +582,7 @@ export function Terminal() {
             <InfoDialog {...infoDialogProps} onClose={closeInfoDialog} />
             <ModalDistribucionLote
                 isOpen={modalDistLoteIsOpen}
+                isRecetaElectronica={isRecetaElectronica}
                 producto={productoModal}
                 setProducto={setProductoModal}
                 finalizar={finalizarDistribucionLote}

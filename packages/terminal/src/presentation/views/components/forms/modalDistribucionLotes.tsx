@@ -8,12 +8,19 @@ import { RootState } from "@presentation/stores";
 
 interface ModalDistribucionLoteProps {
     isOpen: boolean;
+    isRecetaElectronica: boolean;
     finalizar: (e: any) => void;
     producto: IProducto | null;
     setProducto: (e: IProducto) => void;
 }
 
-export function ModalDistribucionLote({ isOpen, finalizar, producto, setProducto }: ModalDistribucionLoteProps) {
+export function ModalDistribucionLote({
+    isOpen,
+    isRecetaElectronica,
+    finalizar,
+    producto,
+    setProducto,
+}: ModalDistribucionLoteProps) {
     const { useStockProductoBodegaListLazyQuery } = graphql;
     const [getStockProductoBodegaListLazyQuery] = useStockProductoBodegaListLazyQuery();
     const [productoModal, setProductoModal] = useState<IProducto | any>(null);
@@ -129,9 +136,11 @@ export function ModalDistribucionLote({ isOpen, finalizar, producto, setProducto
                                             type="number"
                                             id="cant-req"
                                             value={productoModal?.cantidadrequerida}
+                                            min={1}
                                             className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                             onChange={handleChangeCantidadRequerida}
                                             onBlur={handleBlurCantidadRequerida}
+                                            readOnly={isRecetaElectronica}
                                         />
                                     </div>
                                     <div className="flex-initial w-20">
