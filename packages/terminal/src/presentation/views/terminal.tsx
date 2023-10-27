@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, KeyboardEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
@@ -265,6 +265,7 @@ export function Terminal() {
     }, [productoGridSelected]);
 
     function handleClickSearchReceta() {
+        console.log("handleClickSearchReceta");
         if (datosDespacho.numeroreceta.trim()) {
             getRecetaLazyQuery({
                 variables: {
@@ -389,6 +390,11 @@ export function Terminal() {
                                         autoComplete="no-receta"
                                         className="block w-full rounded-md border-0 px-3.5 py-1.5 text-gray-900 text-right shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         {...register("numeroreceta", { required: true, maxLength: 20 })}
+                                        onKeyDown={(e: React.KeyboardEvent) => {
+                                            if (e.keyCode === 9 || e.keyCode === 13) {
+                                                handleClickSearchReceta();
+                                            }
+                                        }}
                                     />
                                     {errors.numeroreceta?.type === "required" && (
                                         <p role="alert" className="mt-1 truncate text-xs leading-5 text-red-500">

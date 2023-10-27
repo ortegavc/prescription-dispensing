@@ -78,9 +78,8 @@ export function SearchBar({ disabled, placeholder, setProductosRadioGroup, setMe
                 placeholder={placeholder}
                 value={query}
                 onChange={handleChangeSearchBar}
-                onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                    if (e.keyCode === 13) {
-                        console.log("Ha puldaso Enter", e);
+                onKeyDown={(e: React.KeyboardEvent) => {
+                    if (e.keyCode === 9 || e.keyCode === 13) {
                         if (query.length >= 3) {
                             search();
                         }
