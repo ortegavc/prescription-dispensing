@@ -37,8 +37,8 @@ export function ModalDistribucionLote({
         }
     };
 
-    const handleBlurCantidadRequerida = () => {
-        console.log("ModalDistribucionLote: handleBlurCantidadRequerida");
+    const getLotesProducto = () => {
+        console.log("ModalDistribucionLote: getLotesProducto");
         if (productoModal && !productoModal.lotes.length) {
             console.log("ModalDistribucionLote: getStockProductoBodegaListLazyQuery");
             getStockProductoBodegaListLazyQuery({
@@ -88,6 +88,11 @@ export function ModalDistribucionLote({
             if (productoModal.cantidaddespachada !== cantdisttotal) {
                 setProductoModal({ ...productoModal, cantidaddespachada: cantdisttotal });
             }
+        }
+
+        // Esto es para consulta automatica de lotes en factura electrónica
+        if (productoModal && !!productoModal.cantidadrequerida && isRecetaElectronica) {
+            getLotesProducto();
         }
     }, [productoModal]);
 
@@ -139,7 +144,7 @@ export function ModalDistribucionLote({
                                             min={1}
                                             className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                             onChange={handleChangeCantidadRequerida}
-                                            onBlur={handleBlurCantidadRequerida}
+                                            onBlur={getLotesProducto}
                                             readOnly={isRecetaElectronica}
                                         />
                                     </div>
