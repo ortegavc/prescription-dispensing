@@ -10,9 +10,16 @@ interface FilterableListProps {
     placeholder: string;
     setProductosRadioGroup: (p: IProducto[]) => void;
     setMensajeGridProductos: (m: string) => void;
+    setLoadingSearchProducts: (status: boolean) => void;
 }
 
-export function SearchBar({ disabled, placeholder, setProductosRadioGroup, setMensajeGridProductos }: FilterableListProps) {
+export function SearchBar({
+    disabled,
+    placeholder,
+    setProductosRadioGroup,
+    setMensajeGridProductos,
+    setLoadingSearchProducts,
+}: FilterableListProps) {
     const { useProductoBodegaCollectionLazyQuery } = graphql;
     const [getProductoBodegaCollectionLazyQuery] = useProductoBodegaCollectionLazyQuery();
     const terminal: any = useSelector<RootState>((state) => state.terminal);
@@ -26,6 +33,7 @@ export function SearchBar({ disabled, placeholder, setProductosRadioGroup, setMe
     }, [disabled]);
 
     const search = () => {
+        setLoadingSearchProducts(true);
         getProductoBodegaCollectionLazyQuery({
             variables: {
                 inputWhere: { bodega_id: { is: terminal.bodega.id }, producto: { nombre: { contains: query } } },
@@ -49,6 +57,7 @@ export function SearchBar({ disabled, placeholder, setProductosRadioGroup, setMe
                     setProductosRadioGroup([]);
                     setMensajeGridProductos(`No se encontraron productos con el criterio: ${query}`);
                 }
+                setLoadingSearchProducts(false);
             },
         });
     };

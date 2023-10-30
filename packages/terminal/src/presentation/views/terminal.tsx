@@ -13,6 +13,7 @@ import { RootState } from "@presentation/stores";
 import { InfoDialog, TurnoCloseButton } from "./components";
 import { SearchBar, ModalDistribucionLote, GridProductos, RadioGroupTipoReceta } from "./components/forms";
 import { BotonImprimir } from "./imprimir/botonImprimir";
+import { Loader } from "@msp/shared";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -46,7 +47,7 @@ export function Terminal() {
     const [recetaProductos, setRecetaProductos] = useState<IProducto[]>([]);
     const [productoModal, setProductoModal] = useState<IProducto | any>(null);
     const [productoGridSelected, setProductoGridSelected] = useState<IProducto | null>(null);
-
+    const [loadingSearchProducts, setLoadingSearchProducts] = useState<boolean>(false);
     const botonImprimirRef = React.useRef<any>(null);
 
     const editarDistribucionLotes = (producto: IProducto) => {
@@ -312,6 +313,7 @@ export function Terminal() {
     };
     return (
         <div className="isolate bg-white px-6 py-4 sm:py-12 lg:px-8 min-h-screen mb-7">
+            {/* <Loader/> */}
             <TurnoCloseButton />
 
             <BotonImprimir recetaProductos={recetaProductos} ref={botonImprimirRef} />
@@ -327,8 +329,10 @@ export function Terminal() {
                             placeholder="Digite nombre de producto o SKU para buscar"
                             setProductosRadioGroup={setProductosRadioGroup}
                             setMensajeGridProductos={setMensajeGridProductos}
+                            setLoadingSearchProducts={setLoadingSearchProducts}
                         />
-                        {productosRadioGroup.length ? (
+                        {loadingSearchProducts && <Loader />}
+                        {!loadingSearchProducts && productosRadioGroup.length ? (
                             <GridProductos
                                 productoGridSelected={productoGridSelected}
                                 setProductoGridSelected={setProductoGridSelected}
