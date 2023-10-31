@@ -11,6 +11,18 @@ export interface IProducto {
     lotes: IStockProductoBodegaItem[];
 }
 
+export interface IProductoByCodigo {
+    codigobarras: string;
+    codigoproducto: string;
+    descripcion: string;
+    estado: boolean;
+    id: number;
+    manejalote: boolean;
+    nombre: string;
+    nombrecomercial?: string;
+    unidadmedida_id: number;
+}
+
 export interface IStockProductoBodegaItem {
     CANTIDAD: number;
     CANTIDADDISTRIBUIDA: number;

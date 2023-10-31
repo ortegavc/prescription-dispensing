@@ -326,7 +326,7 @@ export function Terminal() {
                     <div className="border rounded px-2 py-2">
                         <SearchBar
                             disabled={isRecetaElectronica}
-                            placeholder="Digite nombre de producto o SKU para buscar"
+                            placeholder="Digite nombre del producto"
                             setProductosRadioGroup={setProductosRadioGroup}
                             setMensajeGridProductos={setMensajeGridProductos}
                             setLoadingSearchProducts={setLoadingSearchProducts}
