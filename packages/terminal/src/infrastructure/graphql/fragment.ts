@@ -38,6 +38,20 @@ export const PRODUCTO_BODEGA_COLLECTION_FIELDS = gql`
     }
 `
 
+export const PRODUCTO_BY_CODIGO_FIELDS = gql`
+    fragment productoByCodigoFields on ProductoAdministracion {
+        codigobarras
+        codigoproducto
+        descripcion
+        estado
+        id
+        manejalote
+        nombre
+        nombrecomercial
+        unidadmedida_id
+    }
+`
+
 export const PRODUCTO_STOCK_BODEGA_FIELDS = gql`
     fragment productoStockBodegaFields on ProductoStockBodegaStock{        
         bodega_id

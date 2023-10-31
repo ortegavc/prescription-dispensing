@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { PRODUCTO_BODEGA_COLLECTION_FIELDS, PRODUCTO_STOCK_BODEGA_FIELDS, STOCK_PRODUCTO_BODEGA_FIELDS, RECETA_ELECTRONICA_FIELDS, TERMINAL_USUARIO_FIELDS } from './fragment';
+import { PRODUCTO_BODEGA_COLLECTION_FIELDS, PRODUCTO_BY_CODIGO_FIELDS, PRODUCTO_STOCK_BODEGA_FIELDS, STOCK_PRODUCTO_BODEGA_FIELDS, RECETA_ELECTRONICA_FIELDS, TERMINAL_USUARIO_FIELDS } from './fragment';
 
 export const GET_PRODUCTO_BODEGA_COLLECTION = () => {
     return gql`
@@ -19,6 +19,17 @@ export const GET_PRODUCTO_BODEGA_COLLECTION = () => {
                 }
             }            
         `
+}
+
+export const GET_PRODUCTO_BY_CODIGO = () => {
+    return gql`
+        ${PRODUCTO_BY_CODIGO_FIELDS}
+            query ProductoByCodigo (codigoproducto: String!) {
+                productoByCodigo (codigoproducto: $codigoproducto) {
+                    ...productoByCodigoFields
+                }
+            }
+    `
 }
 
 export const GET_PRODUCTO_STOCK_BODEGA_LIST = () => {
