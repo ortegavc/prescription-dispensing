@@ -24,8 +24,8 @@ export const GET_PRODUCTO_BODEGA_COLLECTION = () => {
 export const GET_PRODUCTO_BY_CODIGO = () => {
     return gql`
         ${PRODUCTO_BY_CODIGO_FIELDS}
-            query ProductoByCodigo($codigoproducto: String!) {
-                productoByCodigo(codigoproducto: $codigoproducto) {
+            query ProductoByCodigo($codigoproducto: String, $codigobarras: String) {
+                productoByCodigo(codigoproducto: $codigoproducto, codigobarras: $codigobarras) {
                     ...productoByCodigoFields
                 }
             }

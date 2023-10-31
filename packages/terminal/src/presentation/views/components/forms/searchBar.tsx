@@ -79,7 +79,8 @@ export function SearchBar({
     const searchByCodigo = () => {
         getProductoByCodigoLazyQuery({
             variables: {
-                codigoproducto: query,
+                codigobarras: criterio === "barras" ? query : null,
+                codigoproducto: criterio === "sku" ? query : null,
             },
             onCompleted: (response: any) => {
                 const auxArray: any[] = [];
