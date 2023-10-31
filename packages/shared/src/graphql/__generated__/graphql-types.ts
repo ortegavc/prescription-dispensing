@@ -3298,7 +3298,8 @@ export type QueryProductoBodegaListArgs = {
 };
 
 export type QueryProductoByCodigoArgs = {
-    codigoproducto: Scalars["String"]["input"];
+    codigobarras?: InputMaybe<Scalars["String"]["input"]>;
+    codigoproducto?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type QueryProductoCollectionArgs = {
@@ -4696,7 +4697,8 @@ export type ProductoBodegaCollectionQuery = {
 };
 
 export type ProductoByCodigoQueryVariables = Exact<{
-    codigoproducto: Scalars["String"]["input"];
+    codigoproducto?: InputMaybe<Scalars["String"]["input"]>;
+    codigobarras?: InputMaybe<Scalars["String"]["input"]>;
 }>;
 
 export type ProductoByCodigoQuery = {
@@ -5159,8 +5161,8 @@ export type ProductoBodegaCollectionQueryResult = Apollo.QueryResult<
     ProductoBodegaCollectionQueryVariables
 >;
 export const ProductoByCodigoDocument = gql`
-    query ProductoByCodigo($codigoproducto: String!) {
-        productoByCodigo(codigoproducto: $codigoproducto) {
+    query ProductoByCodigo($codigoproducto: String, $codigobarras: String) {
+        productoByCodigo(codigoproducto: $codigoproducto, codigobarras: $codigobarras) {
             ...productoByCodigoFields
         }
     }
@@ -5180,11 +5182,12 @@ export const ProductoByCodigoDocument = gql`
  * const { data, loading, error } = useProductoByCodigoQuery({
  *   variables: {
  *      codigoproducto: // value for 'codigoproducto'
+ *      codigobarras: // value for 'codigobarras'
  *   },
  * });
  */
 export function useProductoByCodigoQuery(
-    baseOptions: Apollo.QueryHookOptions<ProductoByCodigoQuery, ProductoByCodigoQueryVariables>
+    baseOptions?: Apollo.QueryHookOptions<ProductoByCodigoQuery, ProductoByCodigoQueryVariables>
 ) {
     const options = { ...defaultOptions, ...baseOptions };
     return Apollo.useQuery<ProductoByCodigoQuery, ProductoByCodigoQueryVariables>(ProductoByCodigoDocument, options);
