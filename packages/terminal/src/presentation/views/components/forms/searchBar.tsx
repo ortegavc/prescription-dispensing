@@ -83,17 +83,21 @@ export function SearchBar({
                 codigoproducto: criterio === "sku" ? query : null,
             },
             onCompleted: (response: any) => {
-                const auxArray: any[] = [];
-                const productoByCodigo: IProductoByCodigo = response.productoByCodigo;
-                const producto = {
-                    codigoproducto: productoByCodigo.codigoproducto,
-                    estado: !!productoByCodigo.estado,
-                    id: productoByCodigo.id,
-                    manejaLote: !!productoByCodigo.manejalote,
-                    nombre: productoByCodigo.nombre,
-                    unidadmedida_id: productoByCodigo.unidadmedida_id,
-                };
-                setProductosRadioGroup([...auxArray, producto]);
+                if (!response.productoByCodigo.id) {
+                    setMensajeGridProductos(`No se encontraron productos con el criterio: ${query}`);
+                } else {
+                    const auxArray: any[] = [];
+                    const productoByCodigo: IProductoByCodigo = response.productoByCodigo;
+                    const producto = {
+                        codigoproducto: productoByCodigo.codigoproducto,
+                        estado: !!productoByCodigo.estado,
+                        id: productoByCodigo.id,
+                        manejaLote: !!productoByCodigo.manejalote,
+                        nombre: productoByCodigo.nombre,
+                        unidadmedida_id: productoByCodigo.unidadmedida_id,
+                    };
+                    setProductosRadioGroup([...auxArray, producto]);
+                }
                 setLoadingSearchProducts(false);
             },
         });
