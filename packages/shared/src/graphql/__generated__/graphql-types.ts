@@ -2284,6 +2284,7 @@ export type NumberWhereInput = {
 export type Paciente = {
     __typename?: "Paciente";
     cttipoidentificacion?: Maybe<CatalogoDetalle>;
+    id: Scalars["Int"]["output"];
     identificacion?: Maybe<Scalars["String"]["output"]>;
     nombre?: Maybe<Scalars["String"]["output"]>;
 };
@@ -3157,7 +3158,7 @@ export type QueryConfiguraCodigoBarraCollectionArgs = {
 };
 
 export type QueryDespachoArgs = {
-    id?: InputMaybe<Scalars["Int"]["input"]>;
+    id: Scalars["Int"]["input"];
 };
 
 export type QueryDespachoCollectionArgs = {
@@ -4494,6 +4495,19 @@ export type ProductoBodegaCollectionFieldsFragment = {
     } | null;
 };
 
+export type ProductoByCodigoFieldsFragment = {
+    __typename?: "ProductoAdministracion";
+    codigobarras?: string | null;
+    codigoproducto?: string | null;
+    descripcion?: string | null;
+    estado?: number | null;
+    id?: number | null;
+    manejalote?: number | null;
+    nombre?: string | null;
+    nombrecomercial?: string | null;
+    unidadmedida_id?: number | null;
+};
+
 export type ProductoStockBodegaFieldsFragment = {
     __typename?: "ProductoStockBodegaStock";
     bodega_id?: number | null;
@@ -4681,6 +4695,26 @@ export type ProductoBodegaCollectionQuery = {
     } | null;
 };
 
+export type ProductoByCodigoQueryVariables = Exact<{
+    codigoproducto: Scalars["String"]["input"];
+}>;
+
+export type ProductoByCodigoQuery = {
+    __typename?: "Query";
+    productoByCodigo?: {
+        __typename?: "ProductoAdministracion";
+        codigobarras?: string | null;
+        codigoproducto?: string | null;
+        descripcion?: string | null;
+        estado?: number | null;
+        id?: number | null;
+        manejalote?: number | null;
+        nombre?: string | null;
+        nombrecomercial?: string | null;
+        unidadmedida_id?: number | null;
+    } | null;
+};
+
 export type ProductoStockBodegaQueryVariables = Exact<{
     bodegaId: Scalars["Int"]["input"];
     productoId: Scalars["Int"]["input"];
@@ -4838,6 +4872,19 @@ export const ProductoBodegaCollectionFieldsFragmentDoc = gql`
             limit
             offset
         }
+    }
+`;
+export const ProductoByCodigoFieldsFragmentDoc = gql`
+    fragment productoByCodigoFields on ProductoAdministracion {
+        codigobarras
+        codigoproducto
+        descripcion
+        estado
+        id
+        manejalote
+        nombre
+        nombrecomercial
+        unidadmedida_id
     }
 `;
 export const ProductoStockBodegaFieldsFragmentDoc = gql`
@@ -5111,6 +5158,46 @@ export type ProductoBodegaCollectionQueryResult = Apollo.QueryResult<
     ProductoBodegaCollectionQuery,
     ProductoBodegaCollectionQueryVariables
 >;
+export const ProductoByCodigoDocument = gql`
+    query ProductoByCodigo($codigoproducto: String!) {
+        productoByCodigo(codigoproducto: $codigoproducto) {
+            ...productoByCodigoFields
+        }
+    }
+    ${ProductoByCodigoFieldsFragmentDoc}
+`;
+
+/**
+ * __useProductoByCodigoQuery__
+ *
+ * To run a query within a React component, call `useProductoByCodigoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductoByCodigoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductoByCodigoQuery({
+ *   variables: {
+ *      codigoproducto: // value for 'codigoproducto'
+ *   },
+ * });
+ */
+export function useProductoByCodigoQuery(
+    baseOptions: Apollo.QueryHookOptions<ProductoByCodigoQuery, ProductoByCodigoQueryVariables>
+) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useQuery<ProductoByCodigoQuery, ProductoByCodigoQueryVariables>(ProductoByCodigoDocument, options);
+}
+export function useProductoByCodigoLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<ProductoByCodigoQuery, ProductoByCodigoQueryVariables>
+) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useLazyQuery<ProductoByCodigoQuery, ProductoByCodigoQueryVariables>(ProductoByCodigoDocument, options);
+}
+export type ProductoByCodigoQueryHookResult = ReturnType<typeof useProductoByCodigoQuery>;
+export type ProductoByCodigoLazyQueryHookResult = ReturnType<typeof useProductoByCodigoLazyQuery>;
+export type ProductoByCodigoQueryResult = Apollo.QueryResult<ProductoByCodigoQuery, ProductoByCodigoQueryVariables>;
 export const ProductoStockBodegaDocument = gql`
     query ProductoStockBodega($bodegaId: Int!, $productoId: Int!) {
         productoStockBodega(bodega_id: $bodegaId, producto_id: $productoId) {
@@ -5303,6 +5390,7 @@ export type TerminalUsuarioListQueryResult = Apollo.QueryResult<TerminalUsuarioL
 export const namedOperations = {
     Query: {
         ProductoBodegaCollection: "ProductoBodegaCollection",
+        ProductoByCodigo: "ProductoByCodigo",
         ProductoStockBodega: "ProductoStockBodega",
         Receta: "Receta",
         StockProductoBodegaList: "StockProductoBodegaList",
@@ -5316,6 +5404,7 @@ export const namedOperations = {
     Fragment: {
         despachoCreateFields: "despachoCreateFields",
         productoBodegaCollectionFields: "productoBodegaCollectionFields",
+        productoByCodigoFields: "productoByCodigoFields",
         productoStockBodegaFields: "productoStockBodegaFields",
         stockProductoBodegaFields: "stockProductoBodegaFields",
         recetaElectronicaFields: "recetaElectronicaFields",
