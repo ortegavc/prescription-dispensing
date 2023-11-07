@@ -58,6 +58,13 @@ export function ModalDistribucionLote({
         }
     };
 
+    const cantdisttotal = () => {
+        return productoModal?.lotes?.reduce(
+            (accumulator: number, currentObject: IStockProductoBodegaItem) => accumulator + currentObject.CANTIDADDISTRIBUIDA,
+            0
+        );
+    };
+
     const handleChangeCantidadRequerida = (e: React.ChangeEvent<HTMLInputElement>) => {
         setProductoModal({ ...productoModal, cantidadrequerida: parseInt(e.target.value) });
     };
@@ -79,14 +86,9 @@ export function ModalDistribucionLote({
     useEffect(() => {
         console.log("ModalDistribucionLote: useEffect [productoModal]", productoModal);
         if (productoModal && productoModal.lotes.length) {
-            const cantdisttotal = productoModal.lotes.reduce(
-                (accumulator: number, currentObject: IStockProductoBodegaItem) =>
-                    accumulator + currentObject.CANTIDADDISTRIBUIDA,
-                0
-            );
-            console.log("ModalDistribucionLote: cantidad distribuida total", cantdisttotal);
-            if (productoModal.cantidaddespachada !== cantdisttotal) {
-                setProductoModal({ ...productoModal, cantidaddespachada: cantdisttotal });
+            console.log("ModalDistribucionLote: cantidad distribuida total", cantdisttotal());
+            if (productoModal.cantidaddespachada !== cantdisttotal()) {
+                setProductoModal({ ...productoModal, cantidaddespachada: cantdisttotal() });
             }
         }
 
@@ -143,8 +145,17 @@ export function ModalDistribucionLote({
                                             value={productoModal?.cantidadrequerida}
                                             min={1}
                                             className="w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                            onChange={handleChangeCantidadRequerida}
                                             onBlur={getLotesProducto}
+                                            onChange={handleChangeCantidadRequerida}
+                                            onKeyDown={(e: React.KeyboardEvent) => {
+                                                if (e.keyCode === 9 || e.keyCode === 13) {
+                                                    if (cantdisttotal() > 0) {
+                                                        handleAcceptClick();
+                                                    } else {
+                                                        getLotesProducto();
+                                                    }
+                                                }
+                                            }}
                                             readOnly={isRecetaElectronica}
                                         />
                                     </div>
