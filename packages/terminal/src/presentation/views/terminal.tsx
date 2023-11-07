@@ -136,38 +136,46 @@ export function Terminal() {
         const mutator: {} = { create: setDespachoCreate };
         // Format the date as "YYYY-MM-DD"
         const formattedDate = new Date().toISOString().slice(0, 10);
+        if (recetaProductos.some((item) => item.cantidaddespachada === 0)) {
+            setInfoDialogProps({
+                parrafo: "Revisar items con cantidad despachada igual a cero.",
+                titulo: "Despacho de recetas",
+                isOpen: true,
+            });
+        } else {
+            setBtnSubmitDisabled(true);
+            createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator)
+                .then((response: any) => {
+                    // You can access the response here
+                    if (response?.despachoCreate.status) {
+                        if (botonImprimirRef.current) {
+                            botonImprimirRef.current.handlePrint();
+                        }
+                    } else {
+                        setBtnSubmitDisabled(false);
+                    }
+                    setInfoDialogProps({
+                        parrafo: response?.despachoCreate.message,
+                        titulo: "Despacho de recetas",
+                        isOpen: true,
+                    });
+                })
+                .catch((error) => {
+                    // Handle errors here
+                    console.error("Mutation error:", error);
+                    setBtnSubmitDisabled(false);
+                    setInfoDialogProps({
+                        parrafo: "Se ha presentado un error, por favor reintentar.",
+                        titulo: "Despacho de recetas",
+                        isOpen: true,
+                    });
+                })
+                .finally(() => {
+                    console.log("Submit End");
+                });
+        }
         // Descartar lotes no utilizados
         data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0);
-        setBtnSubmitDisabled(true);
-        createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator)
-            .then((response: any) => {
-                // You can access the response here
-                if (response?.despachoCreate.status) {
-                    if (botonImprimirRef.current) {
-                        botonImprimirRef.current.handlePrint();
-                    }
-                } else {
-                    setBtnSubmitDisabled(false);
-                }
-                setInfoDialogProps({
-                    parrafo: response?.despachoCreate.message,
-                    titulo: "Despacho de recetas",
-                    isOpen: true,
-                });
-            })
-            .catch((error) => {
-                // Handle errors here
-                console.error("Mutation error:", error);
-                setBtnSubmitDisabled(false);
-                setInfoDialogProps({
-                    parrafo: "Se ha presentado un error, por favor reintentar.",
-                    titulo: "Despacho de recetas",
-                    isOpen: true,
-                });
-            })
-            .finally(() => {
-                console.log("Submit End");
-            });
     };
 
     // Watch in Field Array
