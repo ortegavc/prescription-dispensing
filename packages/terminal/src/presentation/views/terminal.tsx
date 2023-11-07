@@ -42,6 +42,7 @@ export function Terminal() {
     const [getRecetaLazyQuery] = useRecetaLazyQuery();
     const [setDespachoCreate] = useDespachoCreateMutation();
     const [isRecetaElectronica, setEsRecetaElectronica] = useState<boolean>(false);
+    const [btnSubmitDisabled, setBtnSubmitDisabled] = useState<boolean>(false);
     const [modalDistLoteIsOpen, setModalDistLoteIsOpen] = useState<boolean>(false);
     const [productosRadioGroup, setProductosRadioGroup] = useState<IProducto[]>([]);
     const [recetaProductos, setRecetaProductos] = useState<IProducto[]>([]);
@@ -137,7 +138,7 @@ export function Terminal() {
         const formattedDate = new Date().toISOString().slice(0, 10);
         // Descartar lotes no utilizados
         data.despachodetalle = data.despachodetalle.filter((item) => item.cantidaddespachada > 0);
-
+        setBtnSubmitDisabled(true);
         createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator)
             .then((response: any) => {
                 // You can access the response here
@@ -145,6 +146,8 @@ export function Terminal() {
                     if (botonImprimirRef.current) {
                         botonImprimirRef.current.handlePrint();
                     }
+                } else {
+                    setBtnSubmitDisabled(false);
                 }
                 setInfoDialogProps({
                     parrafo: response?.despachoCreate.message,
@@ -155,13 +158,16 @@ export function Terminal() {
             .catch((error) => {
                 // Handle errors here
                 console.error("Mutation error:", error);
+                setBtnSubmitDisabled(false);
                 setInfoDialogProps({
                     parrafo: "Se ha presentado un error, por favor reintentar.",
                     titulo: "Despacho de recetas",
                     isOpen: true,
                 });
+            })
+            .finally(() => {
+                console.log("Submit End");
             });
-        console.log("Submit End");
     };
 
     // Watch in Field Array
@@ -580,13 +586,18 @@ export function Terminal() {
                             <div className="mt-6 flex items-center justify-end gap-x-6 col-span-full">
                                 <button
                                     type="button"
-                                    className="rounded-md px-3 py-2 text-center font-medium shadow-sm ring-1 ring-slate-700/10 hover:bg-slate-50"
+                                    className="rounded px-3 py-2 text-center font-medium bg-blue-50 hover:bg-blue-100"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
-                                    className="rounded-md bg-indigo-600 px-3 py-2 text-center font-medium leading-5 text-white hover:bg-indigo-500"
+                                    className={`rounded px-3 py-2 text-center font-medium leading-5 ${
+                                        btnSubmitDisabled
+                                            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                                            : "bg-blue-500 text-white hover:bg-blue-600"
+                                    }`}
+                                    disabled={btnSubmitDisabled}
                                 >
                                     Aceptar
                                 </button>
