@@ -141,10 +141,16 @@ export function Terminal() {
         createDespachoService({ ...data, ...{ fechareceta: formattedDate, turno_id: terminal.turno.id } }, mutator)
             .then((response: any) => {
                 // You can access the response here
-                console.log("Mutation response:", response);
-                if (response?.despachoCreate.status && botonImprimirRef.current) {
-                    botonImprimirRef.current.handlePrint();
+                if (response?.despachoCreate.status) {
+                    if (botonImprimirRef.current) {
+                        botonImprimirRef.current.handlePrint();
+                    }
                 }
+                setInfoDialogProps({
+                    parrafo: response?.despachoCreate.message,
+                    titulo: "Despacho de recetas",
+                    isOpen: true,
+                });
             })
             .catch((error) => {
                 // Handle errors here
